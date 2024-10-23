@@ -11,17 +11,17 @@ dotenv.config();
 const port = process.env.PORT || 8000;
 
 const app = express();
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 // middleware
 app.use(
   cors({
-    origin: process.env.CLIENT_URL,
+    origin: [process.env.CLIENT_URI],
     credentials: true,
   })
 );
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
 
 // app.get('/test',(req,res)=>{
 // console.log(req.cookies)
@@ -45,14 +45,12 @@ app.use(errorHandler);
 //     });
 // });
 
-
 const server = async () => {
   try {
     await connect();
 
     app.listen(port, () => {
       console.log(`Server is running on port ${port}`);
-
     });
   } catch (error) {
     console.log("Failed to strt server.....", error.message);
