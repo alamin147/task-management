@@ -40,7 +40,7 @@ export const registerUser = asyncHandler(async (req, res) => {
   });
 
   // generate token with user id
-  const token = generateToken(user._id);
+  const token =await generateToken(user._id);
 
   // send back the user and token in the response to the client
   res.cookie("token", token, {
@@ -55,7 +55,7 @@ export const registerUser = asyncHandler(async (req, res) => {
     const { _id, name, email, role, photo, bio, isVerified } = user;
 
     // 201 Created
-    res.status(201).json({
+    return res.status(201).json({
       _id,
       name,
       email,
@@ -107,8 +107,8 @@ export const loginUser = asyncHandler(async (req, res) => {
       path: "/",
       httpOnly: true,
       maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-      sameSite: "none", // cross-site access --> allow all third-party cookies
-      secure: true,
+      sameSite: "none", 
+      secure: false,
     });
 
     // send back the user and token in the response to the client

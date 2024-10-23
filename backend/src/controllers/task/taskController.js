@@ -3,6 +3,7 @@ import TaskModel from "../../models/tasks/taskModel.js";
 
 export const createTask = asyncHandler(async (req, res) => {
   try {
+    console.log("6", req.user);
     const { title, description, status, dueDate } = req.body;
 
     if (!title || title.trim() === "") {
@@ -17,9 +18,12 @@ export const createTask = asyncHandler(async (req, res) => {
       user: req.user._id,
     });
     await task.save();
-
-    res.status(201).json({ message: "Task Created successfully!" }, task);
-  } catch (error) {}
+    return res
+      .status(201)
+      .json({ message: "Task Created successfully!" ,task});
+  } catch (error) {
+    res.status(400).json({ message: "Task Failed to create!" });
+  }
 });
 
 export const getTasks = asyncHandler(async (req, res) => {

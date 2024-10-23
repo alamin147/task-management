@@ -3,18 +3,19 @@ import {
   createTask,
   getTask,
   getTasks,
-  updateTask,deleteTask
+  updateTask,
+  deleteTask,
 } from "../controllers/task/taskController.js";
 import { protect } from "../middleware/authMiddleware.js";
 
-const router = express.router();
+export const TaskRoutes = express.Router();
 
-router.post("/task/create", protect, createTask);
+TaskRoutes.post("/create", protect, createTask);
 
-router.get("/tasks", protect, getTasks);
+TaskRoutes.get("/tasks", protect, getTasks);
 
-router.get("/task/:id", protect, getTask);
+TaskRoutes.get("/:id", protect, getTask);
 
-router.patch("/task/:id", protect, updateTask);
+TaskRoutes.patch("/:id", protect, updateTask);
 
-router.delete("/task/:id", protect, deleteTask);
+TaskRoutes.delete("/:id", protect, deleteTask);

@@ -22,36 +22,35 @@ import {
   getAllUsers,
 } from "../controllers/auth/adminController.js";
 
-const router = express.Router();
+export const userRoutes = express.Router();
 
-router.post("/register", registerUser);
-router.post("/login", loginUser);
-router.get("/logout", logoutUser);
-router.get("/user", protect, getUser);
-router.patch("/user", protect, updateUser);
+userRoutes.post("/register", registerUser);
+userRoutes.post("/login", loginUser);
+userRoutes.get("/logout", logoutUser);
+userRoutes.get("/user", protect, getUser);
+userRoutes.patch("/user", protect, updateUser);
 
 // admin route
-router.delete("/admin/users/:id", protect, adminMiddleware, deleteUser);
+userRoutes.delete("/admin/users/:id", protect, adminMiddleware, deleteUser);
 
 // get all users
-router.get("/admin/users", protect, creatorMiddleware, getAllUsers);
+userRoutes.get("/admin/users", protect, creatorMiddleware, getAllUsers);
 
 // login status
-router.get("/login-status", userLoginStatus);
+userRoutes.get("/login-status", userLoginStatus);
 
 // email verification
-router.post("/verify-email", protect, verifyEmail);
+userRoutes.post("/verify-email", protect, verifyEmail);
 
 // veriify user --> email verification
-router.post("/verify-user/:verificationToken", verifyUser);
+userRoutes.post("/verify-user/:verificationToken", verifyUser);
 
 // forgot password
-router.post("/forgot-password", forgotPassword);
+userRoutes.post("/forgot-password", forgotPassword);
 
 //reset password
-router.post("/reset-password/:resetPasswordToken", resetPassword);
+userRoutes.post("/reset-password/:resetPasswordToken", resetPassword);
 
 // change password ---> user must be logged in
-router.patch("/change-password", protect, changePassword);
+userRoutes.patch("/change-password", protect, changePassword);
 
-export default router;
