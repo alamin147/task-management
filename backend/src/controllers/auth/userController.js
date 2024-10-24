@@ -40,7 +40,7 @@ export const registerUser = asyncHandler(async (req, res) => {
   });
 
   // generate token with user id
-  const token =await generateToken(user._id);
+  const token = await generateToken(user._id);
 
   // send back the user and token in the response to the client
   res.cookie("token", token, {
@@ -96,8 +96,15 @@ export const loginUser = asyncHandler(async (req, res) => {
     return res.status(400).json({ message: "Invalid credentials" });
   }
 
+  console.log({userExists})
   // generate token with user id
-  const token = generateToken(userExists._id);
+  const token = generateToken(
+    userExists._id,
+    userExists.name,
+    userExists.email,
+    userExists.role,
+    userExists.photo
+  );
 
   if (userExists && isMatch) {
     const { _id, name, email, role, photo, bio, isVerified } = userExists;
@@ -107,7 +114,7 @@ export const loginUser = asyncHandler(async (req, res) => {
       path: "/",
       httpOnly: true,
       maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-      sameSite: "none", 
+      sameSite: "none",
       secure: false,
     });
 

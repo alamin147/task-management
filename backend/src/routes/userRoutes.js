@@ -26,7 +26,7 @@ export const userRoutes = express.Router();
 
 userRoutes.post("/register", registerUser);
 userRoutes.post("/login", loginUser);
-userRoutes.get("/logout", logoutUser);
+// userRoutes.get("/logout", logoutUser);
 userRoutes.get("/user", protect, getUser);
 userRoutes.patch("/user", protect, updateUser);
 
@@ -37,20 +37,20 @@ userRoutes.delete("/admin/users/:id", protect, adminMiddleware, deleteUser);
 userRoutes.get("/admin/users", protect, creatorMiddleware, getAllUsers);
 
 // login status
-userRoutes.get("/login-status", userLoginStatus);
+// userRoutes.get("/login-status", userLoginStatus);
 
 // email verification
-userRoutes.post("/verify-email", protect, verifyEmail);
+// userRoutes.post("/verify-email", protect, verifyEmail);
 
-// veriify user --> email verification
-userRoutes.post("/verify-user/:verificationToken", verifyUser);
+// verify user --> email verification
+// userRoutes.post("/verify-user/:verificationToken", verifyUser);
 
 // forgot password
-userRoutes.post("/forgot-password", forgotPassword);
+// userRoutes.post("/forgot-password", forgotPassword);
 
 //reset password
-userRoutes.post("/reset-password/:resetPasswordToken", resetPassword);
+// userRoutes.post("/reset-password/:resetPasswordToken", resetPassword);
 
-// change password ---> user must be logged in
-userRoutes.patch("/change-password", protect, changePassword);
+// change password
+// userRoutes.patch("/change-password", protect, changePassword);
 

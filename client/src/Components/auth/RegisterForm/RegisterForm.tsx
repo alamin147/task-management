@@ -1,53 +1,46 @@
-import { useState } from "react";
+import React from "react";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
-import { useLoginUserMutation } from "../../../redux/features/auth/authApi";
 import toast from "react-hot-toast";
-import { jwtDecode } from "jwt-decode";
-import { setUser } from "../../../redux/features/auth/authSlice";
-import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { useRegisterUserMutation } from "../../../redux/features/auth/authApi";
 
 interface IFormInput {
+  name: string;
   email: string;
   password: string;
 }
 
-function LoginForm() {
+function RegisterForm() {
   const {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm<IFormInput>({
     defaultValues: {
+      name: "john doe",
       email: "john@example.com",
       password: "123456",
     },
   });
 
-  const [showPassword, setShowPassword] = useState(false);
+  const [registerUser, { isLoading }] = useRegisterUserMutation();
+
+  const [showPassword, setShowPassword] = React.useState(false);
   const navigate = useNavigate();
 
   const togglePassword = () => setShowPassword(!showPassword);
-  const [loginUser, { isLoading }] = useLoginUserMutation();
-  const dispatch = useDispatch();
 
   const onSubmit = async (data: IFormInput) => {
     try {
-      const res = await loginUser(data);
-      const token = res?.data?.token;
-      const decoded = jwtDecode(token);
-
-
-      // console.log
-      dispatch(setUser({ token: decoded }));
-      // setUser(decoded);
-      // setUserLocalStorage(token);
-      toast.success("User logged in successfully");
-
-      // navigate("/");
+      const res = await registerUser(data);
+      // console.log("here",res);
+      toast.success("User registered successfully");
+      reset(); // Reset the form after successful submission
+      // navigate("/login"); // Use navigate instead of router.push
     } catch (error: any) {
-      console.error("Login error", error);
-      // Optionally handle error (e.g., showing a toast or message)
+      console.log("Error registering user", error);
+      toast.error(error.response?.data?.message);
     }
   };
 
@@ -58,17 +51,33 @@ function LoginForm() {
     >
       <div className="relative z-10">
         <h1 className="mb-2 text-center text-[1.35rem] font-medium">
-          Login to Your Account
+          Register for an Account
         </h1>
         <p className="mb-8 px-[2rem] text-center text-[#999] text-[14px]">
-          Login Now. Don't have an account?{" "}
+          Create an account. Already have an account?{" "}
           <a
-            href="/register"
+            href="/login"
             className="font-bold text-[#2ECC71] hover:text-[#7263F3] transition-all duration-300"
           >
-            Register here
+            Login here
           </a>
         </p>
+
+        {/* Full Name Field */}
+        <div className="flex flex-col">
+          <label htmlFor="name" className="mb-1 text-[#999]">
+            Full Name
+          </label>
+          <input
+            id="name"
+            {...register("name", { required: "Full Name is required" })}
+            className="px-4 py-3 border-[2px] rounded-md outline-[#2ECC71] text-gray-800"
+            placeholder="John Doe"
+          />
+          {errors.name && (
+            <span className="text-red-500 text-sm">{errors.name.message}</span>
+          )}
+        </div>
 
         {/* Email Field */}
         <div className="mt-[1rem] flex flex-col">
@@ -79,10 +88,10 @@ function LoginForm() {
             id="email"
             {...register("email", {
               required: "Email is required",
-              // pattern: {
-              //   value: /^[^@]+@[^@]+\.[^@]+$/,
-              //   message: "Please enter a valid email",
-              // },
+              pattern: {
+                value: /^[^@]+@[^@]+\.[^@]+$/,
+                message: "Please enter a valid email",
+              },
             })}
             className="px-4 py-3 border-[2px] rounded-md outline-[#2ECC71] text-gray-800"
             placeholder="johndoe@gmail.com"
@@ -128,21 +137,13 @@ function LoginForm() {
           </button>
         </div>
 
-        <div className="mt-4 flex justify-end">
-          <a
-            href="/forgot-password"
-            className="font-bold text-[#2ECC71] text-[14px] hover:text-[#7263F3] transition-all duration-300"
-          >
-            Forgot password?
-          </a>
-        </div>
-
+        {/* Submit Button */}
         <div className="flex">
           <button
             type="submit"
             className="mt-[1.5rem] flex-1 px-4 py-3 font-bold bg-[#2ECC71] text-white rounded-md hover:bg-[#1abc9c] transition-colors"
           >
-            Login Now
+            Register Now
           </button>
         </div>
       </div>
@@ -151,4 +152,4 @@ function LoginForm() {
   );
 }
 
-export default LoginForm;
+export default RegisterForm;
