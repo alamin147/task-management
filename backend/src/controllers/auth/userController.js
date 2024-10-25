@@ -96,7 +96,7 @@ export const loginUser = asyncHandler(async (req, res) => {
     return res.status(400).json({ message: "Invalid credentials" });
   }
 
-  console.log({userExists})
+  // console.log({userExists})
   // generate token with user id
   const token = generateToken(
     userExists._id,

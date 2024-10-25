@@ -3,7 +3,7 @@ import TaskModel from "../../models/tasks/taskModel.js";
 
 export const createTask = asyncHandler(async (req, res) => {
   try {
-    console.log("6", req.user);
+    // console.log("6", req.user);
     const { title, description, status, dueDate } = req.body;
 
     if (!title || title.trim() === "") {
