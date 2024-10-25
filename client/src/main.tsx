@@ -9,11 +9,12 @@ import { PersistGate } from "redux-persist/integration/react";
 import { Toaster } from "react-hot-toast";
 import RegisterPage from "./register/Register.tsx";
 import LoginPage from "./login/Login.tsx";
+import Layout from "./Components/layout/Layout.tsx";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <App />,
+    element: <Layout children=<App/> />,
     children: [],
   },
   {
