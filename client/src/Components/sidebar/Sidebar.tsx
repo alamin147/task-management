@@ -4,7 +4,7 @@ import { FaClock, FaCheckCircle, FaTrash } from "react-icons/fa";
 import { FaClockRotateLeft } from "react-icons/fa6";
 import { TbLayoutListFilled } from "react-icons/tb";
 import "./sidebar.css";
-import Tooltip from "../ui/Tooltip";
+import Tooltip from "../uis/Tooltip";
 
 const Sidebar = () => {
   type TIcons = {

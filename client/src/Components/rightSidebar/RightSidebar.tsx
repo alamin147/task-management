@@ -1,5 +1,5 @@
 import { logout } from "../../redux/features/auth/authSlice";
-import Charts from "../chart/Charts";
+import {Charts} from "../chart/Charts";
 import Profile from "../profile/Profile";
 import { useDispatch } from "react-redux";
 

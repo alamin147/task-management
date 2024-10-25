@@ -1,5 +1,5 @@
-import { useUserVerification } from "../Components/auth/utils/authUlits";
-import Rightsidebar from "../Components/rightSidebar/Rightsidebar";
+import { useUserVerification } from "../components/auth/utils/authUlits";
+import Rightsidebar from "../components/rightSidebar/Rightsidebar";
 
 const SidebarProvider = () => {
 
