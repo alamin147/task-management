@@ -4,8 +4,10 @@ import Header from "../header/Header";
 import ContentProvider from "../../provider/ContentProvider";
 import SidebarProvider from "../../provider/SidebarProvider";
 import MainLayout from "./MainLayout";
+import { useUserVerification } from "../auth/utils/authUlits";
 
 const Layout = ({ children }: { children: ReactNode }) => {
+
   return (
     <>
       <div className="h-full flex overflow-hidden">

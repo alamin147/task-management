@@ -21,7 +21,7 @@ export const verifyToken = (token: string) => {
 };
 
 export const useUserVerification = () => {
-  const [user, setUser] = useState({});
+  const [user, setUser] = useState<TUser | null>(null);
 
   useEffect(() => {
     const token = getUserLocalStorage();

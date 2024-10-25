@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 
 const MainLayout = ({ children }: { children: ReactNode }) => {
-  return <div>{children}</div>;
+  return <div className="main-layout flex-1 bg-[#EDEDED] border-2 border-white rounded-[1.5rem] overflow-auto">{children}</div>;
 };
 export default MainLayout;
