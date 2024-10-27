@@ -5,9 +5,9 @@ import User from "../models/auth/UserModel.js";
 export const protect = asyncHandler(async (req, res, next) => {
   try {
     // check if user is logged in
-    const token = req.cookies.token;
+    const token = req.headers.authorization;
+    // console.log("token from auth back", token);
 
-    
     if (!token) {
       // 401 Unauthorized
       return res.status(401).json({ message: "Not authorized, please login!" });
@@ -18,13 +18,13 @@ export const protect = asyncHandler(async (req, res, next) => {
 
     // get user details from the token ----> exclude password
     const user = await User.findById(decoded.id).select("-password");
-    
+
     // console.log(user)
     // check if user exists
     if (!user) {
       return res.status(404).json({ message: "User not found!" });
     }
-    
+
     // set user details in the request object
     req.user = user;
     // console.log(req.user)

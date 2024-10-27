@@ -9,6 +9,7 @@ export const baseApi = createApi({
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as RootState).auth.token;
 
+      // console.log("token from 12",token)
       if (token) {
         headers.set("authorization", `${token}`);
       }

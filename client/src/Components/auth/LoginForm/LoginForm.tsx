@@ -39,7 +39,7 @@ function LoginForm() {
 
 
       // console.log
-      dispatch(setUser({ token: decoded }));
+      dispatch(setUser({ user: decoded,token }));
       // setUser(decoded);
       // setUserLocalStorage(token);
       toast.success("User logged in successfully");

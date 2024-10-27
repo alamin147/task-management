@@ -15,18 +15,19 @@ export const getUserLocalStorage = () => {
   return null;
 };
 
-export const verifyToken = (token: string) => {
-  const decodedUser = jwtDecode(token);
-  return decodedUser;
-};
+// export const getUserInfo = (token: string) => {
+//   const decodedUser = jwtDecode(token);
+//   return decodedUser;
+// };
 
 export const useUserVerification = () => {
   const [user, setUser] = useState<TUser | null>(null);
 
   useEffect(() => {
     const token = getUserLocalStorage();
+    // console.log("here",token)
     const pasrsedToken = JSON.parse(token.token);
-    // console.log()
+
     setUser(pasrsedToken);
   }, []);
 
