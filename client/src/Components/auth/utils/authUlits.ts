@@ -15,10 +15,20 @@ export const getUserLocalStorage = () => {
   return null;
 };
 
-// export const getUserInfo = (token: string) => {
-//   const decodedUser = jwtDecode(token);
-//   return decodedUser;
-// };
+export type TUser= {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  photo: string;
+}
+
+export const getUserInfo = () => {
+  const token = getUserLocalStorage();
+  console.log();
+  const decodedUser: TUser = jwtDecode(token.token);
+  return decodedUser;
+};
 
 export const useUserVerification = () => {
   const [user, setUser] = useState<TUser | null>(null);

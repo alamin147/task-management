@@ -2,11 +2,13 @@ import { FaGithub, FaMoon } from "react-icons/fa";
 import { IoPersonSharp } from "react-icons/io5";
 import { NavLink } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { useUserVerification } from "../auth/utils/authUlits";
+import { getUserInfo, useUserVerification } from "../auth/utils/authUlits";
+import { useGetTasksQuery } from "@/redux/features/tasks/tasksApi";
 
 const Header = () => {
-  const user = useUserVerification();
-
+  const user = getUserInfo();
+  const { data, isLoading } = useGetTasksQuery(undefined);
+  console.log(data);
   const router = useNavigate();
 
   return (
@@ -16,15 +18,15 @@ const Header = () => {
           <span role="img" aria-label="wave">
             👋
           </span>
-          {user ? `Welcome, ${user.name} to Task manager!` : "Welcome to Task manager"}
+          {user
+            ? `Welcome, ${user.name} to Task manager!`
+            : "Welcome to Task manager"}
         </h1>
         <p className="text-sm">
-          {user ? (
+          {data ? (
             <>
               You have{" "}
-              <span className="font-bold text-[#3aafae]">
-                activeTasks.length
-              </span>
+              <span className="font-bold text-[#3aafae]">{data.length}</span>
               &nbsp;active tasks
             </>
           ) : (
@@ -48,36 +50,30 @@ const Header = () => {
         </button>
 
         <div className="flex gap-4 items-center">
-
           <NavLink
             to="https://github.com/Maclinz/taskfyer"
             target="_blank"
             rel="noopener noreferrer"
             className="h-[40px] w-[40px] text-purple-500 rounded-full flex items-center justify-center text-lg border-2 border-[#E6E6E6]"
           >
-            <FaGithub/>
+            <FaGithub />
           </NavLink>
 
-
           <NavLink
             to="https://github.com/Maclinz/taskfyer"
-           
             target="_blank"
             rel="noopener noreferrer"
             className="h-[40px] w-[40px] text-purple-500 rounded-full flex items-center justify-center text-lg border-2 border-[#E6E6E6]"
           >
-                        <FaGithub/>
-
+            <FaGithub />
           </NavLink>
           <NavLink
             to="https://github.com/Maclinz/taskfyer"
-         
             target="_blank"
             rel="noopener noreferrer"
             className="h-[40px] w-[40px] text-purple-500 rounded-full flex items-center justify-center text-lg border-2 border-[#E6E6E6]"
           >
-                        <FaGithub/>
-
+            <FaGithub />
           </NavLink>
         </div>
       </div>

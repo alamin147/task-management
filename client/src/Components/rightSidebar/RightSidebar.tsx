@@ -1,11 +1,14 @@
+import { useGetTasksQuery } from "@/redux/features/tasks/tasksApi";
 import { logout } from "../../redux/features/auth/authSlice";
+import { TUser } from "../auth/utils/authUlits";
 import {Charts} from "../chart/Charts";
 import Profile from "../profile/Profile";
 import { useDispatch } from "react-redux";
 
-const Rightsidebar = () => {
+const Rightsidebar = ({user}:{user:TUser}) => {
   const dispatch = useDispatch();
-
+ 
+  console.log(user)
   const handleLogout = () => {
     dispatch(logout());
   };

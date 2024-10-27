@@ -1,13 +1,8 @@
-import { useUserVerification } from "../components/auth/utils/authUlits";
-import Rightsidebar from "../components/rightSidebar/Rightsidebar";
+import { getUserInfo } from "../components/auth/utils/authUlits";
+import Rightsidebar from "../components/rightSidebar/RightSidebar";
 
 const SidebarProvider = () => {
-
-
-    const user = useUserVerification()
-    return <>{user && <Rightsidebar />}</>;
-
-}
+  const user = getUserInfo();
+  return <>{user && <Rightsidebar user={user} />}</>;
+};
 export default SidebarProvider;
-
-
