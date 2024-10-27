@@ -20,7 +20,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
           </ContentProvider>
         </div>
       </div>
-      {children}
+      {/* {children} */}
     </>
   );
 };

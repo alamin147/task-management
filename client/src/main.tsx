@@ -10,12 +10,15 @@ import { Toaster } from "react-hot-toast";
 import RegisterPage from "./register/Register.tsx";
 import LoginPage from "./login/Login.tsx";
 import Layout from "./components/layout/Layout.tsx";
+import Completed from "./pages/completed/Completed.tsx";
+import Due from "./pages/due/Due.tsx";
+import Pending from "./pages/pending/Pending.tsx";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Layout children=<App/> />,
-    children: [],
+    element: <Layout children=<App /> />,
+    errorElement: <h1>Error</h1>,
   },
   {
     path: "/register",
@@ -24,6 +27,18 @@ const router = createBrowserRouter([
   {
     path: "/login",
     element: <LoginPage />,
+  },
+  {
+    path: "/completed",
+    element: <Layout children=<Completed /> />,
+  },
+  {
+    path: "/pending",
+    element: <Layout children=<Due /> />,
+  },
+  {
+    path: "/due",
+    element: <Layout children=<Pending /> />,
   },
 ]);
 ReactDOM.createRoot(document.getElementById("root")!).render(

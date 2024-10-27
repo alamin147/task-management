@@ -32,7 +32,7 @@ const Sidebar = () => {
     {
       icon: <FaClockRotateLeft />,
       title: "Overdue",
-      link: "/overdue",
+      link: "/due",
     },
   ];
 
@@ -47,7 +47,7 @@ const Sidebar = () => {
           {navItems.map((item, index) => (
             <li key={index} className="relative group">
               <NavLink
-              id="sidebarLink"
+                id="sidebarLink"
                 className={({ isActive, isPending }) =>
                   isPending ? "pending" : isActive ? "active" : ""
                 }
