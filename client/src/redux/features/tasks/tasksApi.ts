@@ -10,12 +10,14 @@ const taskApi = baseApi.injectEndpoints({
       }),
     }),
     getTasks: builder.query({
-      query: () => ({
-        url: "/task/tasks",
-        method: "GET",
-      }),
+      query: () => {
+        return {
+          url: "/task/tasks",
+          method: "GET",
+        };
+      },
+      providesTags: ["tasks"],
     }),
-
     getSingleTask: builder.query({
       query: (id: string) => ({
         url: "/task",
@@ -37,6 +39,7 @@ const taskApi = baseApi.injectEndpoints({
         url: `/task/${id}`,
         method: "DELETE",
       }),
+      invalidatesTags: ["tasks"],
     }),
   }),
 });

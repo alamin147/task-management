@@ -8,7 +8,7 @@ import { useDispatch } from "react-redux";
 const Rightsidebar = ({user}:{user:TUser}) => {
   const dispatch = useDispatch();
  
-  console.log(user)
+  // console.log(user)
   const handleLogout = () => {
     dispatch(logout());
   };

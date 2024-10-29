@@ -3,7 +3,7 @@ import { getUserInfo } from "../auth/utils/authUlits";
 
 const Profile = () => {
   const user = getUserInfo();
-  console.log(user);
+  // console.log(user);
 
   const { data, isLoading } = useGetTasksQuery(undefined);
   // const { tasks, activeTasks, completedTasks, openProfileModal } = useTasks();
@@ -33,7 +33,7 @@ const Profile = () => {
 
       <div className="mt-6 flex flex-col gap-8">
         <div className="grid grid-cols-2 gap-4">
-          <div className="text-gray-400">
+           <div className="text-gray-400">
             <p>Total Tasks: {data?.length}</p>
             <p className="pl-4 relative flex gap-2">
               <span className="absolute h-[70%] w-[0.2rem] left-[1px] top-1/2 translate-y-[-50%] bg-purple-500 rounded-[5px]"></span>

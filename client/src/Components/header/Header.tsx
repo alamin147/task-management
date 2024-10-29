@@ -8,7 +8,7 @@ import { useGetTasksQuery } from "@/redux/features/tasks/tasksApi";
 const Header = () => {
   const user = getUserInfo();
   const { data, isLoading } = useGetTasksQuery(undefined);
-  console.log(data);
+  // console.log(data);
   const router = useNavigate();
 
   return (
