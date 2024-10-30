@@ -1,17 +1,23 @@
-import { FaGithub, FaMoon } from "react-icons/fa";
-import { IoPersonSharp } from "react-icons/io5";
+import { FaGithub } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { getUserInfo, useUserVerification } from "../auth/utils/authUlits";
+import { getUserInfo } from "../auth/utils/authUlits";
 import { useGetTasksQuery } from "@/redux/features/tasks/tasksApi";
+import { useState } from "react";
+import CreateTask from "../createTask/CreateTask";
 
 const Header = () => {
   const user = getUserInfo();
-  const { data, isLoading } = useGetTasksQuery(undefined);
+  const { data } = useGetTasksQuery(undefined);
   // console.log(data);
   const router = useNavigate();
 
+const [openModal,setOpenModal]= useState(false)
+
+
   return (
+    <>
+    {openModal && <CreateTask setOpenModal={setOpenModal}/>}
     <header className="px-6 my-4 w-full flex items-center justify-between bg-[#f9f9f9]">
       <div>
         <h1 className="text-lg font-medium">
@@ -38,13 +44,13 @@ const Header = () => {
         <button
           className="px-8 py-3 bg-[#3aafae] text-white rounded-[50px]
           hover:bg-[#00A1F1] hover:text-white transition-all duration-200 ease-in-out"
-          // onClick={() => {
-          //   if (user) {
-          //     openModalForAdd();
-          //   } else {
-          //     router("/login");
-          //   }
-          // }}
+          onClick={() => {
+            if (user) {
+              setOpenModal(true)
+            } else {
+              router("/login");
+            }
+          }}
         >
           {user ? "Add a new Task" : "Login / Register"}
         </button>
@@ -78,6 +84,7 @@ const Header = () => {
         </div>
       </div>
     </header>
+    </>
   );
 };
 

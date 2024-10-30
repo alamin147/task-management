@@ -1,9 +1,14 @@
-import { useDeleteSingleTaskMutation } from "@/redux/features/tasks/tasksApi";
+import {
+  useDeleteSingleTaskMutation,
+  useUpdateSingleTaskMutation,
+} from "@/redux/features/tasks/tasksApi";
 import { TTask } from "@/types/types";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { FaStar, FaPen, FaTrash } from "react-icons/fa";
+import { FaPen, FaTrash } from "react-icons/fa";
+import { MdDone } from "react-icons/md";
+import { IoMdDoneAll } from "react-icons/io";
 import Modal from "../modal/Modal";
 
 const TaskItem = ({ task }: { task: TTask }) => {
@@ -27,9 +32,20 @@ const TaskItem = ({ task }: { task: TTask }) => {
       // console.log(res);
       if (res) toast.success(`${title} deleted successfully!`);
     } catch (error) {
-      console.error(error);
+      // console.error(error);
       toast.error("Failed to delete task");
     }
+  };
+  const [updateSingleTask, {}] = useUpdateSingleTaskMutation();
+
+  //complete a task
+  const handleTaskComplete = async () => {
+    // console.log(task.completed);
+    const data = {
+      completed: true,
+    };
+    const res = await updateSingleTask({ id: task._id, data });
+    if (res) toast.success(`${task.title} Done successfully!`);
   };
 
   const [openModal, setOpenModal] = useState(false);
@@ -56,11 +72,12 @@ const TaskItem = ({ task }: { task: TTask }) => {
           <div>
             <div className="flex items-center gap-3 text-gray-400 text-[1.2rem]">
               <button
+                onClick={handleTaskComplete}
                 className={`${
-                  task.completed ? "text-yellow-400" : "text-gray-400"
+                  task.completed ? "text-green-500" : "text-gray-400"
                 }`}
               >
-                <FaStar />
+                <IoMdDoneAll />
               </button>
               <button
                 className="text-[#00A1F1]"

@@ -10,7 +10,7 @@ function App() {
   const { data, isLoading } = useGetTasksQuery(undefined);
 
   // console.log(user);
-  console.log(data, isLoading);
+  // console.log(data, isLoading);
   return (
     <>
       {isLoading ? (

@@ -3,11 +3,14 @@ import { baseApi } from "../../api/baseApi";
 const taskApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     createTask: builder.mutation({
-      query: (data) => ({
-        url: "/task/create",
-        method: "POST",
-        body: data,
-      }),
+      query: (data) => {
+        return {
+          url: "/task/create",
+          method: "POST",
+          body: data,
+        };
+      },
+      invalidatesTags: ["tasks"],
     }),
     getTasks: builder.query({
       query: () => {
@@ -28,11 +31,15 @@ const taskApi = baseApi.injectEndpoints({
       }),
     }),
     updateSingleTask: builder.mutation({
-      query: ({ id, data }) => ({
-        url: `/task/${id}`,
-        method: "PATCH",
-        body: data,
-      }),
+      query: ({ id, data }) => {
+        console.log(id, data);
+        return {
+          url: `/task/${id}`,
+          method: "PATCH",
+          body: data,
+        };
+      },
+      invalidatesTags: ["tasks"],
     }),
     deleteSingleTask: builder.mutation({
       query: (id) => ({

@@ -1,31 +1,31 @@
-import { useUpdateSingleTaskMutation } from "@/redux/features/tasks/tasksApi";
-import { TTask } from "@/types/types";
+import { useCreateTaskMutation } from "@/redux/features/tasks/tasksApi";
 import { useForm, Controller } from "react-hook-form";
 import toast from "react-hot-toast";
 
-const Modal = ({ task, setOpenModal }: { task: TTask; setOpenModal: any }) => {
-  const [updateSingleTask, {}] = useUpdateSingleTaskMutation();
+const CreateTask = ({ setOpenModal }: { setOpenModal: any }) => {
+  const [createTask] = useCreateTaskMutation();
   const {
     control,
     handleSubmit,
-    setValue,
     formState: { errors },
   } = useForm({
     defaultValues: {
-      title: task.title,
-      description: task.description,
-      priority: task.priority,
-      dueDate: new Date(task.dueDate).toISOString().split("T")[0], // Format dueDate to YYYY-MM-DD
-      completed: task.completed ? "true" : "false",
+      title: "",
+      description: "",
+      priority: "low",
+      dueDate: "",
+      completed: "false",
     },
   });
 
   const onSubmit = async (data: any) => {
-    // console.log("Form data:", data);
-    // Handle the update action here
-    const res = await updateSingleTask({ id: task._id, data });
-    if (res) toast.success(`${task.title} updated successfully!`);
-    setOpenModal(false);
+    try {
+      await createTask(data).unwrap();
+      toast.success("Task created successfully!");
+      setOpenModal(false);
+    } catch (error) {
+      toast.error("Failed to create task");
+    }
   };
 
   return (
@@ -44,7 +44,7 @@ const Modal = ({ task, setOpenModal }: { task: TTask; setOpenModal: any }) => {
         </button>
 
         <h1 className="text-2xl font-bold text-center mt-10 mb-3">
-          Update your Task
+          Create a new Task
         </h1>
 
         {/* Title Field */}
@@ -53,6 +53,7 @@ const Modal = ({ task, setOpenModal }: { task: TTask; setOpenModal: any }) => {
           <Controller
             name="title"
             control={control}
+            rules={{ required: "Title is required" }}
             render={({ field }) => (
               <input
                 {...field}
@@ -63,6 +64,9 @@ const Modal = ({ task, setOpenModal }: { task: TTask; setOpenModal: any }) => {
               />
             )}
           />
+          {errors.title && (
+            <p className="text-red-500 text-sm">{errors.title.message}</p>
+          )}
         </div>
 
         {/* Description Field */}
@@ -134,6 +138,7 @@ const Modal = ({ task, setOpenModal }: { task: TTask; setOpenModal: any }) => {
             )}
           />
         </div>
+
         {/* Submit Button */}
         <div className="mt-8">
           <button
@@ -141,7 +146,7 @@ const Modal = ({ task, setOpenModal }: { task: TTask; setOpenModal: any }) => {
             className="px-8 py-3 bg-[#3aafae] text-white rounded-[50px]
             hover:bg-[#00A1F1] hover:text-white transition-all duration-200 ease-in-out w-full"
           >
-            Update
+            Create Task
           </button>
         </div>
       </form>
@@ -149,4 +154,4 @@ const Modal = ({ task, setOpenModal }: { task: TTask; setOpenModal: any }) => {
   );
 };
 
-export default Modal;
+export default CreateTask;
