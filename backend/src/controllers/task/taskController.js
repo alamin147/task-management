@@ -20,30 +20,38 @@ export const createTask = asyncHandler(async (req, res) => {
     await task.save();
     return res
       .status(201)
-      .json({ message: "Task Created successfully!" ,task});
+      .json({ message: "Task Created successfully!", task });
   } catch (error) {
     res.status(400).json({ message: "Task Failed to create!" });
   }
 });
 
-export const getTasks = asyncHandler(async (req, res) => {
+export const getTasks = async (req, res) => {
   try {
     const userId = req.user._id;
 
     if (!userId)
       return res.status(401).json({ message: "User not authenticated" });
+    const tasks = await TaskModel.find({ user: userId });
 
-    const tasks = await TaskModel.find({ user: req.user._id });
+    const priorityOrder = { high: 1, medium: 2, low: 3 };
+
+    tasks.sort((a, b) => {
+      if (a.completed !== b.completed) {
+        return a.completed - b.completed;
+      }
+      return priorityOrder[a.priority] - priorityOrder[b.priority];
+    });
 
     res.status(200).json({
-      message: "Tasks retrived successfully",
+      message: "Tasks retrieved successfully",
       tasks,
       length: tasks.length,
     });
   } catch (error) {
     res.status(500).json({ message: "Something went wrong" });
   }
-});
+};
 
 export const getTask = asyncHandler(async (req, res) => {
   try {

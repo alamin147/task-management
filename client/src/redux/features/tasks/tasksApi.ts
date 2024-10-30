@@ -14,6 +14,7 @@ const taskApi = baseApi.injectEndpoints({
     }),
     getTasks: builder.query({
       query: () => {
+        console.log("first")
         return {
           url: "/task/tasks",
           method: "GET",

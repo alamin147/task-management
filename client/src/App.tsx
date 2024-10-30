@@ -1,7 +1,6 @@
 import "./App.css";
 import Filters from "./components/filter/Filters";
-import { motion } from "framer-motion";
-
+import { motion, AnimatePresence } from "framer-motion";
 import { useGetTasksQuery } from "./redux/features/tasks/tasksApi";
 import TaskItem from "./components/taskItem/TaskItem";
 import { TTask } from "./types/types";
@@ -10,7 +9,7 @@ function App() {
   const { data, isLoading } = useGetTasksQuery(undefined);
 
   // console.log(user);
-  // console.log(data, isLoading);
+  console.log(data);
   return (
     <>
       {isLoading ? (
@@ -24,21 +23,14 @@ function App() {
 
           <motion.div
             className="pb-[2rem] mt-6 grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-[1.5rem]"
-            // variants={container}
             initial="hidden"
             animate="visible"
           >
-            {data?.tasks?.map((task:TTask, i: number) => (
-              <TaskItem key={i} task={task} />
-            ))}
-            {/* <motion.button
-              className="h-[16rem] w-full py-2 rounded-md text-lg font-medium text-gray-500 border-dashed border-2 border-gray-400
-        hover:bg-gray-300 hover:border-none transition duration-200 ease-in-out"
-              // onClick={openModalForAdd}
-              // variants={item}
-            >
-              Add New Task
-            </motion.button> */}
+            <AnimatePresence>
+              {data?.tasks?.map((task: TTask) => (
+                <TaskItem key={task._id} task={task} />
+              ))}
+            </AnimatePresence>
           </motion.div>
         </main>
       )}
