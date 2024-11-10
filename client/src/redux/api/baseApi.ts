@@ -16,7 +16,7 @@ export const baseApi = createApi({
       return headers;
     },
   }),
-  tagTypes: ["tasks"],
+  tagTypes: ["tasks","subtask"],
 
   endpoints: () => ({}),
 });

@@ -13,6 +13,7 @@ import Layout from "./components/layout/Layout.tsx";
 import Completed from "./pages/completed/Completed.tsx";
 import Due from "./pages/due/Due.tsx";
 import Pending from "./pages/pending/Pending.tsx";
+import Project from "./pages/project/Project.tsx";
 
 const router = createBrowserRouter([
   {
@@ -39,6 +40,10 @@ const router = createBrowserRouter([
   {
     path: "/due",
     element: <Layout children=<Pending /> />,
+  },
+  {
+    path: "/project/:taskId",
+    element: <Layout children=<Project /> />,
   },
 ]);
 ReactDOM.createRoot(document.getElementById("root")!).render(

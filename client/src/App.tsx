@@ -9,7 +9,7 @@ function App() {
   const { data, isLoading } = useGetTasksQuery(undefined);
 
   // console.log(user);
-  console.log(data);
+  // console.log(data);
   return (
     <>
       {isLoading ? (
@@ -28,7 +28,8 @@ function App() {
           >
             <AnimatePresence>
               {data?.tasks?.map((task: TTask) => (
-                <TaskItem key={task._id} task={task} />
+                <TaskItem key={task._id} task={task} 
+                />
               ))}
             </AnimatePresence>
           </motion.div>

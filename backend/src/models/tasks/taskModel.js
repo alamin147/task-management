@@ -1,7 +1,5 @@
 import mongoose from "mongoose";
 
-
-
 const TaskSchema = new mongoose.Schema(
   {
     title: {
@@ -34,6 +32,21 @@ const TaskSchema = new mongoose.Schema(
       type: mongoose.Schema.ObjectId,
       ref: "User",
       required: true,
+    },
+    subcards: {
+      type: [
+        {
+          _id: {
+            type: mongoose.Schema.ObjectId,
+            ref: "subCard",
+          },
+          title: {
+            type: String,
+            required: true,
+          },
+        },
+      ],
+      default: [],
     },
   },
   { timestamps: true }
