@@ -32,7 +32,10 @@ export const getTasks = async (req, res) => {
 
     if (!userId)
       return res.status(401).json({ message: "User not authenticated" });
-    const tasks = await TaskModel.find({ user: userId });
+    const tasks = await TaskModel.find({ user: userId }).populate({
+      path: "subcards",
+      select: "title",
+    });
 
     const priorityOrder = { high: 1, medium: 2, low: 3 };
 

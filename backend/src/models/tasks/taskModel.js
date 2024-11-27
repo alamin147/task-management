@@ -33,21 +33,22 @@ const TaskSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    subcards: {
-      type: [
-        {
-          _id: {
-            type: mongoose.Schema.ObjectId,
-            ref: "subCard",
-          },
-          title: {
-            type: String,
-            required: true,
-          },
-        },
-      ],
-      default: [],
-    },
+    // subcards: {
+    //   type: [
+    //     {
+    //       type: mongoose.Schema.ObjectId,
+    //       ref: "subCard",
+    //     }
+    //   ],
+    //   default: [],
+    // }
+
+    subcards: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "subCard", 
+      },
+    ],
   },
   { timestamps: true }
 );

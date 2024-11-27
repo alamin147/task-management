@@ -28,8 +28,7 @@ export const createSubTask = asyncHandler(async (req, res) => {
     return res.status(500).json({ message: "Failed to create subtask" });
   }
 
-  task.subcards.push({ _id: subCard._id, title: subCard.title });
-
+  task.subcards.push({ _id: subCard._id});
   await task.save();
 
   res.status(200).json({

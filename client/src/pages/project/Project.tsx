@@ -16,7 +16,7 @@ const Project = () => {
   const handleAddSubTask = async () => {
     try {
       await createSubTask({ taskId, title: newTitle });
-      setNewTitle("");
+      setNewTitle("Untitled subtask");
     } catch (err) {
       console.error("Failed to create subtask:", err);
     }
