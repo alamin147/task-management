@@ -10,7 +10,7 @@ const Project = () => {
   const { data, isLoading } = useGetSingleTaskQuery(taskId as string);
   const [createSubTask] = useCreateSubTaskMutation();
 
-  console.log(data?.task?.subcards);
+  console.log(data);
   const [newTitle, setNewTitle] = useState("Untitled subtask");
 
   const handleAddSubTask = async () => {
@@ -30,13 +30,14 @@ const Project = () => {
     <>
       <main className="m-6 h-full">
         <div>
-          <h2 className="text-2xl font-bold">Project Tasks</h2>
+          <h2 className="text-2xl font-bold"> {data?.task?.title}</h2>
         </div>
 
         <div className="pb-8 mt-6 grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-6">
           {data?.task?.subcards?.map((card: any) => (
             <div
               key={card._id}
+              title={card?._id}
               className="h-64 px-4 py-3 flex flex-col gap-4 shadow-sm bg-gray-50 rounded-lg border border-gray-200"
             >
               <div>

@@ -6,6 +6,12 @@ const subCardSchema = new mongoose.Schema(
       type: String,
       default: "Untitled task",
     },
+    miniTasks: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "miniTask",
+      },
+    ],
   },
   { timestamps: true }
 );
@@ -13,8 +19,3 @@ const subCardSchema = new mongoose.Schema(
 const subCardModel = mongoose.model("subCard", subCardSchema);
 
 export default subCardModel;
-
-
-
-// singleCard: [{ type: mongoose.Schema.ObjectId, ref: "singleCard" }],
-// default: [],

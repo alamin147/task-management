@@ -35,6 +35,9 @@ export const getTasks = async (req, res) => {
     const tasks = await TaskModel.find({ user: userId }).populate({
       path: "subcards",
       select: "title",
+      populate: {
+        path: "miniTasks",
+      },
     });
 
     const priorityOrder = { high: 1, medium: 2, low: 3 };
@@ -66,7 +69,13 @@ export const getTask = asyncHandler(async (req, res) => {
     const { id } = req.params;
     if (!id) return res.status(401).json({ message: "Id not Given" });
 
-    const task = await TaskModel.findById(id);
+    const task = await TaskModel.findById(id).populate({
+      path: "subcards",
+      select: "title",
+      populate: {
+        path: "miniTasks",
+      },
+    });
 
     if (!task.user.equals(userId)) {
       return res.status(401).json({ message: "User not authenticated" });

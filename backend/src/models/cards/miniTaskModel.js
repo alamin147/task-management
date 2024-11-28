@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const singleCardSchema = new mongoose.Schema(
+const miniTaskSchema = new mongoose.Schema(
   {
     title: {
       type: String,
@@ -17,19 +17,15 @@ const singleCardSchema = new mongoose.Schema(
       type: Date,
       default: Date.now(),
     },
-    status: {
-      type: String,
-      enum: ["active", "inactive"],
-      default: "active",
-    },
     completed: {
-      type: Boolean,
-      default: false,
+      type: String,
+      enum: ["completed", "pending", "in progress"],
+      default: "pending",
     },
   },
   { timestamps: true }
 );
 
-const singleCardModel = mongoose.model("singleCard", singleCardSchema);
+const miniTaskModel = mongoose.model("miniTask", miniTaskSchema);
 
-export default singleCardModel;
+export default miniTaskModel;
