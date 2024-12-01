@@ -1,16 +1,16 @@
 import { useState } from "react";
 import { useParams } from "react-router-dom";
-import { FaPen, FaTrash } from "react-icons/fa";
-import { IoMdDoneAll } from "react-icons/io";
 import { useGetSingleTaskQuery } from "@/redux/features/tasks/tasksApi";
 import { useCreateSubTaskMutation } from "@/redux/features/subtask/subtaskApi";
+import { useCreateMiniTaskMutation } from "@/redux/features/minitask/minitaskApi";
 
 const Project = () => {
   const { taskId } = useParams();
-  const { data, isLoading } = useGetSingleTaskQuery(taskId as string);
+  const { data } = useGetSingleTaskQuery(taskId as string);
   const [createSubTask] = useCreateSubTaskMutation();
+  const [createMiniTask] = useCreateMiniTaskMutation();
 
-  console.log(data);
+  // console.log({data});
   const [newTitle, setNewTitle] = useState("Untitled subtask");
 
   const handleAddSubTask = async () => {
@@ -22,10 +22,24 @@ const Project = () => {
     }
   };
 
+
+
+const [newTask, setNewTask] = useState("Untitled mini task");
+  const handleAddMiniTask = async (id) => {
+
+    console.log(id, newTask);
+    try {
+      await createMiniTask({ subtaskId:id, title: newTask });
+      setNewTask("Untitled mini task");
+    } catch (err) {
+      console.error("Failed to create subtask:", err);
+    }
+  };
+
+
   const deleteCard = (id: any) => {
     console.log("deleted", id);
   };
-
   return (
     <>
       <main className="m-6 h-full">
@@ -34,53 +48,52 @@ const Project = () => {
         </div>
 
         <div className="pb-8 mt-6 grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-6">
-          {data?.task?.subcards?.map((card: any) => (
-            <div
-              key={card._id}
-              title={card?._id}
-              className="h-64 px-4 py-3 flex flex-col gap-4 shadow-sm bg-gray-50 rounded-lg border border-gray-200"
-            >
-              <div>
-                <h4 className="font-bold text-2xl">{card.title}</h4>
-              </div>
-              <div className="mt-auto flex justify-between items-center">
-                <p className="text-sm text-gray-400">{card.time}</p>
-                <div className="flex items-center gap-3 text-gray-400 text-lg">
-                  <button>
-                    <IoMdDoneAll />
-                  </button>
-                  <button className="text-blue-500">
-                    <FaPen />
-                  </button>
-                  <button
-                    className="text-red-500"
-                    onClick={() => deleteCard(card.id)}
+          {data?.task?.subcards?.map((card: any, i: number) => (
+            <div  key={card._id} title={card._id} className="bg-gradient-to-r from-slate-500 to-slate-500 p-6 text-white rounded-lg max-w-sm">
+              <h1 className="text-lg font-bold mb-4">{card?.title}</h1>
+              <div className="space-y-2">
+                {data?.task?.subcards[i]?.miniTasks?.map((minicard) => (
+                  <div
+                    key={minicard._id}
+                    className={`p-3 rounded-lg shadow-md ${minicard.color}`}
                   >
-                    <FaTrash />
-                  </button>
-                </div>
+                    {minicard.title}
+                  </div>
+                ))}
+              </div>
+              <div className="mt-4">
+                <input
+                  type="text"
+                  placeholder="Add inside mini task..."
+                  // value={newTask}
+                  onChange={(e) => setNewTask(e.target.value)}
+                  className="w-full px-3 py-2 text-black rounded-md"
+                />
+                <button 
+                onClick={() => handleAddMiniTask(card._id)}
+                className="mt-2 w-full bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg">
+                  Add mini task
+                </button>
               </div>
             </div>
           ))}
-        </div>
 
-        {
-          <div className="mt-4 w-72 px-4 py-3 flex flex-col gap-4 shadow-sm bg-gray-50 rounded-lg border border-gray-200">
+          <div className="mt-4">
             <input
               type="text"
-              placeholder="Enter task title"
+              placeholder="Add sub task..."
               value={newTitle}
               onChange={(e) => setNewTitle(e.target.value)}
-              className="p-2 border border-gray-300 rounded"
+              className="w-full px-3 py-2 text-black rounded-md"
             />
             <button
               onClick={handleAddSubTask}
-              className="px-4 py-2 bg-blue-500 text-white rounded"
+              className="mt-2 w-full bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg"
             >
-              Add Task
+              Add sub task
             </button>
           </div>
-        }
+        </div>
       </main>
     </>
   );
