@@ -1,8 +1,15 @@
 import { useCreateTaskMutation } from "@/redux/features/tasks/tasksApi";
 import { useForm, Controller } from "react-hook-form";
 import toast from "react-hot-toast";
+import { Button, Modal } from "antd";
 
-const CreateTask = ({ setOpenModal }: { setOpenModal: any }) => {
+const CreateTask = ({
+  openModal,
+  setOpenModal,
+}: {
+  setOpenModal: any;
+  openModal: any;
+}) => {
   const [createTask] = useCreateTaskMutation();
   const {
     control,
@@ -20,6 +27,9 @@ const CreateTask = ({ setOpenModal }: { setOpenModal: any }) => {
 
   const onSubmit = async (data: any) => {
     try {
+      console.log(
+        "right herererer create task"
+      )
       await createTask(data).unwrap();
       toast.success("Task created successfully!");
       setOpenModal(false);
@@ -29,26 +39,15 @@ const CreateTask = ({ setOpenModal }: { setOpenModal: any }) => {
   };
 
   return (
-    <div className="fixed left-0 top-0 z-50 h-full w-full bg-[#333]/30 overflow-hidden">
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="py-5 px-6 max-w-[520px] w-full flex flex-col gap-3 bg-white absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-lg shadow-md"
-      >
-        {/* Close button */}
-        <button
-          type="button"
-          className="absolute -top-1 -right-1 text-white bg-red-500 hover:bg-red-600 rounded-full w-8 h-8 flex items-center justify-center"
-          onClick={() => setOpenModal(false)}
-        >
-          &times;
-        </button>
-
-        <h1 className="text-2xl font-bold text-center mt-10 mb-3">
-          Create a new Task
-        </h1>
-
+    <Modal
+      title="Create New Task"
+      open={openModal}
+      onCancel={() => setOpenModal(false)}
+      footer={null}
+    >
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
         {/* Title Field */}
-        <div className="flex flex-col gap-1">
+        <div>
           <label htmlFor="title">Title</label>
           <Controller
             name="title"
@@ -57,7 +56,7 @@ const CreateTask = ({ setOpenModal }: { setOpenModal: any }) => {
             render={({ field }) => (
               <input
                 {...field}
-                className="bg-[#F9F9F9] p-2 rounded-md border"
+                className="w-full p-2 border rounded"
                 type="text"
                 id="title"
                 placeholder="Task Title"
@@ -65,12 +64,12 @@ const CreateTask = ({ setOpenModal }: { setOpenModal: any }) => {
             )}
           />
           {errors.title && (
-            <p className="text-red-500 text-sm">{errors.title.message}</p>
+            <p className="text-red-500">{errors.title.message}</p>
           )}
         </div>
 
         {/* Description Field */}
-        <div className="flex flex-col gap-1">
+        <div>
           <label htmlFor="description">Description</label>
           <Controller
             name="description"
@@ -78,25 +77,22 @@ const CreateTask = ({ setOpenModal }: { setOpenModal: any }) => {
             render={({ field }) => (
               <textarea
                 {...field}
-                className="bg-[#F9F9F9] p-2 rounded-md border resize-none"
+                className="w-full p-2 border rounded"
                 placeholder="Task Description"
-                rows={4}
+                rows={3}
               />
             )}
           />
         </div>
 
         {/* Priority Field */}
-        <div className="flex flex-col gap-1">
-          <label htmlFor="priority">Select Priority</label>
+        <div>
+          <label htmlFor="priority">Priority</label>
           <Controller
             name="priority"
             control={control}
             render={({ field }) => (
-              <select
-                {...field}
-                className="bg-[#F9F9F9] p-2 rounded-md border cursor-pointer"
-              >
+              <select {...field} className="w-full p-2 border rounded">
                 <option value="low">Low</option>
                 <option value="medium">Medium</option>
                 <option value="high">High</option>
@@ -106,7 +102,7 @@ const CreateTask = ({ setOpenModal }: { setOpenModal: any }) => {
         </div>
 
         {/* Due Date Field */}
-        <div className="flex flex-col gap-1">
+        <div>
           <label htmlFor="dueDate">Due Date</label>
           <Controller
             name="dueDate"
@@ -114,7 +110,7 @@ const CreateTask = ({ setOpenModal }: { setOpenModal: any }) => {
             render={({ field }) => (
               <input
                 {...field}
-                className="bg-[#F9F9F9] p-2 rounded-md border"
+                className="w-full p-2 border rounded"
                 type="date"
               />
             )}
@@ -122,16 +118,13 @@ const CreateTask = ({ setOpenModal }: { setOpenModal: any }) => {
         </div>
 
         {/* Completed Field */}
-        <div className="flex flex-col gap-1">
+        <div>
           <label htmlFor="completed">Task Completed</label>
           <Controller
             name="completed"
             control={control}
             render={({ field }) => (
-              <select
-                {...field}
-                className="bg-[#F9F9F9] p-2 rounded-md border cursor-pointer"
-              >
+              <select {...field} className="w-full p-2 border rounded">
                 <option value="false">No</option>
                 <option value="true">Yes</option>
               </select>
@@ -139,18 +132,11 @@ const CreateTask = ({ setOpenModal }: { setOpenModal: any }) => {
           />
         </div>
 
-        {/* Submit Button */}
-        <div className="mt-8">
-          <button
-            type="submit"
-            className="px-8 py-3 bg-[#3aafae] text-white rounded-[50px]
-            hover:bg-[#00A1F1] hover:text-white transition-all duration-200 ease-in-out w-full"
-          >
-            Create Task
-          </button>
-        </div>
+        <Button type="primary" htmlType="submit" className="mt-4 w-full">
+          Submit
+        </Button>
       </form>
-    </div>
+    </Modal>
   );
 };
 
