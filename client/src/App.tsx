@@ -9,7 +9,7 @@ function App() {
   const { data, isLoading } = useGetTasksQuery(undefined);
 
   // console.log(user);
-  // console.log(data);
+  console.log(data);
   return (
     <>
       {isLoading ? (
@@ -22,14 +22,13 @@ function App() {
           </div>
 
           <motion.div
-            className="pb-[2rem] mt-6 grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-[1.5rem]"
+            className="pb-[2rem] mt-6 grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-[1.5rem] overflow-x-auto"
             initial="hidden"
             animate="visible"
           >
             <AnimatePresence>
               {data?.tasks?.map((task: TTask) => (
-                <TaskItem key={task._id} task={task} 
-                />
+                <TaskItem key={task._id} task={task} />
               ))}
             </AnimatePresence>
           </motion.div>

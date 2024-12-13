@@ -9,12 +9,10 @@ import { PersistGate } from "redux-persist/integration/react";
 import { Toaster } from "react-hot-toast";
 import RegisterPage from "./register/Register.tsx";
 import LoginPage from "./login/Login.tsx";
-// import Layout from "./components/layout/Layout.tsx";
 import Completed from "./pages/completed/Completed.tsx";
 import Due from "./pages/due/Due.tsx";
 import Pending from "./pages/pending/Pending.tsx";
 import Project from "./pages/project/Project.tsx";
-import TLayout from "./components/layout/MainLayout.tsx";
 import MainLayout from "./components/layout/MainLayout.tsx";
 
 const router = createBrowserRouter([
@@ -46,10 +44,6 @@ const router = createBrowserRouter([
   {
     path: "/project/:taskId",
     element: <MainLayout children=<Project /> />,
-  },
-  {
-    path: "/test",
-    element: <TLayout />,
   },
 ]);
 ReactDOM.createRoot(document.getElementById("root")!).render(
