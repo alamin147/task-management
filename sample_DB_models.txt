@@ -1,0 +1,8 @@
+minitask
+_id
+img
+title
+description
+dueDate
+completed
+

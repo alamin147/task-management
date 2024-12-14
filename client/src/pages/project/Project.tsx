@@ -4,9 +4,9 @@ import { useGetSingleTaskQuery } from "@/redux/features/tasks/tasksApi";
 import { useCreateSubTaskMutation } from "@/redux/features/subtask/subtaskApi";
 import { useCreateMiniTaskMutation } from "@/redux/features/minitask/minitaskApi";
 import { FaPencil } from "react-icons/fa6";
-import { BsPencilSquare } from "react-icons/bs";
 
 import "./project.css";
+import MiniTaskModal from "@/components/miniTaskModal/MiniTaskModal";
 
 const Project = () => {
   const { taskId } = useParams();
@@ -14,8 +14,10 @@ const Project = () => {
   const [createSubTask] = useCreateSubTaskMutation();
   const [createMiniTask] = useCreateMiniTaskMutation();
 
+  const [miniTaskModal, setMiniTaskModal] = useState(false);
+  const [selectedMiniTask, setSelectedMiniTask] = useState<any>(null); // State for the selected mini-task
   const [newTitle, setNewTitle] = useState("Untitled subtask");
-  console.log(data);
+
   const handleAddSubTask = async () => {
     try {
       await createSubTask({ taskId, title: newTitle });
@@ -25,7 +27,6 @@ const Project = () => {
     }
   };
 
-  // State for each subtask's mini task input
   const [miniTaskInputs, setMiniTaskInputs] = useState<{
     [key: string]: string;
   }>({});
@@ -34,103 +35,97 @@ const Project = () => {
     const miniTaskTitle = miniTaskInputs[id] || "Untitled mini task";
     try {
       await createMiniTask({ subtaskId: id, title: miniTaskTitle });
-      setMiniTaskInputs((prev) => ({ ...prev, [id]: "" })); // Clear the input for this specific subtask
+      setMiniTaskInputs((prev) => ({ ...prev, [id]: "" }));
     } catch (err) {
       console.error("Failed to create mini task:", err);
     }
   };
 
   const handleInputChange = (id: string, value: string) => {
-    setMiniTaskInputs((prev) => ({ ...prev, [id]: value })); // Update input for this specific subtask
+    setMiniTaskInputs((prev) => ({ ...prev, [id]: value }));
   };
 
-  const deleteCard = (id: any) => {
-    console.log("deleted", id);
+  const handleOpenMiniTaskModal = (minicard: any) => {
+    setSelectedMiniTask(minicard); 
+    // console.log(minicard)
+    setMiniTaskModal(true); 
   };
 
   return (
     <>
+      {miniTaskModal && (
+        <MiniTaskModal
+          onClose={() => setMiniTaskModal(false)}
+          miniTaskData={selectedMiniTask} 
+        />
+      )}
       <main className="m-6 overflow-hidden">
-        {/* Horizontally scrollable container */}
         <div className="overflow-x-auto">
-          <div
-            className=" pb-8 mt-6 flex gap-6"
-            style={{ height: "calc(100vh - 140px)" }}
-          >
+          <div className="pb-8 mt-6 flex gap-6" style={{ height: "calc(100vh - 140px)" }}>
             {data?.task?.subcards?.map((card: any, i: number) => (
-              //  First Card Section
-              <div>
-                <div className=" bg-white rounded-lg shadow-md w-72 p-4 border border-gray-200">
+              <div key={card._id}>
+                <div className="bg-white rounded-lg shadow-md w-72 p-4 border border-gray-200">
                   <div className="w-64 mb-4 p-3 bg-gray-50 rounded-lg shadow-sm">
                     <div className="flex gap-2 mb-2">
                       <span className="block w-5 h-1 bg-red-500 rounded"></span>
                     </div>
-
                     <h3 className="text-lg font-semibold text-gray-800 mb-4">
                       {card?.title}
                     </h3>
                   </div>
-
-                  {/*  */}
                   <div className="bg-gray-50 rounded-lg shadow-sm">
-                    {/* dynamic card here */}
-
-                    <div className="space-y-2 ">
-                      {data?.task?.subcards[i]?.miniTasks?.map(
-                        (minicard: any) => (
+                    <div className="space-y-2">
+                      {data?.task?.subcards[i]?.miniTasks?.map((minicard: any) => (
+                        <div
+                          key={minicard._id}
+                          className={`p-3 rounded-lg shadow-md ${minicard.color} flex justify-between items-center`}
+                        >
+                          {minicard.title}
                           <div
-                            key={minicard._id}
-                            className={`p-3 rounded-lg shadow-md ${minicard.color} flex justify-between items-center`}
+                            title={minicard._id}
+                            className="cursor-pointer"
+                            onClick={() => handleOpenMiniTaskModal(minicard)} 
                           >
-                            {minicard.title}
-                            <div className="cursor-pointer">
-                              <FaPencil />
-                            </div>
+                            <FaPencil />
                           </div>
-                        )
-                      )}
+                        </div>
+                      ))}
                     </div>
                   </div>
-                  {/* add btn  */}
-                  <div className="mt-6 w-64 mb-4 p-3  rounded-md shadow-md">
-                    <div className="">
-                      <input
-                        type="text"
-                        placeholder="Add inside mini task..."
-                        value={miniTaskInputs[card._id] || ""}
-                        onChange={(e) =>
-                          handleInputChange(card._id, e.target.value)
-                        }
-                        className="w-full px-3 py-2 text-black rounded-md shadow-md hover:bg-gray-50  focus:outline-none focus:ring-0 border-none focus:border-none"
-                      />
-                      <button
-                        onClick={() => handleAddMiniTask(card._id)}
-                        className="mt-2 w-full bg-gray-100 hover:bg-gray-300 text-black px-3 py-2 rounded-lg shadow-md"
-                      >
-                        Add mini task
-                      </button>
-                    </div>
+                  <div className="mt-6 w-64 mb-4 p-3 rounded-md shadow-md">
+                    <input
+                      type="text"
+                      placeholder="Add inside mini task..."
+                      value={miniTaskInputs[card._id] || ""}
+                      onChange={(e) => handleInputChange(card._id, e.target.value)}
+                      className="w-full px-3 py-2 text-black rounded-md shadow-md hover:bg-gray-50 focus:outline-none focus:ring-0 border-none"
+                    />
+                    <button
+                      onClick={() => handleAddMiniTask(card._id)}
+                      className="mt-2 w-full bg-gray-100 hover:bg-gray-300 text-black px-3 py-2 rounded-lg shadow-md"
+                    >
+                      Add mini task
+                    </button>
                   </div>
                 </div>
               </div>
             ))}
-            {/* end of Card Section */}
-
-            {/* Add subtask card */}
             <div className="w-72 h-40 bg-white text-black p-6 flex-shrink-0 rounded-lg flex flex-col gap-4">
-              <input
-                type="text"
-                placeholder="Add sub task..."
-                value={newTitle}
-                onChange={(e) => setNewTitle(e.target.value)}
-                className="px-3 py- py-2 rounded-md text-black  shadow-md bg-gray-50  focus:outline-none focus:ring-0 border-none focus:border-none"
-              />
-              <button
-                onClick={handleAddSubTask}
-                className="w-full bg-gray-100 hover:bg-gray-300 text-black px-3 py-2 rounded-lg shadow-md"
-              >
-                Add sub task
-              </button>
+              <div className="flex flex-col gap-4 p-3 rounded-md border-gray-50 shadow-md border">
+                <input
+                  type="text"
+                  placeholder="Add sub task..."
+                  value={newTitle}
+                  onChange={(e) => setNewTitle(e.target.value)}
+                  className="px-3 py- py-2 rounded-md text-black shadow-md bg-gray-50 focus:outline-none focus:ring-0 border-none"
+                />
+                <button
+                  onClick={handleAddSubTask}
+                  className="w-full bg-gray-100 hover:bg-gray-300 text-black px-3 py-2 rounded-lg shadow-md"
+                >
+                  Add sub task
+                </button>
+              </div>
             </div>
           </div>
         </div>
