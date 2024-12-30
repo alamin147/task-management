@@ -18,7 +18,7 @@ const miniTaskApi = baseApi.injectEndpoints({
 
     updateMiniTask: builder.mutation({
       query: (formdata) => {
-      console.log({formdata})
+    
         return {
           url: `/minitask/update`,
           method: "POST",

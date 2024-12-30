@@ -50,33 +50,47 @@ export const createMiniTask = asyncHandler(async (req, res) => {
     task,
   });
 });
-
 export const updateMiniTask = asyncHandler(async (req, res) => {
   try {
-    const data = req.body;
-    const img = req.file;
-    let fileName;
+    const data = req?.body;
+    const img = req?.file;
 
-    if (img.originalname.toLowerCase().includes(".jpg")) {
-      fileName = img.originalname.split(".jpg")[0];
-    }
-    if (img.originalname.toLowerCase().includes(".jpeg")) {
-      fileName = img.originalname.split(".jpeg")[0];
-    }
-    if (img.originalname.toLowerCase().includes(".png")) {
-      fileName = img.originalname.split(".png")[0];
+    // Check if _id exists in the request body
+    if (!data?._id) {
+      return res.status(400).json({ message: "Task ID (_id) is required" });
     }
 
-    const fileLocation = img.path;
-  
-    const res = await uploadIMG(fileLocation, fileName);
-    const imgURL = res.secure_url;
-  
+    // if image uploaded
+    if (img) {
+      const fileName = img.originalname
+        .toLowerCase()
+        .split(/\.(jpg|jpeg|png)$/)[0];
+      const fileLocation = img.path;
+
+      const uploadResult = await uploadIMG(fileLocation, fileName);
+      if (uploadResult?.secure_url) {
+        data.img = uploadResult.secure_url;
+      }
+    }
+
+    // Update mini task
+    const updatedTask = await miniTaskModel.findOneAndUpdate(
+      { _id: data._id },
+      { $set: data },
+      { new: true }
+    );
+
+    if (!updatedTask) {
+      return res.status(404).json({ message: "Mini task not found" });
+    }
+
     res.status(200).json({
-      message: "Task updated successfully",
+      status: 200,
+      message: "Mini task updated successfully",
+      data: updatedTask,
     });
   } catch (error) {
-    // console.error(error);
-    res.status(500).json({ message: "Internal server error" });
+    console.error("Error in updateMiniTask:", error.message);
+    res.status(500).json({ status: 500, message: "Internal server error" });
   }
 });

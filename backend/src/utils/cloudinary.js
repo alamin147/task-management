@@ -13,17 +13,12 @@ export const uploadIMG = async (path, fileName) => {
             public_id: fileName, 
         });
         
-        console.log('Upload Result:', uploadResult);
+        // console.log('Upload Result:', uploadResult);
+        return uploadResult;
     } catch (error) {
         console.error('Upload Error:', error);
     }
 
-    const optimizeUrl = cloudinary.url(fileName, {
-        fetch_format: 'auto',
-        quality: 'auto'
-    });
-    
-    console.log('Optimized URL:', optimizeUrl);
-   return uploadResult
+   return null
 };
 

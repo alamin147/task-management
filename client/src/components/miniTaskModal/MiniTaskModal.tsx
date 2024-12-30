@@ -1,16 +1,16 @@
 import { useState } from "react";
 import { Flex, Radio, Tooltip } from "antd";
 import { useUpdateMiniTaskMutation } from "@/redux/features/minitask/minitaskApi";
-import { title } from "process";
-import { description } from "../chart/Charts";
-import Completed from "@/pages/completed/Completed";
-
+import { toast } from "react-hot-toast";
+import { RxCross2 } from "react-icons/rx";
+import { FaPlus } from "react-icons/fa6";
 const MiniTaskModal = ({
   onClose,
   miniTaskData,
 }: {
   onClose: () => void;
   miniTaskData: {
+    _id: string;
     title?: string;
     description?: string;
     dueDate?: string;
@@ -29,7 +29,8 @@ const MiniTaskModal = ({
     { label: "Pending", value: "pending" },
     { label: "In progress", value: "in progress" },
   ];
-
+  const [loading, setLoading] = useState(false);
+  // console.log("id ? obj",miniTaskData)
   const [taskTitle, setTaskTitle] = useState(miniTaskData?.title || "");
   const [taskDescription, setTaskDescription] = useState(
     miniTaskData?.description || ""
@@ -58,10 +59,12 @@ const MiniTaskModal = ({
 
   // Handle Form Submit
   const handleSubmit = async (e: React.FormEvent) => {
+    setLoading(true);
     e.preventDefault();
 
     const formData = new FormData();
     const data = {
+      _id: miniTaskData?._id,
       title: taskTitle,
       description: taskDescription,
       duedate: taskDueDate,
@@ -73,9 +76,19 @@ const MiniTaskModal = ({
       formData.append("img", imageFile);
     }
 
-    const res = await updateMiniTask(formData);
-   console.log(res)
-    onClose();
+    try {
+      const res = await updateMiniTask(formData).unwrap();
+
+      if (res?.status == 200)
+        toast.success(res?.message || "Mini Task updated");
+      else toast.error(res?.message || "Failed to update task.");
+    } catch (err) {
+      toast.error("Failed to update task.");
+      console.error(err);
+    } finally {
+      onClose();
+      setLoading(false);
+    }
   };
 
   return (
@@ -86,9 +99,9 @@ const MiniTaskModal = ({
           <h2 className="text-xl font-semibold text-gray-800">Task</h2>
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 focus:outline-none"
+            className="text-gray-500 hover:text-gray-700 focus:outline-none p-1 rounded-full bg-red-500"
           >
-            ✖
+            <RxCross2 color="white" size={20}/>
           </button>
         </div>
 
@@ -106,7 +119,7 @@ const MiniTaskModal = ({
                   <img
                     className="w-full h-48 object-cover rounded-lg"
                     src={uploadedImagePreview}
-                    alt="Uploaded Preview"
+                    alt="uploaded image"
                   />
                   {/* Plus icon appears on hover */}
                   <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -114,45 +127,50 @@ const MiniTaskModal = ({
                       htmlFor="imageUpload"
                       className="cursor-pointer flex items-center justify-center w-12 h-12 bg-blue-500 text-white rounded-full hover:bg-blue-600"
                     >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-6 w-6"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M12 4v16m8-8H4"
-                        />
-                      </svg>
+                      <FaPlus />
                     </label>
                   </div>
                 </div>
               ) : (
-                <div className="bg-gray-100 w-full h-48 flex items-center justify-center rounded-lg">
-                  <label
-                    htmlFor="imageUpload"
-                    className="cursor-pointer flex items-center justify-center w-12 h-12 bg-blue-500 text-white rounded-full hover:bg-blue-600"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-6 w-6"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
+                miniTaskData?.img?
+                (<div className="relative">
+                  <img
+                    className="w-full h-48 object-cover rounded-lg "
+                    src={miniTaskData?.img}
+                    alt=""
+                  />
+                  {/* Plus icon appears on hover */}
+                  <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg">
+                    <label
+                      htmlFor="imageUpload"
+                      className="cursor-pointer flex items-center justify-center w-12 h-12 bg-blue-500 text-white rounded-full  hover:bg-blue-600"
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M12 4v16m8-8H4"
-                      />
-                    </svg>
-                  </label>
-                </div>
+                      <FaPlus />
+                    </label>
+                  </div>
+                </div>):
+
+                // always on hover
+                (<div className="relative">
+                  <img
+                    className="w-full h-48 object-cover rounded-lg"
+                    src={miniTaskData?.img}
+                    alt=""
+                  />
+                  <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40 rounded-lg">
+                    <label
+                      htmlFor="imageUpload"
+                      className="cursor-pointer flex items-center justify-center w-12 h-12 bg-blue-500 text-white rounded-full hover:bg-blue-600"
+                    >
+                      <FaPlus />
+                    </label>
+                  </div>
+                </div>)
+
+
+
+
+
               )}
               <input
                 id="imageUpload"
@@ -188,7 +206,7 @@ const MiniTaskModal = ({
             <textarea
               value={taskDescription}
               onChange={(e) => setTaskDescription(e.target.value)}
-              className="w-full px-4 py-2 border rounded-lg"
+              className="w-full px-4 py-2 border rounded-lg max-h-64"
             />
           </div>
 
@@ -210,15 +228,17 @@ const MiniTaskModal = ({
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Status
             </label>
-            <Flex vertical gap="middle">
-              <Radio.Group
-                options={options}
-                value={taskCompleted}
-                optionType="button"
-                buttonStyle="solid"
-                onChange={(e) => setTaskCompleted(e.target.value)}
-              />
-            </Flex>
+            <div className="">
+              <Flex vertical gap="middle">
+                <Radio.Group
+                  options={options}
+                  value={taskCompleted}
+                  optionType="button"
+                  buttonStyle="solid"
+                  onChange={(e) => setTaskCompleted(e.target.value)}
+                />
+              </Flex>
+            </div>
           </div>
 
           {/* Buttons */}
@@ -227,14 +247,16 @@ const MiniTaskModal = ({
               type="button"
               onClick={onClose}
               className="px-4 py-2 bg-gray-200 rounded-lg"
+              disabled={loading}
             >
               Cancel
             </button>
             <button
               type="submit"
               className="px-4 py-2 bg-blue-500 text-white rounded-lg"
+              disabled={loading}
             >
-              Save Task
+              {loading ? "Saving..." : "Save Task"}
             </button>
           </div>
         </form>

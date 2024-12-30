@@ -14,8 +14,9 @@ const Project = () => {
   const [createSubTask] = useCreateSubTaskMutation();
   const [createMiniTask] = useCreateMiniTaskMutation();
 
+  // console.log(data)
   const [miniTaskModal, setMiniTaskModal] = useState(false);
-  const [selectedMiniTask, setSelectedMiniTask] = useState<any>(null); // State for the selected mini-task
+  const [selectedMiniTask, setSelectedMiniTask] = useState<any>(null); 
   const [newTitle, setNewTitle] = useState("Untitled subtask");
 
   const handleAddSubTask = async () => {
@@ -47,7 +48,7 @@ const Project = () => {
 
   const handleOpenMiniTaskModal = (minicard: any) => {
     setSelectedMiniTask(minicard); 
-    // console.log(minicard)
+    // console.log({minicard})
     setMiniTaskModal(true); 
   };
 
@@ -82,7 +83,6 @@ const Project = () => {
                         >
                           {minicard.title}
                           <div
-                            title={minicard._id}
                             className="cursor-pointer"
                             onClick={() => handleOpenMiniTaskModal(minicard)} 
                           >

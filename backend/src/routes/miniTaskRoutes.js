@@ -23,7 +23,7 @@ const upload = multer({ storage });
 export const miniTaskRoutes = express.Router();
 
 
-miniTaskRoutes.post("/update", protect, upload.single("img"),(req,res,next)=>{
+miniTaskRoutes.post("/update", protect, upload?.single("img"),(req,res,next)=>{
   
 req.body = JSON.parse(req.body.data)
   next()
