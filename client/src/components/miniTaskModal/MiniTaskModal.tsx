@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { Flex, Radio, Tooltip } from "antd";
-import { useUpdateMiniTaskMutation } from "@/redux/features/minitask/minitaskApi";
+import {
+  useDeleteMiniTaskMutation,
+  useUpdateMiniTaskMutation,
+} from "@/redux/features/minitask/minitaskApi";
 import { toast } from "react-hot-toast";
 import { RxCross2 } from "react-icons/rx";
 import { FaPlus, FaTrash } from "react-icons/fa6";
@@ -10,8 +13,10 @@ import { motion } from "framer-motion";
 const MiniTaskModal = ({
   onClose,
   miniTaskData,
+  subTask,
 }: {
   onClose: () => void;
+  subTask: any;
   miniTaskData: {
     _id: string;
     title?: string;
@@ -93,8 +98,8 @@ const MiniTaskModal = ({
       setLoading(false);
     }
   };
-
-  const handleDelete = () => {
+  const [deleteMiniTask] = useDeleteMiniTaskMutation();
+  const handleDelete = async () => {
     const swalWithBootstrapButtons = Swal.mixin({
       customClass: {
         confirmButton:
@@ -104,34 +109,45 @@ const MiniTaskModal = ({
       },
       buttonsStyling: false,
     });
-    swalWithBootstrapButtons
-      .fire({
-        title: "Delete this task?",
-        text: "You won't be able to revert this!",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Yes, delete it!",
-        cancelButtonText: "No, cancel!",
-        reverseButtons: true,
-      })
-      .then((result) => {
-        if (result.isConfirmed) {
+
+    const result = await swalWithBootstrapButtons.fire({
+      title: "Delete this task?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "No, cancel!",
+      reverseButtons: true,
+    });
+
+    if (result.isConfirmed) {
+      try {
+        const res = await deleteMiniTask({
+          miniTaskId: miniTaskData?._id,
+          subtaskId: subTask?._id,
+        }).unwrap();
+
+        if (res?.status == 200) {
           swalWithBootstrapButtons.fire({
             title: "Deleted!",
-            text: "Your task has been deleted.",
+            text: res?.message,
             icon: "success",
+            showConfirmButton: false,
+            timer: 1000,
           });
-        } else if (
-          /* Read more about handling dismissals below */
-          result.dismiss === Swal.DismissReason.cancel
-        ) {
+        } else {
           swalWithBootstrapButtons.fire({
-            title: "Cancelled",
-            text: "Your task could not delete.",
+            title: "Could not Deleted!",
+            text: res?.message,
             icon: "error",
           });
         }
-      });
+      } catch (error) {
+        console.error("Error in deleteMiniTask mutation:", error);
+      }
+    }
+
+    onClose();
   };
 
   const [isPreview, setIsPreview] = useState(false);
@@ -335,6 +351,7 @@ const MiniTaskModal = ({
                   size={18}
                   color="red"
                   className="ms-1 cursor-pointer"
+                  type="button"
                 />
               </Tooltip>
               <div className="flex justify-end gap-4">

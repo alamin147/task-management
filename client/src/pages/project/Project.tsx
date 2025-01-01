@@ -6,6 +6,7 @@ import { useCreateMiniTaskMutation } from "@/redux/features/minitask/minitaskApi
 import { FaPencil } from "react-icons/fa6";
 import "./project.css";
 import MiniTaskModal from "@/components/miniTaskModal/MiniTaskModal";
+import { Tooltip } from "antd";
 
 const Project = () => {
   const { taskId } = useParams();
@@ -16,6 +17,7 @@ const Project = () => {
   // console.log(data)
   const [miniTaskModal, setMiniTaskModal] = useState(false);
   const [selectedMiniTask, setSelectedMiniTask] = useState<any>(null);
+  const [selectedSubTask, setSelectedSubTask] = useState<any>(null);
   const [newTitle, setNewTitle] = useState("Untitled subtask");
 
   const handleAddSubTask = async () => {
@@ -45,9 +47,9 @@ const Project = () => {
     setMiniTaskInputs((prev) => ({ ...prev, [id]: value }));
   };
 
-  const handleOpenMiniTaskModal = (minicard: any) => {
+  const handleOpenMiniTaskModal = (minicard: any, subcard:any) => {
     setSelectedMiniTask(minicard);
-    // console.log({minicard})
+    setSelectedSubTask(subcard);
     setMiniTaskModal(true);
   };
 
@@ -57,6 +59,7 @@ const Project = () => {
         <MiniTaskModal
           onClose={() => setMiniTaskModal(false)}
           miniTaskData={selectedMiniTask}
+          subTask = {selectedSubTask}
         />
       )}
       <main className="m-6 overflow-hidden">
@@ -88,15 +91,33 @@ const Project = () => {
                                 className="w-full h-32 object-cover rounded-t-md"
                               />
                             )}
-                            
+
                             <div className="p-3">
                               <div className="flex gap-2 mb-2">
                                 {minicard?.completed == "completed" ? (
-                                  <span className="block w-5 h-1 bg-green-500 rounded"></span>
+                                  <Tooltip
+                                    title="Completed"
+                                    color={"green"}
+                                    key={"green"}
+                                  >
+                                    <span className="block w-5 h-1 bg-green-500 rounded"></span>
+                                  </Tooltip>
                                 ) : minicard?.completed == "pending" ? (
-                                  <span className="block w-5 h-1 bg-red-500 rounded"></span>
+                                  <Tooltip
+                                    title="Pending"
+                                    color={"red"}
+                                    key={"red"}
+                                  >
+                                    <span className="block w-5 h-1 bg-red-500 rounded"></span>
+                                  </Tooltip>
                                 ) : (
-                                  <span className="block w-5 h-1 bg-yellow-500 rounded"></span>
+                                  <Tooltip
+                                    title="In Progress"
+                                    color={"yellow"}
+                                    key={"yellow"}
+                                  >
+                                    <span className="block w-5 h-1 bg-yellow-500 rounded"></span>
+                                  </Tooltip>
                                 )}
                               </div>
                               <div className="flex justify-between items-center mt-2">
@@ -112,7 +133,7 @@ const Project = () => {
                                 <div
                                   className="cursor-pointer"
                                   onClick={() =>
-                                    handleOpenMiniTaskModal(minicard)
+                                    handleOpenMiniTaskModal(minicard,card)
                                   }
                                 >
                                   <FaPencil />

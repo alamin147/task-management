@@ -1,5 +1,5 @@
 import express from "express";
-import { createMiniTask, updateMiniTask } from "../controllers/card/miniTaskController.js";
+import { createMiniTask, deleteMiniTask, updateMiniTask } from "../controllers/card/miniTaskController.js";
 import { protect } from "../middleware/authMiddleware.js";
 import multer from "multer";
 import path from "path";
@@ -30,3 +30,4 @@ req.body = JSON.parse(req.body.data)
 } ,updateMiniTask);
 
 miniTaskRoutes.post("/create", protect, createMiniTask);
+miniTaskRoutes.delete("/delete/minitask", protect, deleteMiniTask);
