@@ -3,7 +3,9 @@ import { Flex, Radio, Tooltip } from "antd";
 import { useUpdateMiniTaskMutation } from "@/redux/features/minitask/minitaskApi";
 import { toast } from "react-hot-toast";
 import { RxCross2 } from "react-icons/rx";
-import { FaPlus } from "react-icons/fa6";
+import { FaPlus, FaTrash } from "react-icons/fa6";
+import Swal from "sweetalert2";
+
 const MiniTaskModal = ({
   onClose,
   miniTaskData,
@@ -91,6 +93,45 @@ const MiniTaskModal = ({
     }
   };
 
+  const handleDelete = () => {
+    const swalWithBootstrapButtons = Swal.mixin({
+      customClass: {
+        confirmButton:
+          "px-4 py-2 bg-green-500 rounded-lg text-white border-none cursor-pointer",
+        cancelButton:
+          "px-4 py-2 bg-red-500 rounded-lg text-white border-none me-2 cursor-pointer",
+      },
+      buttonsStyling: false,
+    });
+    swalWithBootstrapButtons
+      .fire({
+        title: "Delete this task?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes, delete it!",
+        cancelButtonText: "No, cancel!",
+        reverseButtons: true,
+      })
+      .then((result) => {
+        if (result.isConfirmed) {
+          swalWithBootstrapButtons.fire({
+            title: "Deleted!",
+            text: "Your task has been deleted.",
+            icon: "success",
+          });
+        } else if (
+          /* Read more about handling dismissals below */
+          result.dismiss === Swal.DismissReason.cancel
+        ) {
+          swalWithBootstrapButtons.fire({
+            title: "Cancelled",
+            text: "Your task could not delete.",
+            icon: "error",
+          });
+        }
+      });
+  };
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div className="bg-white rounded-lg shadow-lg w-full max-w-lg p-6">
@@ -101,7 +142,7 @@ const MiniTaskModal = ({
             onClick={onClose}
             className="text-gray-500 hover:text-gray-700 focus:outline-none p-1 rounded-full bg-red-500"
           >
-            <RxCross2 color="white" size={20}/>
+            <RxCross2 color="white" size={20} />
           </button>
         </div>
 
@@ -131,9 +172,8 @@ const MiniTaskModal = ({
                     </label>
                   </div>
                 </div>
-              ) : (
-                miniTaskData?.img?
-                (<div className="relative">
+              ) : miniTaskData?.img ? (
+                <div className="relative">
                   <img
                     className="w-full h-48 object-cover rounded-lg "
                     src={miniTaskData?.img}
@@ -148,15 +188,16 @@ const MiniTaskModal = ({
                       <FaPlus />
                     </label>
                   </div>
-                </div>):
-
+                </div>
+              ) : (
                 // always on hover
-                (<div className="relative">
+                <div className="relative">
                   <img
                     className="w-full h-48 object-cover rounded-lg"
                     src={miniTaskData?.img}
                     alt=""
                   />
+
                   <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40 rounded-lg">
                     <label
                       htmlFor="imageUpload"
@@ -165,12 +206,7 @@ const MiniTaskModal = ({
                       <FaPlus />
                     </label>
                   </div>
-                </div>)
-
-
-
-
-
+                </div>
               )}
               <input
                 id="imageUpload"
@@ -186,6 +222,9 @@ const MiniTaskModal = ({
 
           {/* Task Title */}
           <div className="mb-4">
+            <button>
+              <a href="">Preview Fullscreen</a>
+            </button>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Task Title
             </label>
@@ -242,22 +281,32 @@ const MiniTaskModal = ({
           </div>
 
           {/* Buttons */}
-          <div className="flex justify-end gap-4">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 bg-gray-200 rounded-lg"
-              disabled={loading}
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="px-4 py-2 bg-blue-500 text-white rounded-lg"
-              disabled={loading}
-            >
-              {loading ? "Saving..." : "Save Task"}
-            </button>
+          <div className="flex justify-between items-center">
+            <Tooltip title="Delete this Task" color={"red"} key={"red"}>
+              <FaTrash
+                onClick={handleDelete}
+                size={18}
+                color="red"
+                className="ms-1 cursor-pointer"
+              />
+            </Tooltip>
+            <div className="flex justify-end gap-4">
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-4 py-2 bg-gray-200 rounded-lg"
+                disabled={loading}
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="px-4 py-2 bg-blue-500 text-white rounded-lg"
+                disabled={loading}
+              >
+                {loading ? "Saving..." : "Save Task"}
+              </button>
+            </div>
           </div>
         </form>
       </div>

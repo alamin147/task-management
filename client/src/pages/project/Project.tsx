@@ -4,7 +4,6 @@ import { useGetSingleTaskQuery } from "@/redux/features/tasks/tasksApi";
 import { useCreateSubTaskMutation } from "@/redux/features/subtask/subtaskApi";
 import { useCreateMiniTaskMutation } from "@/redux/features/minitask/minitaskApi";
 import { FaPencil } from "react-icons/fa6";
-
 import "./project.css";
 import MiniTaskModal from "@/components/miniTaskModal/MiniTaskModal";
 
@@ -16,7 +15,7 @@ const Project = () => {
 
   // console.log(data)
   const [miniTaskModal, setMiniTaskModal] = useState(false);
-  const [selectedMiniTask, setSelectedMiniTask] = useState<any>(null); 
+  const [selectedMiniTask, setSelectedMiniTask] = useState<any>(null);
   const [newTitle, setNewTitle] = useState("Untitled subtask");
 
   const handleAddSubTask = async () => {
@@ -47,9 +46,9 @@ const Project = () => {
   };
 
   const handleOpenMiniTaskModal = (minicard: any) => {
-    setSelectedMiniTask(minicard); 
+    setSelectedMiniTask(minicard);
     // console.log({minicard})
-    setMiniTaskModal(true); 
+    setMiniTaskModal(true);
   };
 
   return (
@@ -57,39 +56,72 @@ const Project = () => {
       {miniTaskModal && (
         <MiniTaskModal
           onClose={() => setMiniTaskModal(false)}
-          miniTaskData={selectedMiniTask} 
+          miniTaskData={selectedMiniTask}
         />
       )}
       <main className="m-6 overflow-hidden">
         <div className="overflow-x-auto">
-          <div className="pb-8 mt-6 flex gap-6" style={{ height: "calc(100vh - 140px)" }}>
+          <div
+            className="pb-8 mt-6 flex gap-6"
+            style={{ height: "calc(100vh - 140px)" }}
+          >
             {data?.task?.subcards?.map((card: any, i: number) => (
               <div key={card._id}>
                 <div className="bg-white rounded-lg shadow-md w-72 p-4 border border-gray-200">
                   <div className="w-64 mb-4 p-3 bg-gray-50 rounded-lg shadow-sm">
-                    <div className="flex gap-2 mb-2">
-                      <span className="block w-5 h-1 bg-red-500 rounded"></span>
-                    </div>
-                    <h3 className="text-lg font-semibold text-gray-800 mb-4">
+                    <h3 className="text-lg font-semibold text-gray-800">
                       {card?.title}
                     </h3>
                   </div>
                   <div className="bg-gray-50 rounded-lg shadow-sm">
-                    <div className="space-y-2">
-                      {data?.task?.subcards[i]?.miniTasks?.map((minicard: any) => (
-                        <div
-                          key={minicard._id}
-                          className={`p-3 rounded-lg shadow-md ${minicard.color} flex justify-between items-center`}
-                        >
-                          {minicard.title}
+                    <div className="space-y-6">
+                      {data?.task?.subcards[i]?.miniTasks?.map(
+                        (minicard: any) => (
                           <div
-                            className="cursor-pointer"
-                            onClick={() => handleOpenMiniTaskModal(minicard)} 
+                            key={minicard._id}
+                            className={` rounded-lg shadow-md ${minicard.color} flex flex-col `}
                           >
-                            <FaPencil />
+                            {minicard.img && (
+                              <img
+                                src={minicard.img}
+                                alt={minicard.title}
+                                className="w-full h-32 object-cover rounded-t-md"
+                              />
+                            )}
+                            
+                            <div className="p-3">
+                              <div className="flex gap-2 mb-2">
+                                {minicard?.completed == "completed" ? (
+                                  <span className="block w-5 h-1 bg-green-500 rounded"></span>
+                                ) : minicard?.completed == "pending" ? (
+                                  <span className="block w-5 h-1 bg-red-500 rounded"></span>
+                                ) : (
+                                  <span className="block w-5 h-1 bg-yellow-500 rounded"></span>
+                                )}
+                              </div>
+                              <div className="flex justify-between items-center mt-2">
+                                <span
+                                  className={`text-gray-800 font-semibold ${
+                                    minicard?.completed === "completed"
+                                      ? "line-through"
+                                      : ""
+                                  }`}
+                                >
+                                  {minicard.title}
+                                </span>
+                                <div
+                                  className="cursor-pointer"
+                                  onClick={() =>
+                                    handleOpenMiniTaskModal(minicard)
+                                  }
+                                >
+                                  <FaPencil />
+                                </div>
+                              </div>
+                            </div>
                           </div>
-                        </div>
-                      ))}
+                        )
+                      )}
                     </div>
                   </div>
                   <div className="mt-6 w-64 mb-4 p-3 rounded-md shadow-md">
@@ -97,7 +129,9 @@ const Project = () => {
                       type="text"
                       placeholder="Add inside mini task..."
                       value={miniTaskInputs[card._id] || ""}
-                      onChange={(e) => handleInputChange(card._id, e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange(card._id, e.target.value)
+                      }
                       className="w-full px-3 py-2 text-black rounded-md shadow-md hover:bg-gray-50 focus:outline-none focus:ring-0 border-none"
                     />
                     <button
