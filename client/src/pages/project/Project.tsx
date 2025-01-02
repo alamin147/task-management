@@ -7,6 +7,7 @@ import { FaPencil } from "react-icons/fa6";
 import "./project.css";
 import MiniTaskModal from "@/components/miniTaskModal/MiniTaskModal";
 import { Tooltip } from "antd";
+import SubCardTaskModal from "@/components/subCardModal/SubCardTaskModal";
 
 const Project = () => {
   const { taskId } = useParams();
@@ -14,7 +15,7 @@ const Project = () => {
   const [createSubTask] = useCreateSubTaskMutation();
   const [createMiniTask] = useCreateMiniTaskMutation();
 
-  // console.log(data)
+  console.log(data)
   const [miniTaskModal, setMiniTaskModal] = useState(false);
   const [selectedMiniTask, setSelectedMiniTask] = useState<any>(null);
   const [selectedSubTask, setSelectedSubTask] = useState<any>(null);
@@ -47,19 +48,33 @@ const Project = () => {
     setMiniTaskInputs((prev) => ({ ...prev, [id]: value }));
   };
 
-  const handleOpenMiniTaskModal = (minicard: any, subcard:any) => {
+  const handleOpenMiniTaskModal = (minicard: any, subcard: any) => {
     setSelectedMiniTask(minicard);
     setSelectedSubTask(subcard);
     setMiniTaskModal(true);
   };
 
+  const [subtaskModal, setSubtaskModal]= useState(false);
+  const [selectedSubTaskForSub, setSelectedSubTaskForSub] = useState<any>(null);
+
+  const handleOpenSubTaskModal = (subcard: any) => {
+    setSelectedSubTaskForSub(subcard);
+    setSubtaskModal(true);
+  };
+
   return (
     <>
+      {subtaskModal && (
+        <SubCardTaskModal
+          onClose={() => setSubtaskModal(false)}
+          subTask={selectedSubTaskForSub}
+        />
+      )}
       {miniTaskModal && (
         <MiniTaskModal
           onClose={() => setMiniTaskModal(false)}
           miniTaskData={selectedMiniTask}
-          subTask = {selectedSubTask}
+          subTask={selectedSubTask}
         />
       )}
       <main className="m-6 overflow-hidden">
@@ -71,10 +86,18 @@ const Project = () => {
             {data?.task?.subcards?.map((card: any, i: number) => (
               <div key={card._id}>
                 <div className="bg-white rounded-lg shadow-md w-72 p-4 border border-gray-200">
-                  <div className="w-64 mb-4 p-3 bg-gray-50 rounded-lg shadow-sm">
+                  <div className="w-64 mb-4 p-3 bg-gray-50 rounded-lg shadow-sm flex items-center justify-between">
                     <h3 className="text-lg font-semibold text-gray-800">
                       {card?.title}
                     </h3>
+                      <div
+                        className="cursor-pointer"
+                        onClick={() =>
+                          handleOpenSubTaskModal(card)
+                        }
+                      >
+                        <FaPencil />
+                      </div>
                   </div>
                   <div className="bg-gray-50 rounded-lg shadow-sm">
                     <div className="space-y-6">
@@ -133,7 +156,7 @@ const Project = () => {
                                 <div
                                   className="cursor-pointer"
                                   onClick={() =>
-                                    handleOpenMiniTaskModal(minicard,card)
+                                    handleOpenMiniTaskModal(minicard, card)
                                   }
                                 >
                                   <FaPencil />

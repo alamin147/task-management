@@ -13,7 +13,29 @@ const subtaskApi = baseApi.injectEndpoints({
       },
       invalidatesTags: ["subtask"],
     }),
+
+    updateSubTask: builder.mutation({
+      query: (data) => {
+        return {
+          url: `/card/sub-card/update`,
+          method: "PATCH",
+          body: data,
+        };
+      },
+      invalidatesTags: ["subtask"],
+    }),
+    deleteSubTask: builder.mutation({
+      query: (id) => {
+        return {
+          url: `/card/sub-card/delete`,
+          method: "delete",
+          body: id,
+        };
+      },
+      invalidatesTags: ["subtask"],
+    }),
   }),
 });
 
-export const { useCreateSubTaskMutation } = subtaskApi;
+export const { useCreateSubTaskMutation, useUpdateSubTaskMutation } =
+  subtaskApi;

@@ -103,74 +103,56 @@ export const updateMiniTask = asyncHandler(async (req, res) => {
     res.status(500).json({ status: 500, message: "Internal server error" });
   }
 });
+
 export const deleteMiniTask = asyncHandler(async (req, res) => {
   const { miniTaskId, subtaskId } = req.body;
   const userId = req.user.id;
 
   if (!userId) return res.status(401).json({ message: "Unauthorized access" });
 
-  const session = await mongoose.startSession();
-
   try {
-    session.startTransaction();
-
-    // Fetch the subcard and verify
-    const subcard = await subCardModel.findById(subtaskId).session(session);
+    const subcard = await subCardModel.findById(subtaskId);
 
     if (!subcard) {
-      res.status(400).json({
-        status: 400,
-        message: `Subcard Not found`,
-      });
+      return res
+        .status(400)
+        .json({ status: 400, message: "Subcard Not found" });
     }
 
     const miniTaskIndex = subcard.miniTasks.indexOf(miniTaskId);
     if (miniTaskIndex === -1) {
-      res.status(400).json({
-        status: 400,
-        message: `Subcard Not found`,
-      });
+      return res
+        .status(400)
+        .json({ status: 400, message: "MiniTask Not found in Subcard" });
     }
 
     subcard.miniTasks.splice(miniTaskIndex, 1);
-    await subcard.save({ session });
+    await subcard.save();
 
-    const miniTask = await miniTaskModel.findById(miniTaskId).session(session);
+    const miniTask = await miniTaskModel.findById(miniTaskId);
     if (!miniTask) {
-      res.status(400).json({
-        status: 400,
-        message: `MiniTask Not found`,
-      });
+      return res
+        .status(400)
+        .json({ status: 400, message: "MiniTask Not found" });
     }
 
     const miniTaskName = miniTask.title;
-
-    await miniTaskModel.findByIdAndDelete(miniTaskId).session(session);
+    await miniTaskModel.findByIdAndDelete(miniTaskId);
 
     if (miniTask.img) {
       const publicId = extractPublicId(miniTask.img);
-
       try {
         await cloudinary.v2.uploader.destroy(publicId);
       } catch (err) {
-        res.status(400).json({
-          status: 400,
-          message: `Failed to delete image from Cloudinary`,
-        });
+        console.error("Failed to delete image from Cloudinary:", err);
       }
     }
 
-    await session.commitTransaction();
-
-    res.status(200).json({
-      status: 200,
-      message: `${miniTaskName} deleted successfully`,
-    });
+    res
+      .status(200)
+      .json({ status: 200, message: `${miniTaskName} deleted successfully` });
   } catch (error) {
-    await session.abortTransaction();
-    console.error("Transaction aborted:", error);
+    console.error("Error:", error);
     res.status(500).json({ message: error.message });
-  } finally {
-    session.endSession();
   }
 });
