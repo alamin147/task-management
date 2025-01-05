@@ -15,7 +15,7 @@ const Project = () => {
   const [createSubTask] = useCreateSubTaskMutation();
   const [createMiniTask] = useCreateMiniTaskMutation();
 
-  console.log(data)
+  // console.log(data)
   const [miniTaskModal, setMiniTaskModal] = useState(false);
   const [selectedMiniTask, setSelectedMiniTask] = useState<any>(null);
   const [selectedSubTask, setSelectedSubTask] = useState<any>(null);
@@ -54,11 +54,12 @@ const Project = () => {
     setMiniTaskModal(true);
   };
 
-  const [subtaskModal, setSubtaskModal]= useState(false);
+  const [subtaskModal, setSubtaskModal] = useState(false);
   const [selectedSubTaskForSub, setSelectedSubTaskForSub] = useState<any>(null);
-
-  const handleOpenSubTaskModal = (subcard: any) => {
+  const [selectedTask, setSelectedTask] = useState<string | any>(null);
+  const handleOpenSubTaskModal = (subcard: any, taskId: string) => {
     setSelectedSubTaskForSub(subcard);
+    setSelectedTask(taskId);
     setSubtaskModal(true);
   };
 
@@ -68,6 +69,7 @@ const Project = () => {
         <SubCardTaskModal
           onClose={() => setSubtaskModal(false)}
           subTask={selectedSubTaskForSub}
+          taskId={selectedTask}
         />
       )}
       {miniTaskModal && (
@@ -90,14 +92,14 @@ const Project = () => {
                     <h3 className="text-lg font-semibold text-gray-800">
                       {card?.title}
                     </h3>
-                      <div
-                        className="cursor-pointer"
-                        onClick={() =>
-                          handleOpenSubTaskModal(card)
-                        }
-                      >
-                        <FaPencil />
-                      </div>
+                    <div
+                      className="cursor-pointer"
+                      onClick={() =>
+                        handleOpenSubTaskModal(card, data?.task?._id)
+                      }
+                    >
+                      <FaPencil />
+                    </div>
                   </div>
                   <div className="bg-gray-50 rounded-lg shadow-sm">
                     <div className="space-y-6">

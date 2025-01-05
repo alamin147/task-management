@@ -3,14 +3,15 @@ import { Tooltip } from "antd";
 import { toast } from "react-hot-toast";
 import { RxCross2 } from "react-icons/rx";
 import { FaTrash } from "react-icons/fa6";
-import { useUpdateSubTaskMutation } from "@/redux/features/subtask/subtaskApi";
+import { useDeleteSubTaskMutation, useUpdateSubTaskMutation } from "@/redux/features/subtask/subtaskApi";
 
 const SubCardTaskModal = ({
   onClose,
   subTask,
+  taskId,
 }: {
   onClose: () => void;
-
+  taskId: string;
   subTask: {
     _id: string;
     title?: string;
@@ -18,9 +19,10 @@ const SubCardTaskModal = ({
   } | null;
 }) => {
   const [updateSubTask] = useUpdateSubTaskMutation();
+  const [deleteSubTask] = useDeleteSubTaskMutation();
 
   const [loading, setLoading] = useState(false);
-
+// console.log("24",subTask,taskId)
   const [taskTitle, setTaskTitle] = useState(subTask?.title || "");
 
   // Handle Form Submit
@@ -48,9 +50,25 @@ const SubCardTaskModal = ({
   };
 
   //   delete card option to be added
-const handleDelete=()=>{
+  const handleDelete = async() => {
+    const data = {
+      taskId,
+      subtaskId: subTask?._id,
+    };
 
-}
+    try {
+      const res = await deleteSubTask(data).unwrap();
+
+      if (res?.status == 200) toast.success(res?.message || "Sub Task deleted");
+      else toast.error(res?.message || "Failed to delete task.");
+    } catch (err) {
+      toast.error("Failed to delete task.");
+      console.error(err);
+    } finally {
+      onClose();
+      setLoading(false);
+    }
+  };
   return (
     <>
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">

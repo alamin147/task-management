@@ -1,6 +1,9 @@
 import asyncHandler from "express-async-handler";
 import TaskModel from "../../models/tasks/taskModel.js";
 import subCardModel from "../../models/cards/subCardModel.js";
+import miniTaskModel from "../../models/cards/miniTaskModel.js";
+import cloudinary from "cloudinary";
+import { configserverENV } from "../../utils/configs.js";
 
 export const createSubTask = asyncHandler(async (req, res) => {
   const { title, taskId } = req.body;
@@ -76,5 +79,66 @@ export const updateSubTask = asyncHandler(async (req, res) => {
   } catch (error) {
     console.error("Error updating subtask:", error);
     res.status(500).json({ status: 500, message: "Internal server error" });
+  }
+});
+
+cloudinary.v2.config({
+  cloud_name: configserverENV.cloud_name,
+  api_key: configserverENV.cloud_api_key,
+  api_secret: configserverENV.cloud_api_secret,
+});
+
+export const deleteSubtask = asyncHandler(async (req, res) => {
+  const { taskId, subtaskId } = req.body;
+
+  if (!taskId || !subtaskId) {
+    return res.status(400).json({
+      status: 400,
+      message: "Both taskId and subtaskId are required",
+    });
+  }
+
+  try {
+    const task = await TaskModel.findById(taskId);
+    if (!task) {
+      return res.status(404).json({ status: 404, message: "Task not found" });
+    }
+
+    task.subcards = task.subcards.filter((id) => id.toString() !== subtaskId);
+    await task.save();
+
+    const subCard = await subCardModel.findById(subtaskId);
+    if (!subCard) {
+      return res
+        .status(404)
+        .json({ status: 404, message: "Subtask not found" });
+    }
+
+    for (const miniTaskId of subCard.miniTasks) {
+      const miniTask = await miniTaskModel.findById(miniTaskId);
+      if (miniTask?.img) {
+        const publicId = miniTask.img.split("/").pop().split(".")[0];
+
+        await cloudinary.v2.uploader.destroy(publicId, (error, result) => {
+          if (error) console.error(`Error deleting image: ${error.message}`);
+        });
+      }
+
+      await miniTaskModel.findByIdAndDelete(miniTaskId);
+    }
+
+    await subCardModel.findByIdAndDelete(subtaskId);
+
+    return res.status(200).json({
+      status: 200,
+      message: "Subtask deleted successfully",
+    });
+  } catch (error) {
+    console.error("Error deleting subtask:", error);
+    return res.status(500).json({
+      status: 500,
+      message: "Internal server error",
+      error: error.message,
+    });
   }
 });

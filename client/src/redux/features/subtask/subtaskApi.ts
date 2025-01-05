@@ -25,11 +25,11 @@ const subtaskApi = baseApi.injectEndpoints({
       invalidatesTags: ["subtask"],
     }),
     deleteSubTask: builder.mutation({
-      query: (id) => {
+      query: (data) => {
         return {
           url: `/card/sub-card/delete`,
           method: "delete",
-          body: id,
+          body: data,
         };
       },
       invalidatesTags: ["subtask"],
@@ -37,5 +37,5 @@ const subtaskApi = baseApi.injectEndpoints({
   }),
 });
 
-export const { useCreateSubTaskMutation, useUpdateSubTaskMutation } =
+export const { useCreateSubTaskMutation, useUpdateSubTaskMutation,useDeleteSubTaskMutation} =
   subtaskApi;
