@@ -80,7 +80,7 @@ const MainLayout = ({ children }: { children?: ReactNode }) => {
         <LeftSideBar />
         <Layout>
           <Headers openModal={isModalOpen} setOpenModal={setIsModalOpen} />
-          <Content className="bg-blue-400"
+          <Content className="bg-gray-600"
             style={{
               // margin: "24px 16px",
               // padding: 24,

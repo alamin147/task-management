@@ -8,6 +8,8 @@ import "./project.css";
 import MiniTaskModal from "@/components/miniTaskModal/MiniTaskModal";
 import { Tooltip } from "antd";
 import SubCardTaskModal from "@/components/subCardModal/SubCardTaskModal";
+import { FaClock } from "react-icons/fa";
+import { PiDotsSixVertical } from "react-icons/pi";
 
 const Project = () => {
   const { taskId } = useParams();
@@ -82,13 +84,14 @@ const Project = () => {
       <main className="m-6 overflow-hidden">
         <div className="overflow-x-auto">
           <div
-            className="pb-8 mt-6 flex gap-6"
+            className="pb-8 mt-6 flex gap-4"
             style={{ height: "calc(100vh - 140px)" }}
           >
             {data?.task?.subcards?.map((card: any, i: number) => (
               <div key={card._id}>
-                <div className="bg-white rounded-lg shadow-md w-72 p-4 border border-gray-200">
+                <div className="cngbg-white rounded-lg cngshadow-md w-72 p-4 cngborder cngborder-gray-200">
                   <div className="w-64 mb-4 p-3 bg-gray-50 rounded-lg shadow-sm flex items-center justify-between">
+                    <PiDotsSixVertical />
                     <h3 className="text-lg font-semibold text-gray-800">
                       {card?.title}
                     </h3>
@@ -101,13 +104,13 @@ const Project = () => {
                       <FaPencil />
                     </div>
                   </div>
-                  <div className="bg-gray-50 rounded-lg shadow-sm">
+                  <div className="cngbg-gray-50 rounded-lg shadow-sm">
                     <div className="space-y-6">
                       {data?.task?.subcards[i]?.miniTasks?.map(
                         (minicard: any) => (
                           <div
                             key={minicard._id}
-                            className={` rounded-lg shadow-md ${minicard.color} flex flex-col `}
+                            className={` rounded-lg shadow-md bg-white flex flex-col `}
                           >
                             {minicard.img && (
                               <img
@@ -117,37 +120,32 @@ const Project = () => {
                               />
                             )}
 
-                            <div className="p-3">
-                              <div className="flex gap-2 mb-2">
-                                {minicard?.completed == "completed" ? (
-                                  <Tooltip
-                                    title="Completed"
-                                    color={"green"}
-                                    key={"green"}
-                                  >
-                                    <span className="block w-5 h-1 bg-green-500 rounded"></span>
-                                  </Tooltip>
-                                ) : minicard?.completed == "pending" ? (
-                                  <Tooltip
-                                    title="Pending"
-                                    color={"red"}
-                                    key={"red"}
-                                  >
-                                    <span className="block w-5 h-1 bg-red-500 rounded"></span>
-                                  </Tooltip>
-                                ) : (
-                                  <Tooltip
-                                    title="In Progress"
-                                    color={"yellow"}
-                                    key={"yellow"}
-                                  >
-                                    <span className="block w-5 h-1 bg-yellow-500 rounded"></span>
-                                  </Tooltip>
-                                )}
-                              </div>
-                              <div className="flex justify-between items-center mt-2">
+                            {/* tags */}
+
+                            <div className="p-3 ps-2">
+                              <div className="flex items-center gap-2">
+                                {/* {minicard?.tags &&
+                                  minicard?.tags.map((tag: any) => ( */}
                                 <span
-                                  className={`text-gray-800 font-semibold ${
+                                  // key={tag.title}
+                                  className="px-[10px] py-[2px] text-[13px] font-medium rounded-md "
+                                  style={{
+                                    backgroundColor: "rgb(207, 250, 254)",
+                                    color: "rgb(8, 145, 178)",
+                                  }}
+                                >
+                                  tags
+                                </span>
+                                {/* ))} */}
+                              </div>
+                            </div>
+
+                            {/* title */}
+
+                            <div className="p-3 pt-0">
+                              <div className="flex justify-between items-center">
+                                <span
+                                  className={`text-gray-800 font-semibold text-lg ${
                                     minicard?.completed === "completed"
                                       ? "line-through"
                                       : ""
@@ -155,6 +153,7 @@ const Project = () => {
                                 >
                                   {minicard.title}
                                 </span>
+
                                 <div
                                   className="cursor-pointer"
                                   onClick={() =>
@@ -165,12 +164,68 @@ const Project = () => {
                                 </div>
                               </div>
                             </div>
+                            <div className="p-3 pt-0">
+                              <div className="flex justify-between items-center">
+                                <span className="text-gray-500 text-[13px]">
+                                  {minicard?.description?.length > 30
+                                    ? `${minicard.description.substring(
+                                        0,
+                                        30
+                                      )}...`
+                                    : minicard?.description}
+                                </span>
+                              </div>
+                            </div>
+                            <div className="p-3 pt-0">
+                              <div className="flex justify-between items-center">
+                                <Tooltip
+                                  title="Due Date"
+                                  color="red"
+                                  key={"dd"}
+                                  className=""
+                                >
+                                  <div className="flex items-center gap-2">
+                                    <FaClock className="" size={18} />
+                                    <div className="pt-0.5">
+                                      {minicard?.dueDate.split("T")[0]}
+                                    </div>
+                                  </div>
+                                </Tooltip>
+                                <div className="flex gap-2 mb">
+                                  {minicard?.completed == "completed" ? (
+                                    <Tooltip
+                                      title="Completed"
+                                      color={"green"}
+                                      key={"green"}
+                                    >
+                                      <span className="block w-5 h-1 bg-green-500 rounded"></span>
+                                    </Tooltip>
+                                  ) : minicard?.completed == "pending" ? (
+                                    <Tooltip
+                                      title="Pending"
+                                      color={"red"}
+                                      key={"red"}
+                                    >
+                                      <span className="block w-5 h-1 bg-red-500 rounded"></span>
+                                    </Tooltip>
+                                  ) : (
+                                    <Tooltip
+                                      title="In Progress"
+                                      color={"yellow"}
+                                      key={"yellow"}
+                                    >
+                                      <span className="block w-5 h-1 bg-yellow-500 rounded"></span>
+                                    </Tooltip>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
                           </div>
                         )
                       )}
                     </div>
                   </div>
-                  <div className="mt-6 w-64 mb-4 p-3 rounded-md shadow-md">
+                  <div className="cng mt-6 w-64 mb-4 p-5 rounded-md shadow-md bg-white ">
                     <input
                       type="text"
                       placeholder="Add inside mini task..."
@@ -190,7 +245,7 @@ const Project = () => {
                 </div>
               </div>
             ))}
-            <div className="w-72 h-40 bg-white text-black p-6 flex-shrink-0 rounded-lg flex flex-col gap-4">
+            <div className="mt-4 w-64 h-36 bg-white text-black p-3 flex-shrink-0 rounded-lg flex flex-col gap-4 ">
               <div className="flex flex-col gap-4 p-3 rounded-md border-gray-50 shadow-md border">
                 <input
                   type="text"
