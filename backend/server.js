@@ -38,19 +38,6 @@ app.use("/", (req,res)=>{
 // error handler middleware
 app.use(errorHandler);
 
-//routes
-// const routeFiles = fs.readdirSync("./src/routes");
-
-// routeFiles.forEach((file) => {
-//   // use dynamic import
-//   import(`./src/routes/${file}`)
-//     .then((route) => {
-//       app.use("/api/v1", route.default);
-//     })
-//     .catch((err) => {
-//       console.log("Failed to load route file", err);
-//     });
-// });
 
 const server = async () => {
   try {

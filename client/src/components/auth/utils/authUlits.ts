@@ -1,19 +1,6 @@
 import { jwtDecode } from "jwt-decode";
-// import { decodedUser } from "../types/types";
 import { useEffect, useState } from "react";
-
-// const redirect = useNavigate();
-
-export const getUserLocalStorage = () => {
-  if (typeof window !== "undefined" && window.localStorage) {
-    const token = localStorage.getItem("persist:auth");
-    if (!token) return null;
-
-    // console.log(token);
-    return JSON.parse(token);
-  }
-  return null;
-};
+import { useSelector } from "react-redux";
 
 export type TUser= {
   id: string;
@@ -23,37 +10,59 @@ export type TUser= {
   photo: string;
 }
 
-export const getUserInfo = () => {
-  const token = getUserLocalStorage();
-  console.log();
-  const decodedUser: TUser = jwtDecode(token.token);
-  return decodedUser;
-};
+// const getAuthToken = (): string | null => {
+//   if (typeof window !== "undefined" && window.localStorage) {
+//     const storedData = localStorage.getItem("persist:auth");
+//     if (storedData) {
+//       try {
+//         const parsedData = JSON.parse(storedData);
+//         return parsedData?.token || null;
+//       } catch {
+        
+//         return null;
+//       }
+//     }
+//   }
+//   return null;
+// };
 
-export const useUserVerification = () => {
+const isValidJwt = (token: string): boolean => {
+  return token.split(".").length === 3;
+};
+export const getUserInfo = (): TUser | null => {
+  const token = useSelector((state: any) => state.auth.token);
+
+  // const token = getAuthToken();
+  if (token && isValidJwt(token)) {
+    try {
+      return jwtDecode<TUser>(token);
+    } catch {
+      console.error("Invalid token format");
+      return null;
+    }
+  }
+  return null;
+};
+export const useUserVerification = (): TUser | null => {
   const [user, setUser] = useState<TUser | null>(null);
 
   useEffect(() => {
-    const token = getUserLocalStorage();
-    // console.log("here",token)
-    const pasrsedToken = JSON.parse(token.token);
+    // const token = getAuthToken();
+  const token = useSelector((state: any) => state.auth.token);
 
-    setUser(pasrsedToken);
+    if (token) {
+      const decodedUser = jwtDecode<TUser>(token);
+      setUser(decodedUser);
+    }
   }, []);
 
   return user;
 };
 
-// export const signOut: any = () => {
-//   if (typeof window !== "undefined" && window.localStorage) {
-//     localStorage.removeItem("persist:auth");
-//     // redirect("/");
-//   }
-// };
+// Sign out function
+export const signOut = (): void => {
+  if (typeof window !== "undefined" && window.localStorage) {
+    localStorage.removeItem("persist:auth");
+  }
+};
 
-// const router = useRouter()
-//   const user: any  = useUserVerification();
-//   console.log(user.role);
-//   if(user?.role=="USER"){
-//    removeUserLocalStorage()
-//   }

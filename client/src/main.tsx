@@ -14,11 +14,12 @@ import Due from "./pages/due/Due.tsx";
 import Pending from "./pages/pending/Pending.tsx";
 import Project from "./pages/project/Project.tsx";
 import MainLayout from "./components/layout/MainLayout.tsx";
+import PrivateRoute from "./routes/PrivateRoute.tsx";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <MainLayout children=<App /> />,
+    element: <PrivateRoute children=<MainLayout children=<App /> />/>,
     errorElement: <h1>Error</h1>,
   },
   {
@@ -31,19 +32,19 @@ const router = createBrowserRouter([
   },
   {
     path: "/completed",
-    element: <MainLayout children=<Completed /> />,
-  },
-  {
-    path: "/pending",
-    element: <MainLayout children=<Due /> />,
+    element: <PrivateRoute children=<MainLayout children=<Completed /> />/>,
   },
   {
     path: "/due",
-    element: <MainLayout children=<Pending /> />,
+    element: <PrivateRoute children=<MainLayout children=<Due /> />/>,
+  },
+  {
+    path: "/pending",
+    element: <PrivateRoute children=<MainLayout children=<Pending /> />/>,
   },
   {
     path: "/project/:taskId",
-    element: <MainLayout children=<Project /> />,
+    element: <PrivateRoute children=<MainLayout children=<Project /> />/>,
   },
 ]);
 ReactDOM.createRoot(document.getElementById("root")!).render(

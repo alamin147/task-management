@@ -8,8 +8,6 @@ import { TTask } from "./types/types";
 function App() {
   const { data, isLoading } = useGetTasksQuery(undefined);
 
-  // console.log(user);
-  console.log(data);
   return (
     <>
       {isLoading ? (
