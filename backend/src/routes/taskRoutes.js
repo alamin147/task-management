@@ -5,6 +5,7 @@ import {
   getTasks,
   updateTask,
   deleteTask,
+  duplicateTask
 } from "../controllers/task/taskController.js";
 import { protect } from "../middleware/authMiddleware.js";
 
@@ -19,3 +20,5 @@ TaskRoutes.get("/:id", protect, getTask);
 TaskRoutes.patch("/:id", protect, updateTask);
 
 TaskRoutes.delete("/:id", protect, deleteTask);
+
+TaskRoutes.post("/duplicate/:taskId", protect, duplicateTask);

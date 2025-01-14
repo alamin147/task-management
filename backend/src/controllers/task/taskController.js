@@ -1,5 +1,7 @@
 import asyncHandler from "express-async-handler";
 import TaskModel from "../../models/tasks/taskModel.js";
+import miniTaskModel from "../../models/cards/miniTaskModel.js";
+import subCardModel from "../../models/cards/subCardModel.js";
 
 export const createTask = asyncHandler(async (req, res) => {
   try {
@@ -150,6 +152,65 @@ export const deleteTask = asyncHandler(async (req, res) => {
       message: "Task deleted successfully",
     });
   } catch (error) {
+    res.status(500).json({ message: "Something went wrong" });
+  }
+});
+
+export const duplicateTask = asyncHandler(async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const { taskId } = req.params;
+
+    if (!userId)
+      return res.status(401).json({ message: "User not authenticated" });
+    if (!taskId)
+      return res.status(400).json({ message: "Task ID not provided" });
+
+    const task = await TaskModel.findById(taskId).populate({
+      path: "subcards",
+      populate: { path: "miniTasks" },
+    });
+
+    if (!task) return res.status(404).json({ message: "Task not found" });
+
+    const newSubcards = [];
+    for (const subcard of task.subcards) {
+      const newMiniTasks = [];
+      for (const miniTask of subcard.miniTasks) {
+        const newMiniTask = await miniTaskModel.create({
+          title: miniTask.title,
+          img: miniTask.img,
+          description: miniTask.description,
+          dueDate: miniTask.dueDate,
+          completed: miniTask.completed,
+        });
+        newMiniTasks.push(newMiniTask._id);
+      }
+
+      const newSubcard = await subCardModel.create({
+        title: subcard.title,
+        miniTasks: newMiniTasks,
+      });
+      newSubcards.push(newSubcard._id);
+    }
+
+    const newTask = await TaskModel.create({
+      title: task.title,
+      description: task.description,
+      dueDate: task.dueDate,
+      status: task.status,
+      completed: task.completed,
+      priority: task.priority,
+      user: userId,
+      subcards: newSubcards,
+    });
+
+    res.status(201).json({
+      message: "Task duplicated successfully",
+      task: newTask,
+    });
+  } catch (error) {
+    console.error(error);
     res.status(500).json({ message: "Something went wrong" });
   }
 });

@@ -100,13 +100,14 @@ const MainLayout = ({ children }: { children?: ReactNode }) => {
           />
           <div>
             <Button
-              className="bg-[#3aafae]"
+              className="bg-custom-green text-white rounded-md hover:bg-[#1abc9c] transition-colors"
               type="primary"
               onClick={() => setOpenModal(true)}
               style={{ marginRight: 16 }}
             >
               Create Task
             </Button>
+           
           </div>
           <div
             style={{

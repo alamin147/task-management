@@ -12,7 +12,10 @@ export default {
   			md: 'calc(var(--radius) - 2px)',
   			sm: 'calc(var(--radius) - 4px)'
   		},
-  		colors: {}
+  		colors: {
+        'custom-green': '#2ECC71',
+        'custom-green-hover': '#1abc9c',
+      }
   	}
   },
   plugins: [require("tailwindcss-animate")],

@@ -37,7 +37,7 @@ const Modal = ({ task, setOpenModal }: { task: TTask; setOpenModal: any }) => {
         {/* Close button */}
         <button
           type="button"
-          className="absolute -top-1 -right-1 text-white bg-red-500 hover:bg-red-600 rounded-full w-8 h-8 flex items-center justify-center"
+          className="absolute top-2 right-2 text-white bg-red-500 hover:bg-red-600 rounded-full w-8 h-8 flex items-center justify-center"
           onClick={() => setOpenModal(false)}
         >
           &times;

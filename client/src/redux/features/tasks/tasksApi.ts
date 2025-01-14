@@ -55,6 +55,13 @@ const taskApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["tasks"],
     }),
+    duplicateSingleTask: builder.mutation({
+      query: (taskId) => ({
+        url: `/task/duplicate/${taskId}`,
+        method: "POST",
+      }),
+      invalidatesTags: ["tasks"],
+    }),
   }),
 });
 
@@ -64,4 +71,5 @@ export const {
   useGetSingleTaskQuery,
   useUpdateSingleTaskMutation,
   useDeleteSingleTaskMutation,
+  useDuplicateSingleTaskMutation
 } = taskApi;

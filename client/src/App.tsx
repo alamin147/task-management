@@ -5,7 +5,7 @@ import { useGetTasksQuery } from "./redux/features/tasks/tasksApi";
 import TaskItem from "./components/taskItem/TaskItem";
 import { TTask } from "./types/types";
 
-function App() {
+const App = () => {
   const { data, isLoading } = useGetTasksQuery(undefined);
 
   return (
@@ -20,7 +20,7 @@ function App() {
           </div>
 
           <motion.div
-            className="pb-[2rem] mt-6 grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-[1.5rem] overflow-x-auto"
+            className="pb-[2rem] mt-6 grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap- overflow-x-auto"
             initial="hidden"
             animate="visible"
           >
@@ -34,6 +34,6 @@ function App() {
       )}
     </>
   );
-}
+};
 
 export default App;
