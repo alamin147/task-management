@@ -1,11 +1,13 @@
 import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useGetSingleTaskQuery } from "@/redux/features/tasks/tasksApi";
 import { useCreateSubTaskMutation } from "@/redux/features/subtask/subtaskApi";
 import "./project.css";
 import Task from "./Task";
+import { FaArrowLeft } from "react-icons/fa";
 
 const Project = () => {
+  const navigate = useNavigate();
   const { taskId } = useParams();
   const { data } = useGetSingleTaskQuery(taskId as string);
   const [createSubTask] = useCreateSubTaskMutation();
@@ -25,8 +27,15 @@ const Project = () => {
     <>
       <main className="m-6 overflow-hidden">
         <div className="overflow-x-auto">
+          <FaArrowLeft
+            size={18}
+            color="white"
+            className="cursor-pointer"
+            onClick={() => navigate(`/`)}
+          />
+
           <div
-            className="pb-8 mt-6 flex gap-4"
+            className="pb-8 mt-3 flex gap-4"
             style={{ height: "calc(100vh - 140px)" }}
           >
             <Task task={data?.task} />

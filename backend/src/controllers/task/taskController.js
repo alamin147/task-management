@@ -134,25 +134,32 @@ export const deleteTask = asyncHandler(async (req, res) => {
     const userId = req.user._id;
 
     if (!userId)
-      return res.status(401).json({ message: "User not authenticated" });
+      return res
+        .status(401)
+        .json({ status: 401, message: "User not authenticated" });
 
     const { id } = req.params;
-    if (!id) return res.status(401).json({ message: "Id not Given" });
+    if (!id)
+      return res.status(401).json({ status: 401, message: "Id not Given" });
 
     const task = await TaskModel.findById(id);
-    if (!task) return res.status(404).json({ message: "Task not found" });
+    if (!task)
+      return res.status(404).json({ status: 404, message: "Task not found" });
 
     if (!task.user.equals(userId)) {
-      return res.status(401).json({ message: "User not authenticated" });
+      return res
+        .status(401)
+        .json({ status: 401, message: "User not authenticated" });
     }
 
     await TaskModel.findByIdAndDelete(id);
 
     res.status(200).json({
+      status: 200,
       message: "Task deleted successfully",
     });
   } catch (error) {
-    res.status(500).json({ message: "Something went wrong" });
+    res.status(500).json({ status: 500, message: "Something went wrong" });
   }
 });
 

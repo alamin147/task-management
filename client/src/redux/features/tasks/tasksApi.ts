@@ -23,19 +23,17 @@ const taskApi = baseApi.injectEndpoints({
       providesTags: ["tasks"],
     }),
 
-
     getSingleTask: builder.query({
       query: (taskId: string) => {
         // console.log({taskId})
 
         return {
-        url: `/task/${taskId}`,
-        method: "GET",
-      }},
+          url: `/task/${taskId}`,
+          method: "GET",
+        };
+      },
       providesTags: ["subtask"],
     }),
-
-
 
     updateSingleTask: builder.mutation({
       query: ({ id, data }) => {
@@ -71,5 +69,5 @@ export const {
   useGetSingleTaskQuery,
   useUpdateSingleTaskMutation,
   useDeleteSingleTaskMutation,
-  useDuplicateSingleTaskMutation
+  useDuplicateSingleTaskMutation,
 } = taskApi;

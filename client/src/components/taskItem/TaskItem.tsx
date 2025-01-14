@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { FaPen, FaTrash } from "react-icons/fa";
+import { FaPen, FaTrash, FaArrowRight } from "react-icons/fa";
 import { IoMdDoneAll } from "react-icons/io";
 import Modal from "../modal/Modal";
 import {
@@ -12,6 +12,7 @@ import { TTask } from "@/types/types";
 import { useNavigate } from "react-router-dom";
 import { IoDuplicate } from "react-icons/io5";
 import { Tooltip } from "antd";
+import Swal from "sweetalert2";
 const TaskItem = ({ task }: { task: TTask }) => {
   const navigate = useNavigate();
   const [deleteSingleTask] = useDeleteSingleTaskMutation();
@@ -33,8 +34,49 @@ const TaskItem = ({ task }: { task: TTask }) => {
 
   const deleteTask = async (id: string, title: string) => {
     try {
-      await deleteSingleTask(id).unwrap();
-      toast.success(`${title} deleted successfully!`);
+      const swalWithBootstrapButtons = Swal.mixin({
+        customClass: {
+          confirmButton:
+            "px-4 py-2 bg-green-500 rounded-lg text-white border-none cursor-pointer",
+          cancelButton:
+            "px-4 py-2 bg-red-500 rounded-lg text-white border-none me-2 cursor-pointer",
+        },
+        buttonsStyling: false,
+      });
+      swalWithBootstrapButtons
+        .fire({
+          title: "Delete this task?",
+          text: "You won't be able to revert this!",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonText: "Yes, delete it!",
+          cancelButtonText: "No, cancel!",
+          reverseButtons: true,
+        })
+        .then(async (result) => {
+          if (result.isConfirmed) {
+            const res = await deleteSingleTask(id).unwrap();
+            if (res?.status == 200) {
+              swalWithBootstrapButtons.fire({
+                title: "Deleted!",
+                text: `${title} task has been deleted.`,
+                icon: "success",
+              });
+            } else if (res?.status != 200) {
+              swalWithBootstrapButtons.fire({
+                title: "Could not delete!",
+                text: `${res?.message}`,
+                icon: "error",
+              });
+            }
+          } else if (result.dismiss === Swal.DismissReason.cancel) {
+            swalWithBootstrapButtons.fire({
+              title: "Cancelled",
+              // text: "Your task is safe",
+              icon: "error",
+            });
+          }
+        });
     } catch {
       toast.error("Failed to delete task");
     }
@@ -65,9 +107,12 @@ const TaskItem = ({ task }: { task: TTask }) => {
           className="cursor-pointer"
           onClick={() => navigate(`/project/${task._id}`)}
         >
-          <h4 className="font-bold text-2xl">
-            {task.title ? task.title : "Untitled task"}
-          </h4>
+          <div className="flex items-center justify-between">
+            <h4 className="font-bold text-2xl">
+              {task.title ? task.title : "Untitled task"}
+            </h4>
+            <FaArrowRight />
+          </div>
           <p className="break-words whitespace-normal">
             {task.description && task.description.length > 130
               ? task.description.substring(0, 130) + "..."

@@ -53,26 +53,31 @@ const MainLayout = ({ children }: { children?: ReactNode }) => {
   return (
     <Layout className=" min-h-[100vh] overflow-hidden">
       <Sider trigger={null} collapsible collapsed={collapsed}>
-        <div className="demo-logo-vertical text-white">logo</div>
-        <div className="flex flex-col h-full justify-between">
-          <div>
+        <div className="mb-5 bg-gradient-to-r from-green-400 to-green-600 py-1">
+          <div className=" text-white ms-5 my-5 font-bold text-lg">
+            Task Management
+          </div>
+        </div>
+        <div className="flex flex-col gap-32">
+          <div className="">
             <Menu
               theme="dark"
               mode="inline"
               defaultSelectedKeys={["1"]}
               items={navItems}
+              color=""
             />
           </div>
-          <div className="mb-8 mx-0.5">
+          <div className="mb-8 mx-1">
             <Button
               type="primary"
-              className="w-full flex items-center justify-center gap-2"
+              className="w-full py-5 flex items-center justify-start gap-2"
               onClick={handleSignOut}
               style={{
                 border: "none",
               }}
             >
-              <FaDoorOpen color="white" size={20} />
+              <FaDoorOpen color="white" size={20} className="ms-2" />
               {!collapsed && <span>Sign Out</span>}
             </Button>
           </div>
@@ -107,7 +112,6 @@ const MainLayout = ({ children }: { children?: ReactNode }) => {
             >
               Create Task
             </Button>
-           
           </div>
           <div
             style={{
