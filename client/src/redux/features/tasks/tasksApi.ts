@@ -13,10 +13,10 @@ const taskApi = baseApi.injectEndpoints({
       invalidatesTags: ["tasks"],
     }),
     getTasks: builder.query({
-      query: () => {
-        // console.log("first")
+      query: (status?:string) => {
+        console.log(status)
         return {
-          url: "/task/tasks",
+          url: `/task/tasks/${status}`,
           method: "GET",
         };
       },
@@ -37,7 +37,7 @@ const taskApi = baseApi.injectEndpoints({
 
     updateSingleTask: builder.mutation({
       query: ({ id, data }) => {
-        console.log(id, data);
+        // console.log(id, data);
         return {
           url: `/task/${id}`,
           method: "PATCH",

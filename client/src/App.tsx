@@ -12,7 +12,7 @@ const App = () => {
 
   const handleChange = (value: string) => {
     setFilter(value);
-    console.log(`selected ${value}`);
+    // console.log(`selected ${value}`);
   };
 
   type ft = {

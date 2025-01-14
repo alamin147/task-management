@@ -30,11 +30,14 @@ export const createTask = asyncHandler(async (req, res) => {
 
 export const getTasks = async (req, res) => {
   try {
+    const { status } = req.params;
     const userId = req.user._id;
 
-    if (!userId)
+    if (!userId) {
       return res.status(401).json({ message: "User not authenticated" });
-    const tasks = await TaskModel.find({ user: userId }).populate({
+    }
+
+    const allTasks = await TaskModel.find({ user: userId }).populate({
       path: "subcards",
       select: "title",
       populate: {
@@ -44,12 +47,24 @@ export const getTasks = async (req, res) => {
 
     const priorityOrder = { high: 1, medium: 2, low: 3 };
 
-    tasks.sort((a, b) => {
+    allTasks.sort((a, b) => {
       if (a.completed !== b.completed) {
         return a.completed - b.completed;
       }
       return priorityOrder[a.priority] - priorityOrder[b.priority];
     });
+
+    let tasks = allTasks;
+
+    if (status === "completed") {
+      tasks = allTasks.filter((task) => task.completed);
+    } else if (status === "pending") {
+      tasks = allTasks.filter((task) => !task.completed);
+    } else if (status === "due") {
+      tasks = allTasks.filter(
+        (task) => !task.completed && new Date(task.dueDate) < new Date()
+      );
+    }
 
     res.status(200).json({
       message: "Tasks retrieved successfully",
@@ -57,6 +72,7 @@ export const getTasks = async (req, res) => {
       length: tasks.length,
     });
   } catch (error) {
+    console.error("Error retrieving tasks:", error);
     res.status(500).json({ message: "Something went wrong" });
   }
 };

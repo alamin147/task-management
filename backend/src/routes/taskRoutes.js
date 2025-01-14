@@ -13,7 +13,7 @@ export const TaskRoutes = express.Router();
 
 TaskRoutes.post("/create", protect, createTask);
 
-TaskRoutes.get("/tasks", protect, getTasks);
+TaskRoutes.get("/tasks/:status", protect, getTasks);
 
 TaskRoutes.get("/:id", protect, getTask);
 

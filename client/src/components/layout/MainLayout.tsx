@@ -1,12 +1,12 @@
 import { FaClock, FaCheckCircle, FaDoorOpen } from "react-icons/fa";
-import { FaClockRotateLeft } from "react-icons/fa6";
+import { FaClockRotateLeft, FaUserGroup } from "react-icons/fa6";
 import { TbLayoutListFilled } from "react-icons/tb";
 import { ReactNode, useState } from "react";
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
 import { Button, Layout, Menu } from "antd";
 import { getUserInfo, signOut } from "../auth/utils/authUlits";
 import CreateTask from "../createTask/CreateTask";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
 const { Header, Sider, Content } = Layout;
@@ -14,7 +14,7 @@ const { Header, Sider, Content } = Layout;
 const MainLayout = ({ children }: { children?: ReactNode }) => {
   const user = getUserInfo();
   const navigate = useNavigate();
-
+  const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
   const [openModal, setOpenModal] = useState(false);
 
@@ -49,7 +49,20 @@ const MainLayout = ({ children }: { children?: ReactNode }) => {
       label: "Overdue",
       link: "/due",
     },
+    {
+      key: "5",
+      icon: <FaUserGroup />,
+      label: "Shared with me",
+      link: "/shared",
+    },
   ];
+
+  const getSelectedKey = () => {
+    const currentPath = location.pathname;
+    const matchedItem = navItems.find((item) => item.link === currentPath);
+    return matchedItem ? matchedItem.key : "1";
+  };
+
   return (
     <Layout className=" min-h-[100vh] overflow-hidden">
       <Sider trigger={null} collapsible collapsed={collapsed}>
@@ -64,8 +77,16 @@ const MainLayout = ({ children }: { children?: ReactNode }) => {
               theme="dark"
               mode="inline"
               defaultSelectedKeys={["1"]}
-              items={navItems}
-              color=""
+              selectedKeys={[getSelectedKey()]}
+              items={navItems.map((item) => ({
+                key: item.key,
+                icon: item.icon,
+                label: item.label,
+                onClick: () => {
+                  // console.log(`Selected ${item.label}`);
+                  navigate(item.link);
+                },
+              }))}
             />
           </div>
           <div className="mb-8 mx-1">

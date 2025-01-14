@@ -9,9 +9,7 @@ import { PersistGate } from "redux-persist/integration/react";
 import { Toaster } from "react-hot-toast";
 import RegisterPage from "./register/Register.tsx";
 import LoginPage from "./login/Login.tsx";
-import Completed from "./pages/completed/Completed.tsx";
-import Due from "./pages/due/Due.tsx";
-import Pending from "./pages/pending/Pending.tsx";
+import TaskDynamicStatus from "./pages/taskDynamicStatus/taskDynamicStatus.tsx";
 import Project from "./pages/project/Project.tsx";
 import MainLayout from "./components/layout/MainLayout.tsx";
 import PrivateRoute from "./routes/PrivateRoute.tsx";
@@ -19,7 +17,7 @@ import PrivateRoute from "./routes/PrivateRoute.tsx";
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <PrivateRoute children=<MainLayout children=<App /> />/>,
+    element: <PrivateRoute children=<MainLayout children=<App /> /> />,
     errorElement: <h1>Error</h1>,
   },
   {
@@ -31,20 +29,14 @@ const router = createBrowserRouter([
     element: <LoginPage />,
   },
   {
-    path: "/completed",
-    element: <PrivateRoute children=<MainLayout children=<Completed /> />/>,
-  },
-  {
-    path: "/due",
-    element: <PrivateRoute children=<MainLayout children=<Due /> />/>,
-  },
-  {
-    path: "/pending",
-    element: <PrivateRoute children=<MainLayout children=<Pending /> />/>,
+    path: "/:status",
+    element: (
+      <PrivateRoute children=<MainLayout children=<TaskDynamicStatus /> /> />
+    ),
   },
   {
     path: "/project/:taskId",
-    element: <PrivateRoute children=<MainLayout children=<Project /> />/>,
+    element: <PrivateRoute children=<MainLayout children=<Project /> /> />,
   },
 ]);
 ReactDOM.createRoot(document.getElementById("root")!).render(
