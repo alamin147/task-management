@@ -13,8 +13,8 @@ const taskApi = baseApi.injectEndpoints({
       invalidatesTags: ["tasks"],
     }),
     getTasks: builder.query({
-      query: (status?:string) => {
-        console.log(status)
+      query: (status?: string) => {
+        console.log(status);
         return {
           url: `/task/tasks/${status}`,
           method: "GET",
@@ -60,6 +60,17 @@ const taskApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["tasks"],
     }),
+    shareSingleTask: builder.mutation({
+      query: ({ taskId, user }) => {
+        // console.log("666", taskId, user.length);
+        return {
+          url: `/task/share/${taskId}`,
+          method: "POST",
+          body: user,
+        };
+      },
+      invalidatesTags: ["tasks"],
+    }),
   }),
 });
 
@@ -70,4 +81,5 @@ export const {
   useUpdateSingleTaskMutation,
   useDeleteSingleTaskMutation,
   useDuplicateSingleTaskMutation,
+  useShareSingleTaskMutation,
 } = taskApi;

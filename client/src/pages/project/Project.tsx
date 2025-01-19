@@ -5,13 +5,16 @@ import { useCreateSubTaskMutation } from "@/redux/features/subtask/subtaskApi";
 import "./project.css";
 import Task from "./Task";
 import { FaArrowLeft } from "react-icons/fa";
-
+import { PiShareNetworkFill } from "react-icons/pi";
+import { Tooltip } from "antd";
+import ShareModal from "@/components/shareModal/ShareModal";
+import { useGetUsersQuery } from "@/redux/features/users/users";
 const Project = () => {
   const navigate = useNavigate();
   const { taskId } = useParams();
   const { data } = useGetSingleTaskQuery(taskId as string);
   const [createSubTask] = useCreateSubTaskMutation();
-
+  const { data: users } = useGetUsersQuery(undefined);
   const [newTitle, setNewTitle] = useState("Untitled subtask");
 
   const handleAddSubTask = async () => {
@@ -23,17 +26,37 @@ const Project = () => {
     }
   };
 
+  const [shareOpenModal, setShareOpenModal] = useState(false);
+// console.log("first user", users)
   return (
     <>
+      {shareOpenModal && (
+        <ShareModal
+          taskId={taskId}
+          users={users?.users}
+          setOpenModal={setShareOpenModal}
+        />
+      )}
       <main className="m-6 overflow-hidden">
         <div className="overflow-x-auto">
-          <FaArrowLeft
-            size={18}
-            color="white"
-            className="cursor-pointer"
-            onClick={() => navigate(`/`)}
-          />
-
+          <div className="flex items-center justify-between">
+            <Tooltip title="Go back">
+              <FaArrowLeft
+                size={18}
+                color="white"
+                className="cursor-pointer"
+                onClick={() => navigate(`/`)}
+              />
+            </Tooltip>
+            <Tooltip title="Share this with">
+              <PiShareNetworkFill
+                size={20}
+                className="cursor-pointer"
+                color="white"
+                onClick={() => setShareOpenModal(true)}
+              />
+            </Tooltip>
+          </div>
           <div
             className="pb-8 mt-3 flex gap-4"
             style={{ height: "calc(100vh - 140px)" }}

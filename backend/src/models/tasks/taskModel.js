@@ -36,7 +36,12 @@ const TaskSchema = new mongoose.Schema(
     subcards: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "subCard", 
+        ref: "subCard",
+      },
+    ],
+    shared: [
+      {
+        type: String,
       },
     ],
   },

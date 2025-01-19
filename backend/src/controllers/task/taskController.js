@@ -237,3 +237,55 @@ export const duplicateTask = asyncHandler(async (req, res) => {
     res.status(500).json({ message: "Something went wrong" });
   }
 });
+
+export const shareTask = asyncHandler(async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const { taskId } = req.params;
+    const userEmails = req.body;
+    console.log("share task");
+    console.log(req.body);
+    if (!userId)
+      return res
+        .status(401)
+        .json({ status: 401, message: "User not authenticated" });
+    if (!taskId)
+      return res
+        .status(400)
+        .json({ status: 400, message: "Task ID not provided" });
+    if (!Array.isArray(userEmails) || userEmails.length === 0)
+      return res
+        .status(400)
+        .json({ status: 400, message: "No emails provided for sharing" });
+
+    try {
+      const task = await TaskModel.findById(taskId);
+
+      if (!task)
+        return res.status(404).json({ status: 404, message: "Task not found" });
+
+      const newEmailsToShare = userEmails.filter(
+        (email) => !task.shared.includes(email)
+      );
+
+      if (newEmailsToShare.length > 0) {
+        task.shared.push(...newEmailsToShare);
+        await task.save();
+      }
+
+      res.status(201).json({
+        status: 200,
+        message: `${
+          newEmailsToShare?.length
+            ? `Task shared with ${newEmailsToShare.length} people successfully`
+            : "Task shared successfully"
+        }`,
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ status: 500, message: "Server error" });
+    }
+  } catch (Error) {
+    res.status(500).json({ status: 500, message: "Server error" });
+  }
+});
