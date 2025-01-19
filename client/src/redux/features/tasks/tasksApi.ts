@@ -14,9 +14,19 @@ const taskApi = baseApi.injectEndpoints({
     }),
     getTasks: builder.query({
       query: (status?: string) => {
-        console.log(status);
+        // console.log(status);
         return {
           url: `/task/tasks/${status}`,
+          method: "GET",
+        };
+      },
+      providesTags: ["tasks"],
+    }),
+    getSharedTasks: builder.query({
+      query: () => {
+        // console.log(status);
+        return {
+          url: `/task/tasks/share`,
           method: "GET",
         };
       },
@@ -82,4 +92,5 @@ export const {
   useDeleteSingleTaskMutation,
   useDuplicateSingleTaskMutation,
   useShareSingleTaskMutation,
+  useGetSharedTasksQuery
 } = taskApi;

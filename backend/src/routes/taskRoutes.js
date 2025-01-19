@@ -7,12 +7,15 @@ import {
   deleteTask,
   duplicateTask,
   shareTask,
+  getSharedTasks,
 } from "../controllers/task/taskController.js";
 import { protect } from "../middleware/authMiddleware.js";
 
 export const TaskRoutes = express.Router();
 
 TaskRoutes.post("/create", protect, createTask);
+
+TaskRoutes.get("/tasks/share", protect, getSharedTasks);
 
 TaskRoutes.get("/tasks/:status", protect, getTasks);
 

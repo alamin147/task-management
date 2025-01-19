@@ -5,13 +5,12 @@ export const getUsers = asyncHandler(async (req, res) => {
   try {
     // console.log("first")
     const userId = req.user._id;
-
     if (!userId)
       return res.status(401).json({ message: "User not authenticated" });
 
-    const users = await User.find().select("email");
+    const users = await User.find({ _id: { $ne: userId } }).select("email");
 
-    if (!users) {
+    if (!users){
       return res.status(400).json({ message: "No user" });
     }
 

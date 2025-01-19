@@ -13,6 +13,7 @@ import TaskDynamicStatus from "./pages/taskDynamicStatus/taskDynamicStatus.tsx";
 import Project from "./pages/project/Project.tsx";
 import MainLayout from "./components/layout/MainLayout.tsx";
 import PrivateRoute from "./routes/PrivateRoute.tsx";
+import ShareTasks from "./pages/sharePage/ShareTasks.tsx";
 
 const router = createBrowserRouter([
   {
@@ -33,6 +34,10 @@ const router = createBrowserRouter([
     element: (
       <PrivateRoute children=<MainLayout children=<TaskDynamicStatus /> /> />
     ),
+  },
+  {
+    path: "/shared",
+    element: <PrivateRoute children=<MainLayout children=<ShareTasks /> /> />,
   },
   {
     path: "/project/:taskId",

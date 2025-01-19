@@ -28,11 +28,52 @@ export const createTask = asyncHandler(async (req, res) => {
   }
 });
 
+export const getSharedTasks = async (req, res) => {
+  try {
+    const { status } = req.params;
+    const userId = req.user._id;
+    const userEmail = req?.user?.email;
+    console.log(userEmail);
+    if (!userId) {
+      return res.status(401).json({ message: "User not authenticated" });
+    }
+
+    const allTasks = await TaskModel.find({
+      shared: { $in: [userEmail] },
+    }).populate({
+      path: "subcards",
+      select: "title",
+      populate: {
+        path: "miniTasks",
+      },
+    });
+
+    const priorityOrder = { high: 1, medium: 2, low: 3 };
+    allTasks.sort((a, b) => {
+      if (a.completed !== b.completed) {
+        return a.completed - b.completed;
+      }
+      return priorityOrder[a.priority] - priorityOrder[b.priority];
+    });
+
+    let tasks = allTasks;
+
+    res.status(200).json({
+      message: "Tasks retrieved successfully",
+      tasks,
+      length: tasks.length,
+    });
+  } catch (error) {
+    console.error("Error retrieving tasks:", error);
+    res.status(500).json({ message: "Something went wrong" });
+  }
+};
 export const getTasks = async (req, res) => {
   try {
     const { status } = req.params;
     const userId = req.user._id;
-
+    const userEmail = req?.user?.email;
+    // console.log(req.user);
     if (!userId) {
       return res.status(401).json({ message: "User not authenticated" });
     }
@@ -46,7 +87,6 @@ export const getTasks = async (req, res) => {
     });
 
     const priorityOrder = { high: 1, medium: 2, low: 3 };
-
     allTasks.sort((a, b) => {
       if (a.completed !== b.completed) {
         return a.completed - b.completed;
@@ -94,10 +134,6 @@ export const getTask = asyncHandler(async (req, res) => {
         path: "miniTasks",
       },
     });
-
-    if (!task.user.equals(userId)) {
-      return res.status(401).json({ message: "User not authenticated" });
-    }
 
     res.status(200).json({
       message: "Task retrived successfully",
