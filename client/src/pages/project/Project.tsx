@@ -25,9 +25,7 @@ const Project = () => {
       console.error("Failed to create subtask:", err);
     }
   };
-
   const [shareOpenModal, setShareOpenModal] = useState(false);
-// console.log("first user", users)
   return (
     <>
       {shareOpenModal && (
@@ -37,9 +35,9 @@ const Project = () => {
           setOpenModal={setShareOpenModal}
         />
       )}
-      <main className="m-6 overflow-hidden">
-        <div className="overflow-x-auto">
-          <div className="flex items-center justify-between">
+      <main className="m-6 overflow-hidden ">
+        <div className="overflow-x-auto scrollbar-custom ">
+          <div className="flex items-center justify-between ">
             <Tooltip title="Go back">
               <FaArrowLeft
                 size={18}
@@ -48,36 +46,38 @@ const Project = () => {
                 onClick={() => navigate(`/`)}
               />
             </Tooltip>
-            <Tooltip title="Share this with">
+            <Tooltip title="Share this with ">
               <PiShareNetworkFill
                 size={20}
-                className="cursor-pointer"
+                className="cursor-pointer me-5"
                 color="white"
                 onClick={() => setShareOpenModal(true)}
               />
             </Tooltip>
           </div>
           <div
-            className="pb-8 mt-3 flex gap-4"
+            className="pb-8 mt-3 flex gap-1"
             style={{ height: "calc(100vh - 140px)" }}
           >
             <Task task={data?.task} />
 
-            <div className="mt-4 w-64 h-36 bg-white text-black p-3 flex-shrink-0 rounded-lg flex flex-col gap-4 ">
-              <div className="flex flex-col gap-4 p-3 rounded-md border-gray-50 shadow-md border">
-                <input
-                  type="text"
-                  placeholder="Add sub task..."
-                  value={newTitle}
-                  onChange={(e) => setNewTitle(e.target.value)}
-                  className="px-3 py- py-2 rounded-md text-black shadow-md bg-gray-50 focus:outline-none focus:ring-0 border-none"
-                />
-                <button
-                  onClick={handleAddSubTask}
-                  className="w-full bg-gray-100 hover:bg-gray-300 text-black px-3 py-2 rounded-lg shadow-md"
-                >
-                  Add sub task
-                </button>
+            <div className="pe-5">
+              <div className="mt-4  w-64 h-36 bg-white text-black p-3 flex-shrink-0 rounded-lg flex flex-col gap-4">
+                <div className="flex flex-col gap-4 p-3 rounded-md border-gray-50 shadow-md border">
+                  <input
+                    type="text"
+                    placeholder="Add sub task..."
+                    value={newTitle}
+                    onChange={(e) => setNewTitle(e.target.value)}
+                    className="px-3 py- py-2 rounded-md text-black shadow-md bg-gray-50 focus:outline-none focus:ring-0 border-none"
+                  />
+                  <button
+                    onClick={handleAddSubTask}
+                    className="w-full bg-gray-100 hover:bg-gray-300 text-black px-3 py-2 rounded-lg shadow-md"
+                  >
+                    Add sub task
+                  </button>
+                </div>
               </div>
             </div>
           </div>

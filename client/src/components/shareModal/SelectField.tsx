@@ -63,20 +63,11 @@ interface UserValue {
 }
 
 interface SelectFieldProps {
-  users: { email: string}[];
+  users: { email: string }[];
   setValues: any;
 }
-// const localUsers = [
-//     { username: 'user1', email: 'user1@example.com',name:"$a" },
-//     { username: 'user2', email: 'user2@example.com',name:"$d" },
-//     { username: 'user3', email: 'user3@example.com',name:"$r" },
-//     { username: 'user4', email: 'user4@example.com',name:"$hy" },
-//   ];
 
-const SelectField: React.FC<SelectFieldProps> = ({
-  users,
-  setValues,
-}) => {
+const SelectField: React.FC<SelectFieldProps> = ({ users, setValues }) => {
   const [value, setValue] = useState<UserValue[]>([]);
 
   // Fetch options from local data

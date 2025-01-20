@@ -3,7 +3,8 @@ import SelectField from "./SelectField";
 import { useState } from "react";
 import { useShareSingleTaskMutation } from "@/redux/features/tasks/tasksApi";
 import toast from "react-hot-toast";
-
+import { Avatar, Tooltip } from "antd";
+import "./share.css";
 const ShareModal = ({
   taskId,
   users,
@@ -34,7 +35,8 @@ const ShareModal = ({
 
     setOpenModal(false);
   };
-
+  // console.log(users);
+  const handleRemoveShare = () => {};
   return (
     <>
       <div className="fixed left-0 top-0 z-50 h-full w-full bg-[#333]/30 overflow-hidden">
@@ -53,20 +55,39 @@ const ShareModal = ({
               &times;
             </button>
 
-            <h1 className="absoute top-2 left-2 text-2xl font-bold text-center ">
+            <h1 className="text-2xl font-bold text-center ">
               Share this task with
             </h1>
           </div>
 
-          {/* <Search
-            placeholder="input search text"
-            allowClear
-            enterButton
-            size="large"
-            onSearch={handleSearch}
-          /> */}
-
           <SelectField users={users} setValues={setValue} />
+          <h1 className=" mt-6 text-lg">Shared with</h1>
+
+          <div onClick={handleRemoveShare}>
+            <Avatar.Group
+              className="flex justify-end"
+              size="large"
+              max={{
+                count: 3,
+                style: { color: "#f56a00", backgroundColor: "#fde3cf" },
+              }}
+            >
+              {users?.map((u: any) =>
+                u.photo ? (
+                  <Tooltip title={u?.name}>
+                    <Avatar key={u._id} src={u.photo} />
+                  </Tooltip>
+                ) : (
+                  <Tooltip title={u?.name}>
+                    <Avatar key={u._id} style={{ backgroundColor: "#f56a00" }}>
+                      {u.name.charAt(0).toUpper()}
+                    </Avatar>
+                  </Tooltip>
+                )
+              )}
+            </Avatar.Group>
+          </div>
+
           {/* Submit Button */}
           <div className="mt-8 flex justify-end items-center gap-3">
             <button

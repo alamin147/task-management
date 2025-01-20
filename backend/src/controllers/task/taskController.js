@@ -30,7 +30,6 @@ export const createTask = asyncHandler(async (req, res) => {
 
 export const getSharedTasks = async (req, res) => {
   try {
-    const { status } = req.params;
     const userId = req.user._id;
     const userEmail = req?.user?.email;
     console.log(userEmail);
@@ -279,8 +278,8 @@ export const shareTask = asyncHandler(async (req, res) => {
     const userId = req.user._id;
     const { taskId } = req.params;
     const userEmails = req.body;
-    console.log("share task");
-    console.log(req.body);
+    // console.log("share task");
+    // console.log(req.body);
     if (!userId)
       return res
         .status(401)

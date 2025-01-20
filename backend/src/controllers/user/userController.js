@@ -8,9 +8,8 @@ export const getUsers = asyncHandler(async (req, res) => {
     if (!userId)
       return res.status(401).json({ message: "User not authenticated" });
 
-    const users = await User.find({ _id: { $ne: userId } }).select("email");
-
-    if (!users){
+    const users = await User.find({ _id: { $ne: userId } }).select("-password");
+    if (!users) {
       return res.status(400).json({ message: "No user" });
     }
 
