@@ -126,13 +126,19 @@ export const getTask = asyncHandler(async (req, res) => {
     const { id } = req.params;
     if (!id) return res.status(401).json({ message: "Id not Given" });
 
-    const task = await TaskModel.findById(id).populate({
-      path: "subcards",
-      select: "title",
-      populate: {
-        path: "miniTasks",
+    const task = await TaskModel.findById(id).populate([
+      {
+        path: "subcards",
+        select: "title",
+        populate: {
+          path: "miniTasks",
+        },
       },
-    });
+      {
+        path:"shared",
+        select:"name email photo"
+      }
+    ]);
 
     res.status(200).json({
       message: "Task retrived successfully",
@@ -277,9 +283,8 @@ export const shareTask = asyncHandler(async (req, res) => {
   try {
     const userId = req.user._id;
     const { taskId } = req.params;
-    const userEmails = req.body;
-    // console.log("share task");
-    // console.log(req.body);
+    const users = req.body;
+    // users=['6718d8023254c674957c9f35']
     if (!userId)
       return res
         .status(401)
@@ -288,10 +293,11 @@ export const shareTask = asyncHandler(async (req, res) => {
       return res
         .status(400)
         .json({ status: 400, message: "Task ID not provided" });
-    if (!Array.isArray(userEmails) || userEmails.length === 0)
+
+    if (!Array.isArray(users) || users.length === 0)
       return res
         .status(400)
-        .json({ status: 400, message: "No emails provided for sharing" });
+        .json({ status: 400, message: "No users provided for sharing" });
 
     try {
       const task = await TaskModel.findById(taskId);
@@ -299,20 +305,20 @@ export const shareTask = asyncHandler(async (req, res) => {
       if (!task)
         return res.status(404).json({ status: 404, message: "Task not found" });
 
-      const newEmailsToShare = userEmails.filter(
-        (email) => !task.shared.includes(email)
+      const newShared = users.filter(
+        (user) => !task.shared.includes(user)
       );
 
-      if (newEmailsToShare.length > 0) {
-        task.shared.push(...newEmailsToShare);
+      if (newShared.length > 0) {
+        task.shared.push(...newShared);
         await task.save();
       }
 
       res.status(201).json({
         status: 200,
         message: `${
-          newEmailsToShare?.length
-            ? `Task shared with ${newEmailsToShare.length} people successfully`
+          newShared?.length
+            ? `Task shared with ${newShared.length} people successfully`
             : "Task shared successfully"
         }`,
       });

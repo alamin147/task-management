@@ -63,22 +63,19 @@ interface UserValue {
 }
 
 interface SelectFieldProps {
-  users: { email: string }[];
+  users: { _id: string; name: string; email: string }[];
   setValues: any;
 }
 
 const SelectField: React.FC<SelectFieldProps> = ({ users, setValues }) => {
   const [value, setValue] = useState<UserValue[]>([]);
 
-  // Fetch options from local data
-  const fetchLocalUsers = async (username: string): Promise<UserValue[]> => {
+  const fetchUsers = async (email: string): Promise<UserValue[]> => {
     return users
-      .filter((user) =>
-        user.email.toLowerCase().includes(username.toLowerCase())
-      )
+      .filter((user) => user.email.toLowerCase().includes(email.toLowerCase()))
       .map((user) => ({
-        label: user.email,
-        value: user.email,
+        label: `${user.email}`,
+        value: user._id,
       }));
   };
 
@@ -87,7 +84,7 @@ const SelectField: React.FC<SelectFieldProps> = ({ users, setValues }) => {
       mode="multiple"
       value={value}
       placeholder="Search email"
-      fetchOptions={fetchLocalUsers}
+      fetchOptions={fetchUsers}
       onChange={(newValue) => {
         setValue(newValue as UserValue[]);
         setValues(newValue);

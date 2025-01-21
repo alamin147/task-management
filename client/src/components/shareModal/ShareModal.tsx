@@ -9,14 +9,18 @@ const ShareModal = ({
   taskId,
   users,
   setOpenModal,
+  sharedUsers
 }: {
   taskId: any;
   users: any;
   setOpenModal: any;
+  sharedUsers:any
 }) => {
   const [shareSingleTask, {}] = useShareSingleTaskMutation();
   const [value, setValue] = useState([]);
   const { handleSubmit } = useForm();
+
+  // console.log("value",value)
   const onSubmit = async () => {
     if (value.length) {
       let user = [];
@@ -65,6 +69,7 @@ const ShareModal = ({
 
           <div onClick={handleRemoveShare}>
             <Avatar.Group
+            
               className="flex justify-end"
               size="large"
               max={{
@@ -72,9 +77,9 @@ const ShareModal = ({
                 style: { color: "#f56a00", backgroundColor: "#fde3cf" },
               }}
             >
-              {users?.map((u: any) =>
+              {sharedUsers?.map((u: any,i:number) =>
                 u.photo ? (
-                  <Tooltip title={u?.name}>
+                  <Tooltip key={i} title={u?.name}>
                     <Avatar key={u._id} src={u.photo} />
                   </Tooltip>
                 ) : (

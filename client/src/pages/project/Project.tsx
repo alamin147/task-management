@@ -26,12 +26,15 @@ const Project = () => {
     }
   };
   const [shareOpenModal, setShareOpenModal] = useState(false);
+  console.log("task",data)
+  
   return (
     <>
       {shareOpenModal && (
         <ShareModal
           taskId={taskId}
           users={users?.users}
+          sharedUsers= {data?.task?.shared}
           setOpenModal={setShareOpenModal}
         />
       )}

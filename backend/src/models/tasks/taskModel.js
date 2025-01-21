@@ -41,8 +41,8 @@ const TaskSchema = new mongoose.Schema(
     ],
     shared: [
       {
-        // email of users
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
       },
     ],
   },

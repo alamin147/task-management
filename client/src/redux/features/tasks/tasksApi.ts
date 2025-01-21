@@ -72,14 +72,14 @@ const taskApi = baseApi.injectEndpoints({
     }),
     shareSingleTask: builder.mutation({
       query: ({ taskId, user }) => {
-        // console.log("666", taskId, user.length);
+        // console.log("666", taskId, user);
         return {
           url: `/task/share/${taskId}`,
           method: "POST",
           body: user,
         };
       },
-      invalidatesTags: ["tasks"],
+      invalidatesTags: ["tasks","subtask"],
     }),
   }),
 });
