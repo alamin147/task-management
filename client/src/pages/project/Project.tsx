@@ -26,7 +26,7 @@ const Project = () => {
     }
   };
   const [shareOpenModal, setShareOpenModal] = useState(false);
-  console.log("task",data)
+  // console.log("task",data)
   
   return (
     <>

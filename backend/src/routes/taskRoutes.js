@@ -8,6 +8,7 @@ import {
   duplicateTask,
   shareTask,
   getSharedTasks,
+  deleteSharedUser,
 } from "../controllers/task/taskController.js";
 import { protect } from "../middleware/authMiddleware.js";
 
@@ -24,6 +25,8 @@ TaskRoutes.get("/:id", protect, getTask);
 TaskRoutes.patch("/:id", protect, updateTask);
 
 TaskRoutes.delete("/:id", protect, deleteTask);
+
+TaskRoutes.delete("/delete/share/:taskId", protect, deleteSharedUser);
 
 TaskRoutes.post("/duplicate/:taskId", protect, duplicateTask);
 

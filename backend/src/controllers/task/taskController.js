@@ -2,7 +2,6 @@ import asyncHandler from "express-async-handler";
 import TaskModel from "../../models/tasks/taskModel.js";
 import miniTaskModel from "../../models/cards/miniTaskModel.js";
 import subCardModel from "../../models/cards/subCardModel.js";
-
 export const createTask = asyncHandler(async (req, res) => {
   try {
     // console.log("6", req.user);
@@ -31,14 +30,14 @@ export const createTask = asyncHandler(async (req, res) => {
 export const getSharedTasks = async (req, res) => {
   try {
     const userId = req.user._id;
-    const userEmail = req?.user?.email;
-    console.log(userEmail);
+    // const userEmail = req?.user?.email;
+    // console.log({userId});
     if (!userId) {
       return res.status(401).json({ message: "User not authenticated" });
     }
 
     const allTasks = await TaskModel.find({
-      shared: { $in: [userEmail] },
+      shared: { $in: [userId] },
     }).populate({
       path: "subcards",
       select: "title",
@@ -135,9 +134,9 @@ export const getTask = asyncHandler(async (req, res) => {
         },
       },
       {
-        path:"shared",
-        select:"name email photo"
-      }
+        path: "shared",
+        select: "name email photo",
+      },
     ]);
 
     res.status(200).json({
@@ -305,9 +304,7 @@ export const shareTask = asyncHandler(async (req, res) => {
       if (!task)
         return res.status(404).json({ status: 404, message: "Task not found" });
 
-      const newShared = users.filter(
-        (user) => !task.shared.includes(user)
-      );
+      const newShared = users.filter((user) => !task.shared.includes(user));
 
       if (newShared.length > 0) {
         task.shared.push(...newShared);
@@ -321,6 +318,51 @@ export const shareTask = asyncHandler(async (req, res) => {
             ? `Task shared with ${newShared.length} people successfully`
             : "Task shared successfully"
         }`,
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ status: 500, message: "Server error" });
+    }
+  } catch (Error) {
+    res.status(500).json({ status: 500, message: "Server error" });
+  }
+});
+
+export const deleteSharedUser = asyncHandler(async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const { taskId } = req.params;
+
+    const { user } = req.body;
+    if (!userId)
+      return res
+        .status(401)
+        .json({ status: 401, message: "User not authenticated" });
+    if (!taskId)
+      return res
+        .status(400)
+        .json({ status: 400, message: "Task ID not provided" });
+
+    if (!user)
+      return res.status(400).json({ status: 400, message: "No user given" });
+
+    try {
+      const task = await TaskModel.findById(taskId);
+
+      if (!task)
+        return res.status(404).json({ status: 404, message: "Task not found" });
+      if (
+        task.shared &&
+        task.shared.some((sharedUser) => sharedUser.toString() == user)
+      ) {
+        task.shared = task.shared.filter(
+          (sharedUser) => sharedUser.toString() != user
+        ); // Remove the user
+        await task.save(); // Save the updated task
+      }
+      res.status(201).json({
+        status: 200,
+        message: `User Deleted Successfully`,
       });
     } catch (error) {
       console.error(error);

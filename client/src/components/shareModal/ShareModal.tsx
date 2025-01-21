@@ -5,16 +5,17 @@ import { useShareSingleTaskMutation } from "@/redux/features/tasks/tasksApi";
 import toast from "react-hot-toast";
 import { Avatar, Tooltip } from "antd";
 import "./share.css";
+import DeleteShareUsers from "./DeleteShareUsers";
 const ShareModal = ({
   taskId,
   users,
   setOpenModal,
-  sharedUsers
+  sharedUsers,
 }: {
   taskId: any;
   users: any;
   setOpenModal: any;
-  sharedUsers:any
+  sharedUsers: any;
 }) => {
   const [shareSingleTask, {}] = useShareSingleTaskMutation();
   const [value, setValue] = useState([]);
@@ -40,10 +41,15 @@ const ShareModal = ({
     setOpenModal(false);
   };
   // console.log(users);
-  const handleRemoveShare = () => {};
+  const [deleteShareModal, setDeleteShareModal] = useState(false);
   return (
     <>
-      <div className="fixed left-0 top-0 z-50 h-full w-full bg-[#333]/30 overflow-hidden">
+      <div>
+        {deleteShareModal && (
+          <DeleteShareUsers sharedUser={sharedUsers} taskId={taskId} setDeleteShareModal={setDeleteShareModal} />
+        )}
+      </div>
+      <div className="fixed left-0 top-0 z-40 h-full w-full bg-[#333]/30 overflow-hidden">
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="py-5 px-6 max-w-[520px] w-full fex flx-col gap-3 bg-white absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-lg shadow-md"
@@ -67,9 +73,8 @@ const ShareModal = ({
           <SelectField users={users} setValues={setValue} />
           <h1 className=" mt-6 text-lg">Shared with</h1>
 
-          <div onClick={handleRemoveShare}>
+          <div onClick={() => setDeleteShareModal(true)}>
             <Avatar.Group
-            
               className="flex justify-end"
               size="large"
               max={{
@@ -77,7 +82,7 @@ const ShareModal = ({
                 style: { color: "#f56a00", backgroundColor: "#fde3cf" },
               }}
             >
-              {sharedUsers?.map((u: any,i:number) =>
+              {sharedUsers?.map((u: any, i: number) =>
                 u.photo ? (
                   <Tooltip key={i} title={u?.name}>
                     <Avatar key={u._id} src={u.photo} />

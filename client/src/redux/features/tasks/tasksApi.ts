@@ -24,7 +24,6 @@ const taskApi = baseApi.injectEndpoints({
     }),
     getSharedTasks: builder.query({
       query: () => {
-        // console.log(status);
         return {
           url: `/task/tasks/share`,
           method: "GET",
@@ -79,7 +78,17 @@ const taskApi = baseApi.injectEndpoints({
           body: user,
         };
       },
-      invalidatesTags: ["tasks","subtask"],
+      invalidatesTags: ["tasks", "subtask"],
+    }),
+    removeShareUser: builder.mutation({
+      query: ({ taskId, user }) => {
+        return {
+          url: `/task/delete/share/${taskId}`,
+          method: "DELETE",
+          body: { user },
+        };
+      },
+      invalidatesTags: ["tasks", "subtask", "user"],
     }),
   }),
 });
@@ -92,5 +101,6 @@ export const {
   useDeleteSingleTaskMutation,
   useDuplicateSingleTaskMutation,
   useShareSingleTaskMutation,
-  useGetSharedTasksQuery
+  useGetSharedTasksQuery,
+  useRemoveShareUserMutation,
 } = taskApi;
