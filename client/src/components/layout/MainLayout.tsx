@@ -3,11 +3,12 @@ import { FaClockRotateLeft, FaUserGroup } from "react-icons/fa6";
 import { TbLayoutListFilled } from "react-icons/tb";
 import { ReactNode, useState } from "react";
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
-import { Button, Layout, Menu } from "antd";
+import { Avatar, Button, Layout, Menu, Tooltip } from "antd";
 import { getUserInfo, signOut } from "../auth/utils/authUlits";
 import CreateTask from "../createTask/CreateTask";
 import { useLocation, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import ProfileMenu from "../profileMenu/ProfileMenu";
 
 const { Header, Sider, Content } = Layout;
 
@@ -62,6 +63,10 @@ const MainLayout = ({ children }: { children?: ReactNode }) => {
     const matchedItem = navItems.find((item) => item.link === currentPath);
     return matchedItem ? matchedItem.key : "1";
   };
+  const [openProfileSetting, setOpenProfileSetting] = useState(false);
+  const hendleProfileModal = () => {
+    setOpenProfileSetting(!openProfileSetting);
+  };
   return (
     <>
       <Layout className=" min-h-[100vh] overflow-hidden">
@@ -83,7 +88,6 @@ const MainLayout = ({ children }: { children?: ReactNode }) => {
                   icon: item.icon,
                   label: item.label,
                   onClick: () => {
-                    // console.log(`Selected ${item.label}`);
                     navigate(item.link);
                   },
                 }))}
@@ -134,18 +138,41 @@ const MainLayout = ({ children }: { children?: ReactNode }) => {
                 Create Task
               </Button>
             </div>
-            <div
-              style={{
-                fontSize: "16px",
-                fontWeight: "bold",
-              }}
-              className="me-5 text-white"
-            >
-              {user ? `Welcome, ${user.name}!` : "Welcome to Task Manager"}
+            <div></div>
+            <div className="flex items-center justify-center gap-3">
+              <div
+                style={{
+                  fontSize: "16px",
+                  fontWeight: "bold",
+                }}
+                className=" text-white"
+              >
+                {user ? `Welcome, ${user.name}!` : "Welcome to Task Manager"}
+                {openProfileSetting && <ProfileMenu />}
+              </div>
+              <Tooltip title={user?.name}>
+                {user?.photo ? (
+                  <Avatar
+                    onClick={hendleProfileModal}
+                    className="cursor-pointer"
+                    size="large"
+                    src={user?.photo}
+                  />
+                ) : (
+                  <Avatar
+                    size="large"
+                    onClick={hendleProfileModal}
+                    style={{ backgroundColor: "#f56a00" }}
+                  >
+                    {user?.name?.charAt(0)?.toUpperCase()}
+                  </Avatar>
+                )}
+              </Tooltip>
             </div>
           </Header>
 
           <Content
+            onClick={() => setOpenProfileSetting(false)}
             className="bg-gray-700  border-t border-t-gray-700"
             style={{
               minHeight: 280,

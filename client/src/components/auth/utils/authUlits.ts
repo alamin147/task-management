@@ -2,29 +2,13 @@ import { jwtDecode } from "jwt-decode";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
-export type TUser= {
+export type TUser = {
   id: string;
   name: string;
   email: string;
   role: string;
   photo: string;
-}
-
-// const getAuthToken = (): string | null => {
-//   if (typeof window !== "undefined" && window.localStorage) {
-//     const storedData = localStorage.getItem("persist:auth");
-//     if (storedData) {
-//       try {
-//         const parsedData = JSON.parse(storedData);
-//         return parsedData?.token || null;
-//       } catch {
-        
-//         return null;
-//       }
-//     }
-//   }
-//   return null;
-// };
+};
 
 const isValidJwt = (token: string): boolean => {
   return token.split(".").length === 3;
@@ -48,7 +32,7 @@ export const useUserVerification = (): TUser | null => {
 
   useEffect(() => {
     // const token = getAuthToken();
-  const token = useSelector((state: any) => state.auth.token);
+    const token = useSelector((state: any) => state.auth.token);
 
     if (token) {
       const decodedUser = jwtDecode<TUser>(token);
@@ -65,4 +49,3 @@ export const signOut = (): void => {
     localStorage.removeItem("persist:auth");
   }
 };
-
