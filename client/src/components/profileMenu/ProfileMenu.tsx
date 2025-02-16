@@ -17,9 +17,9 @@ const items: MenuItem[] = [
     label: "My Tasks",
   },
   {
-    key: "/edit-profile",
+    key: "/profile-edit",
     icon: <FaUserEdit />,
-    label: "Edit Profile (create page)",
+    label: "Edit Profile",
   },
 
   {

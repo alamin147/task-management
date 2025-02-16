@@ -17,27 +17,27 @@ export const createMiniTask = asyncHandler(async (req, res) => {
   const { title, img, description, dueDate, completed, subtaskId } = req.body;
   const userId = req.user.id;
 
-  if (!subtaskId) {
+  if (!subtaskId){
     return res.status(400).json({ message: "Task id is required" });
-  }
+}
 
   const task = await subCardModel.findById(subtaskId);
-  if (!task) {
+  if (!task){
     return res.status(404).json({ message: "Task not found" });
-  }
+}
 
   const mainTask = await TaskModel.findOne({
     subcards: { $in: [task._id] },
   });
   console.log(mainTask);
 
-  if (!mainTask) {
+  if (!mainTask){
     return res.status(404).json({ message: "Task not found" });
-  }
+}
 
-  if (!mainTask.user.equals(userId)) {
+  if (!mainTask.user.equals(userId)){
     return res.status(401).json({ message: "User not authorized" });
-  }
+}
 
   const miniTask = await miniTaskModel.create({
     title,
@@ -103,7 +103,6 @@ export const updateMiniTask = asyncHandler(async (req, res) => {
     res.status(500).json({ status: 500, message: "Internal server error" });
   }
 });
-
 export const deleteMiniTask = asyncHandler(async (req, res) => {
   const { miniTaskId, subtaskId } = req.body;
   const userId = req.user.id;

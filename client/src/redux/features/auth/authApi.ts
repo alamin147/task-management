@@ -19,7 +19,6 @@ const authApi = baseApi.injectEndpoints({
           body: data,
         };
       },
-      // invali.datesTags: ["carts", "gadgets"],
     }),
     
 

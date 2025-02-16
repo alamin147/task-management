@@ -2,8 +2,7 @@ import asyncHandler from "express-async-handler";
 import TaskModel from "../../models/tasks/taskModel.js";
 import subCardModel from "../../models/cards/subCardModel.js";
 import miniTaskModel from "../../models/cards/miniTaskModel.js";
-import cloudinary from "cloudinary";
-import { configserverENV } from "../../utils/configs.js";
+import { cloudinaryConfig } from "../../utils/configs.js";
 
 export const createSubTask = asyncHandler(async (req, res) => {
   const { title, taskId } = req.body;
@@ -82,11 +81,7 @@ export const updateSubTask = asyncHandler(async (req, res) => {
   }
 });
 
-cloudinary.v2.config({
-  cloud_name: configserverENV.cloud_name,
-  api_key: configserverENV.cloud_api_key,
-  api_secret: configserverENV.cloud_api_secret,
-});
+
 
 export const deleteSubtask = asyncHandler(async (req, res) => {
   const { taskId, subtaskId } = req.body;
@@ -119,7 +114,7 @@ export const deleteSubtask = asyncHandler(async (req, res) => {
       if (miniTask?.img) {
         const publicId = miniTask.img.split("/").pop().split(".")[0];
 
-        await cloudinary.v2.uploader.destroy(publicId, (error, result) => {
+        await cloudinaryConfig.v2.uploader.destroy(publicId, (error, result) => {
           if (error) console.error(`Error deleting image: ${error.message}`);
         });
       }

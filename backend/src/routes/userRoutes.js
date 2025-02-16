@@ -1,16 +1,11 @@
 import express from "express";
 import {
-  changePassword,
-  forgotPassword,
   getUser,
+  getUsersWithoutSelf,
   loginUser,
-  logoutUser,
   registerUser,
-  resetPassword,
   updateUser,
-  userLoginStatus,
-  verifyEmail,
-  verifyUser,
+
 } from "../controllers/auth/userController.js";
 import {
   adminMiddleware,
@@ -21,36 +16,27 @@ import {
   deleteUser,
   getAllUsers,
 } from "../controllers/auth/adminController.js";
+import { uploader } from "../utils/uploader.js";
+
 
 export const userRoutes = express.Router();
 
 userRoutes.post("/register", registerUser);
 userRoutes.post("/login", loginUser);
-// userRoutes.get("/logout", logoutUser);
 userRoutes.get("/user", protect, getUser);
 userRoutes.patch("/user", protect, updateUser);
 
 // admin route
 userRoutes.delete("/admin/users/:id", protect, adminMiddleware, deleteUser);
-
-// get all users
 userRoutes.get("/admin/users", protect, creatorMiddleware, getAllUsers);
 
-// login status
-// userRoutes.get("/login-status", userLoginStatus);
+// get all users for share
+// auth/users/share 
 
-// email verification
-// userRoutes.post("/verify-email", protect, verifyEmail);
+userRoutes.patch("/user/edit", protect, uploader?.single("img"),(req,res,next)=>{
+  req.body = JSON.parse(req.body.data)
+  next()
+}, updateUser);
 
-// verify user --> email verification
-// userRoutes.post("/verify-user/:verificationToken", verifyUser);
-
-// forgot password
-// userRoutes.post("/forgot-password", forgotPassword);
-
-//reset password
-// userRoutes.post("/reset-password/:resetPasswordToken", resetPassword);
-
-// change password
-// userRoutes.patch("/change-password", protect, changePassword);
-
+userRoutes.get("/users", protect, getUsersWithoutSelf)
+userRoutes.get("/users/user", protect, getUser)

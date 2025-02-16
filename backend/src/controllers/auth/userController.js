@@ -7,7 +7,16 @@ import Token from "../../models/auth/Token.js";
 import crypto from "node:crypto";
 import hashToken from "../../helpers/hashToken.js";
 import sendEmail from "../../helpers/sendEmail.js";
+import cloudinary from "cloudinary";
+import { uploadIMG } from "../../utils/cloudinary.js";
+import { configserverENV } from "../../utils/configs.js";
+import { extractPublicId } from "../../utils/cloudinaryPublic.js";
 
+cloudinary.v2.config({
+  cloud_name: configserverENV.cloud_name,
+  api_key: configserverENV.cloud_api_key,
+  api_secret: configserverENV.cloud_api_secret,
+});
 export const registerUser = asyncHandler(async (req, res) => {
   const { name, email, password } = req.body;
 
@@ -146,7 +155,7 @@ export const logoutUser = asyncHandler(async (req, res) => {
   res.status(200).json({ message: "User logged out" });
 });
 
-// get user
+// get single user
 export const getUser = asyncHandler(async (req, res) => {
   // get user details from the token ----> exclude password
   const user = await User.findById(req.user._id).select("-password");
@@ -158,37 +167,106 @@ export const getUser = asyncHandler(async (req, res) => {
     res.status(404).json({ message: "User not found" });
   }
 });
+export const getUsersWithoutSelf = asyncHandler(async (req, res) => {
+  try {
+    // console.log("first")
+    const userId = req.user._id;
+    if (!userId)
+      return res.status(401).json({ message: "User not authenticated" });
 
-// update user
-export const updateUser = asyncHandler(async (req, res) => {
-  // get user details from the token ----> protect middleware
-  const user = await User.findById(req.user._id);
-
-  if (user) {
-    // user properties to update
-    const { name, bio, photo } = req.body;
-    // update user properties
-    user.name = req.body.name || user.name;
-    user.bio = req.body.bio || user.bio;
-    user.photo = req.body.photo || user.photo;
-
-    const updated = await user.save();
+    const users = await User.find({ _id: { $ne: userId } }).select("-password");
+    if (!users) {
+      return res.status(400).json({ message: "No user" });
+    }
 
     res.status(200).json({
-      _id: updated._id,
-      name: updated.name,
-      email: updated.email,
-      role: updated.role,
-      photo: updated.photo,
-      bio: updated.bio,
-      isVerified: updated.isVerified,
+      message: "Users retrived successfully",
+      users,
     });
-  } else {
-    // 404 Not Found
-    res.status(404).json({ message: "User not found" });
+  } catch (error) {
+    res.status(500).json({ message: "Something went wrong" });
   }
 });
 
+// update user
+
+export const updateUser = asyncHandler(async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const data = req?.body;
+    const img = req?.file;
+
+    if (!userId) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const existingUser = await User.findById(userId);
+    if (!existingUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    if (img && existingUser.photo) {
+      try {
+        const publicId = extractPublicId(existingUser.photo);
+        
+        const res = await cloudinary.v2.uploader.destroy(publicId);
+        
+        console.log("first", publicId);
+        console.log("first", res);
+      } catch (deleteError) {
+        console.error("Error deleting old profile image:", deleteError.message);
+      }
+    }
+
+    if (img) {
+      const fileName = img.originalname
+        .toLowerCase()
+        .split(/\.(jpg|jpeg|png)$/)[0];
+      const fileLocation = img.path;
+
+      const uploadResult = await uploadIMG(fileLocation, fileName);
+      if (uploadResult?.secure_url) {
+        data.photo = uploadResult.secure_url;
+      }
+    }
+
+    const updatedUser = await User.findOneAndUpdate(
+      { _id: userId },
+      { $set: data },
+      { new: true }
+    );
+
+    if (!updatedUser) {
+      return res
+        .status(404)
+        .json({ message: "User profile could not be updated" });
+    }
+
+    const token = generateToken(
+      userId,
+      updatedUser.name,
+      updatedUser.email,
+      updatedUser.role,
+      updatedUser.photo
+    );
+
+    res.cookie("token", token, {
+      path: "/",
+      httpOnly: true,
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+      sameSite: "none",
+      secure: false,
+    });
+
+    res.status(200).json({
+      status: 200,
+      message: "User profile updated successfully",
+      token,
+    });
+  } catch (error) {
+    console.error("User profile update failed:", error.message);
+    res.status(500).json({ status: 500, message: error?.message });
+  }
+});
 // login status
 export const userLoginStatus = asyncHandler(async (req, res) => {
   const token = req.cookies.token;

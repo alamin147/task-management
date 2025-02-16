@@ -14,6 +14,7 @@ import Project from "./pages/project/Project.tsx";
 import MainLayout from "./components/layout/MainLayout.tsx";
 import PrivateRoute from "./routes/PrivateRoute.tsx";
 import ShareTasks from "./pages/sharePage/ShareTasks.tsx";
+import ProfileEdit from "./pages/profilePage/ProfileEdit.tsx";
 
 const router = createBrowserRouter([
   {
@@ -42,6 +43,10 @@ const router = createBrowserRouter([
   {
     path: "/project/:taskId",
     element: <PrivateRoute children=<MainLayout children=<Project /> /> />,
+  },
+  {
+    path: "/profile-edit",
+    element: <PrivateRoute children=<MainLayout children=<ProfileEdit /> /> />,
   },
 ]);
 ReactDOM.createRoot(document.getElementById("root")!).render(

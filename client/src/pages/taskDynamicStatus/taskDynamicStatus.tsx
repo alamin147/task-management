@@ -45,7 +45,6 @@ const TaskDynamicStatus = () => {
     filter === "all"
       ? data?.tasks
       : data?.tasks?.filter((task: TTask) => task.priority === filter);
-console.log(data)
   return (
     <>
       {isLoading ? (

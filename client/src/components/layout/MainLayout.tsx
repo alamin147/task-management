@@ -1,29 +1,22 @@
-import { FaClock, FaCheckCircle, FaDoorOpen } from "react-icons/fa";
+import { FaClock, FaCheckCircle } from "react-icons/fa";
 import { FaClockRotateLeft, FaUserGroup } from "react-icons/fa6";
 import { TbLayoutListFilled } from "react-icons/tb";
 import { ReactNode, useState } from "react";
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
 import { Avatar, Button, Layout, Menu, Tooltip } from "antd";
-import { getUserInfo, signOut } from "../auth/utils/authUlits";
+import { getUserInfo } from "../auth/utils/authUlits";
 import CreateTask from "../createTask/CreateTask";
 import { useLocation, useNavigate } from "react-router-dom";
-import toast from "react-hot-toast";
 import ProfileMenu from "../profileMenu/ProfileMenu";
-
 const { Header, Sider, Content } = Layout;
 
 const MainLayout = ({ children }: { children?: ReactNode }) => {
   const user = getUserInfo();
+  // console.log(user)
   const navigate = useNavigate();
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
   const [openModal, setOpenModal] = useState(false);
-
-  const handleSignOut = () => {
-    signOut();
-    toast.success("Logged out successfully!");
-    navigate("/login");
-  };
 
   const navItems = [
     {
@@ -73,8 +66,8 @@ const MainLayout = ({ children }: { children?: ReactNode }) => {
         <Sider trigger={null} collapsible collapsed={collapsed}>
           <div className="mb-5 bg-gradient-to-r from-green-400 to-green-600 py-1">
             <div className=" text-white ms-5 my-5 font-bold text-lg">
-              Task Management
-            </div>
+              {collapsed?"TM":"Task Management"}
+            </div>    
           </div>
           <div className="flex flex-col gap-32">
             <div className="">
@@ -92,19 +85,6 @@ const MainLayout = ({ children }: { children?: ReactNode }) => {
                   },
                 }))}
               />
-            </div>
-            <div className="mb-8 mx-1">
-              <Button
-                type="primary"
-                className="w-full py-5 flex items-center justify-start gap-2"
-                onClick={handleSignOut}
-                style={{
-                  border: "none",
-                }}
-              >
-                <FaDoorOpen color="white" size={20} className="ms-2" />
-                {!collapsed && <span>Sign Out</span>}
-              </Button>
             </div>
           </div>
         </Sider>
