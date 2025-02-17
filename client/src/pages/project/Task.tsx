@@ -66,8 +66,8 @@ const Task = ({ task }: { task: any }) => {
       {task?.subcards?.map((card: any, i: number) => {
         return (
           <div key={card._id}>
-            <div className="cngbg-white rounded-lg cngshadow-md w-72 p-4 cngborder cngborder-gray-200">
-              <div className="w-64 mb-4 p-3 bg-gray-50 rounded-lg shadow-sm flex items-center justify-between">
+            <div className="cngbg-white rounded-lg cngshadow-md w-72 p-2.5 cngborder cngborder-gray-200">
+              <div className="w-70 mb-4 p-3  bg-gray-50 rounded-lg shadow-sm flex items-center justify-between">
                 <PiDotsSixVertical />
                 <h3 className="text-lg font-semibold text-gray-800">
                   {card?.title}
@@ -195,7 +195,7 @@ const Task = ({ task }: { task: any }) => {
                   ))}
                 </div>
               </div>
-              <div className="cng mt-6 w-64 mb-4 p-5 rounded-md shadow-md bg-white ">
+              <div className="cng mt-6 w-70 mb-4 p-5 rounded-md shadow-md bg-white ">
                 <input
                   type="text"
                   placeholder="Add inside mini task..."

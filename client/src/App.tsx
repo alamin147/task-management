@@ -38,6 +38,7 @@ const App = () => {
       label: "High",
     },
   ];
+
   const filteredTasks =
     filter === "all"
       ? data?.tasks

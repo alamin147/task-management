@@ -59,13 +59,13 @@ const Project = () => {
             </Tooltip>
           </div>
           <div
-            className="pb-8 mt-3 flex gap-1"
+            className="pb-8 mt-3 flex"
             style={{ height: "calc(100vh - 140px)" }}
           >
             <Task task={data?.task} />
 
             <div className="pe-5">
-              <div className="mt-4  w-64 h-36 bg-white text-black p-3 flex-shrink-0 rounded-lg flex flex-col gap-4">
+              <div className="mt-2.5 w-64 h-36 bg-white text-black p-3 flex-shrink-0 rounded-lg flex flex-col gap-4">
                 <div className="flex flex-col gap-4 p-3 rounded-md border-gray-50 shadow-md border">
                   <input
                     type="text"
