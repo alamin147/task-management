@@ -17,13 +17,7 @@ const ProfileSettings = () => {
   const { data: user, isLoading } = useGetUserQuery(undefined);
   // useUpdateUserMutation
   const [updateUser] = useUpdateUserMutation();
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-    watch,
-  } = useForm({
+  const { register, handleSubmit } = useForm({
     defaultValues: {
       name: user?.name,
       bio: user?.bio,
@@ -32,9 +26,7 @@ const ProfileSettings = () => {
   const [isPreview, setIsPreview] = useState(false);
 
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [uploadedImagePreview, setUploadedImagePreview] = useState<
-    string | null
-  >(user?.photo || null);
+  const [uploadedImagePreview, setUploadedImagePreview] = useState(user?.photo || null);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -119,7 +111,7 @@ const ProfileSettings = () => {
             </button>
             <img
               className="w-full h-full object-center rounded-lg"
-              src={uploadedImagePreview ? uploadedImagePreview : ""}
+              src={uploadedImagePreview ? uploadedImagePreview : user?.photo}
               alt="uploaded image"
             />
           </div>

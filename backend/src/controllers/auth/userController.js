@@ -204,14 +204,18 @@ export const updateUser = asyncHandler(async (req, res) => {
     if (!existingUser) {
       return res.status(404).json({ message: "User not found" });
     }
+
     if (img && existingUser.photo) {
       try {
         const publicId = extractPublicId(existingUser.photo);
-        
-        const res = await cloudinary.v2.uploader.destroy(publicId);
-        
-        console.log("first", publicId);
-        console.log("first", res);
+
+        if (publicId) {
+          // console.log({ publicId });
+          const deleteResponse = await cloudinary.v2.uploader.destroy(publicId);
+          // console.log("Cloudinary Delete Response:", deleteResponse);
+        } else {
+          console.warn("No public ID found for image deletion.");
+        }
       } catch (deleteError) {
         console.error("Error deleting old profile image:", deleteError.message);
       }
@@ -267,6 +271,7 @@ export const updateUser = asyncHandler(async (req, res) => {
     res.status(500).json({ status: 500, message: error?.message });
   }
 });
+
 // login status
 export const userLoginStatus = asyncHandler(async (req, res) => {
   const token = req.cookies.token;
