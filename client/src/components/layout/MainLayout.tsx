@@ -17,6 +17,7 @@ const MainLayout = ({ children }: { children?: ReactNode }) => {
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
   const [openModal, setOpenModal] = useState(false);
+  const [openProfileSetting, setOpenProfileSetting] = useState(false);
 
   const navItems = [
     {
@@ -56,33 +57,50 @@ const MainLayout = ({ children }: { children?: ReactNode }) => {
     const matchedItem = navItems.find((item) => item.link === currentPath);
     return matchedItem ? matchedItem.key : "1";
   };
-  const [openProfileSetting, setOpenProfileSetting] = useState(false);
-  const hendleProfileModal = () => {
+
+  const hendleProfileModal = (e?: React.MouseEvent<HTMLElement, MouseEvent>) => {
+    if (e) e.stopPropagation();
     setOpenProfileSetting(!openProfileSetting);
   };
+
   return (
     <>
-      <Layout className=" min-h-[100vh] overflow-hidden">
-        <Sider trigger={null} collapsible collapsed={collapsed}>
-          <div className="mb-5 bg-gradient-to-r from-green-400 to-green-600 py-1">
-            <div className=" text-white ms-5 my-5 font-bold text-lg">
-              {collapsed?"TM":"Task Management"}
-            </div>    
+      <Layout className="min-h-[100vh] overflow-hidden">
+        <Sider
+          trigger={null}
+          collapsible
+          collapsed={collapsed}
+          className="bg-custom-sidebar transition-all duration-300"
+          style={{ boxShadow: '2px 0 10px rgba(0,0,0,0.1)' }}
+        >
+          <div className="mb-5 bg-gradient-to-r from-custom-green to-custom-green-dark py-2 md:py-3 shadow-md">
+            <div className="text-white ms-2 md:ms-5 my-2 md:my-3 font-bold text-lg md:text-xl flex items-center justify-center md:justify-start">
+              {collapsed ? (
+                <span className="text-xl md:text-2xl flex items-center justify-center">
+                  📋
+                </span>
+              ) : (
+                <>
+                  <span className="text-xl md:text-2xl mr-2">📋</span>
+                  <span className="hidden md:block">Task Management</span>
+                </>
+              )}
+            </div>
           </div>
           <div className="flex flex-col gap-32">
-            <div className="">
+            <div>
               <Menu
                 theme="dark"
                 mode="inline"
                 defaultSelectedKeys={["1"]}
                 selectedKeys={[getSelectedKey()]}
+                style={{ backgroundColor: 'var(--custom-sidebar, #0e3326)' }}
+                className="border-r-0"
                 items={navItems.map((item) => ({
                   key: item.key,
                   icon: item.icon,
                   label: item.label,
-                  onClick: () => {
-                    navigate(item.link);
-                  },
+                  onClick: () => navigate(item.link),
                 }))}
               />
             </div>
@@ -90,12 +108,14 @@ const MainLayout = ({ children }: { children?: ReactNode }) => {
         </Sider>
         <Layout>
           <Header
-            className="bg-gray-600"
+            className="bg-custom-header px-3 md:px-4"
             style={{
               padding: "0 16px",
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
+              boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+              overflow: 'hidden'
             }}
           >
             <Button
@@ -104,37 +124,53 @@ const MainLayout = ({ children }: { children?: ReactNode }) => {
               onClick={() => setCollapsed(!collapsed)}
               style={{
                 fontSize: "16px",
-                width: 64,
-                height: 64,
+                width: 48,
+                height: 48,
+                color: 'white'
               }}
+              className="hover:bg-custom-green-dark transition-colors"
             />
-            <div>
+
+            <div className="hidden sm:block">
               <Button
-                className="bg-custom-green text-white rounded-md hover:bg-[#1abc9c] transition-colors"
+                className=" bg-custom-green text-white rounded-md hover:bg-custom-green-hover transition-colors border-none flex items-center gap-2 text-base h-10"
                 type="primary"
                 onClick={() => setOpenModal(true)}
-                style={{ marginRight: 16 }}
+                style={{ marginRight: 16, boxShadow: '0 2px 5px rgba(0,0,0,0.1)' }}
               >
-                Create Task
+                <span className="text-lg">+</span> Create Task
               </Button>
             </div>
-            <div></div>
-            <div className="flex items-center justify-center gap-3">
+
+            {/* Mobile create task button */}
+            <div className="sm:hidden">
+              <Button
+                className="bg-custom-green text-white rounded-full hover:bg-custom-green-hover transition-colors border-none flex items-center justify-center w-10 h-10"
+                type="primary"
+                onClick={() => setOpenModal(true)}
+                style={{ boxShadow: '0 2px 5px rgba(0,0,0,0.1)' }}
+              >
+                <span className="text-lg">+</span>
+              </Button>
+            </div>
+
+            <div className="flex items-center justify-center gap-2 md:gap-4 relative">
               <div
                 style={{
-                  fontSize: "16px",
-                  fontWeight: "bold",
+                  fontSize: "15px",
+                  fontWeight: "500",
                 }}
-                className=" text-white"
+                className="text-white relative"
               >
-                {user ? `Welcome, ${user.name}!` : "Welcome to Task Manager"}
-                {openProfileSetting && <ProfileMenu />}
+                <span className="">
+                  {user ? `Welcome, ${user.name}!` : "Welcome to Task Manager"}
+                </span>
               </div>
               <Tooltip title={user?.name}>
                 {user?.photo ? (
                   <Avatar
                     onClick={hendleProfileModal}
-                    className="cursor-pointer"
+                    className="cursor-pointer border-2 border-custom-green-light"
                     size="large"
                     src={user?.photo}
                   />
@@ -142,20 +178,31 @@ const MainLayout = ({ children }: { children?: ReactNode }) => {
                   <Avatar
                     size="large"
                     onClick={hendleProfileModal}
-                    style={{ backgroundColor: "#f56a00" }}
+                    style={{
+                      backgroundColor: "var(--custom-green-dark, #27ae60)",
+                      borderColor: "white",
+                      borderWidth: "2px",
+                      boxShadow: '0 2px 5px rgba(0,0,0,0.2)'
+                    }}
+                    className="cursor-pointer"
                   >
                     {user?.name?.charAt(0)?.toUpperCase()}
                   </Avatar>
                 )}
               </Tooltip>
+              {openProfileSetting && <ProfileMenu />}
             </div>
           </Header>
 
           <Content
             onClick={() => setOpenProfileSetting(false)}
-            className="bg-gray-700  border-t border-t-gray-700"
+            className="bg-custom-bg border-t border-t-custom-green-light"
             style={{
               minHeight: 280,
+              padding: "12px",
+              borderRadius: "10px",
+              boxShadow: "inset 0 2px 5px rgba(0,0,0,0.05)",
+              overflowX: "hidden"
             }}
           >
             <CreateTask openModal={openModal} setOpenModal={setOpenModal} />

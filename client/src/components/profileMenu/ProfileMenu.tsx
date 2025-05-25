@@ -51,9 +51,18 @@ const ProfileMenu = () => {
   };
 
   return (
-    <div className="absolute top-16 right-0.5 rounded-lg z-50">
+    <div
+      className="fixed md:absolute top-14 sm:top-16 right-2 sm:right-0 rounded-lg z-50 shadow-xl animate-fadeIn"
+      onClick={(e) => e.stopPropagation()}
+    >
       <Menu
-        style={{ width: 256, borderRadius: 11 }}
+        style={{
+          borderRadius: 8,
+          width: 'auto',
+          minWidth: '180px',
+          backgroundColor: 'var(--custom-sidebar, #0e3326)',
+        }}
+        className="w-48 sm:w-56 lg:w-64"
         mode={mode}
         theme={theme}
         items={items}
