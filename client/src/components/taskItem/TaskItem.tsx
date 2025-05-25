@@ -19,19 +19,6 @@ const TaskItem = ({ task }: { task: TTask }) => {
   const [duplicateSingleTask] = useDuplicateSingleTaskMutation();
   const [openModal, setOpenModal] = useState(false);
 
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case "low":
-        return "text-green-500";
-      case "medium":
-        return "text-yellow-500";
-      case "high":
-        return "text-red-500";
-      default:
-        return "text-red-500";
-    }
-  };
-
   const deleteTask = async (id: string, title: string) => {
     try {
       const swalWithBootstrapButtons = Swal.mixin({
@@ -72,7 +59,6 @@ const TaskItem = ({ task }: { task: TTask }) => {
           } else if (result.dismiss === Swal.DismissReason.cancel) {
             swalWithBootstrapButtons.fire({
               title: "Cancelled",
-              // text: "Your task is safe",
               icon: "error",
             });
           }
@@ -94,48 +80,63 @@ const TaskItem = ({ task }: { task: TTask }) => {
   return (
     <>
       {openModal && <Modal setOpenModal={setOpenModal} task={task} />}
-
       <motion.div
-        className="h-48 px-4 py-3 flex flex-col gap-4 shadow-sm bg-[#f9f9f9] rounded-lg border-2 border-white"
+        className="h-48 px-5 py-4 flex flex-col gap-4 shadow-task bg-white rounded-lg border-l-4"
+        style={{
+          borderLeftColor: task?.priority === "high"
+            ? "#e74c3c"
+            : task?.priority === "medium"
+            ? "#f39c12"
+            : "#2ecc71"
+        }}
         layout
         initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 0.95 }}
         exit={{ opacity: 0, scale: 0.7 }}
-        whileHover={{ scale: 1 }}
-      >
-        <div
-          className="cursor-pointer"
+        whileHover={{
+          scale: 1,
+          boxShadow: "0 10px 15px rgba(46, 204, 113, 0.15), 0 4px 6px rgba(46, 204, 113, 0.1)",
+          transition: { duration: 0.2 }
+        }}
+      >        <div
+          className="cursor-pointer group"
           onClick={() => navigate(`/project/${task._id}`)}
         >
-          <div className="flex items-center justify-between">
-            <h4 className="font-bold text-2xl">
+          <div className="flex items-center justify-between mb-2">
+            <h4 className="font-bold text-2xl text-gray-800 group-hover:text-custom-green-dark transition-colors">
               {task.title ? task.title : "Untitled task"}
             </h4>
-            <FaArrowRight />
+            <FaArrowRight className="text-gray-400 group-hover:text-custom-green group-hover:translate-x-1 transition-all" />
           </div>
-          <p className="break-words whitespace-normal">
-            {task.description && task.description.length > 130
-              ? task.description.substring(0, 130) + "..."
+          <p className="break-words whitespace-normal text-gray-600 leading-relaxed">
+            {task.description && task.description.length > 120
+              ? task.description.substring(0, 120) + "..."
               : task.description || "No description"}
           </p>
         </div>
-        <div className="mt-auto border-t pt-2 border-gray-300 flex justify-between items-center">
-          <Tooltip title="Due Date" color="black">
-            <p className="text-sm text-gray-400">
-              {task?.dueDate?.split("T")[0]}
-            </p>
-          </Tooltip>
-          <Tooltip title="Priority" color="black">
-            <p
-              className={`text-sm font-bold ${getPriorityColor(
-                task?.priority
-              )}`}
-            >
-              {task.priority.charAt(0).toUpperCase() +
-                task.priority.slice(1).toLowerCase()}
-            </p>
-          </Tooltip>
-          <div className="flex items-center gap-3 text-gray-400 text-[1.2rem]">
+        <div className="mt-auto border-t pt-3 border-gray-200 flex justify-between items-center">
+          <div className="flex items-center gap-2">
+            <Tooltip title="Due Date" color="green">
+              <p className="text-sm bg-custom-bg px-2 py-1 rounded-md text-custom-green-dark font-medium">
+                {task?.dueDate?.split("T")[0]}
+              </p>
+            </Tooltip>
+            <Tooltip title="Priority" color={task?.priority === "high" ? "red" : task?.priority === "medium" ? "orange" : "green"}>
+              <p
+                className={`text-sm font-bold px-2 py-1 rounded-md ${
+                  task?.priority === "high"
+                    ? "bg-red-100 text-red-600"
+                    : task?.priority === "medium"
+                    ? "bg-yellow-100 text-yellow-600"
+                    : "bg-green-100 text-green-600"
+                }`}
+              >
+                {task.priority.charAt(0).toUpperCase() +
+                  task.priority.slice(1).toLowerCase()}
+              </p>
+            </Tooltip>
+          </div>
+          <div className="flex items-center gap-3">
             <Tooltip
               title={`${
                 task?.completed
@@ -152,36 +153,57 @@ const TaskItem = ({ task }: { task: TTask }) => {
                   : "yellow"
               }`}
             >
-              <p
-                className={`${
-                  task.completed ? "text-green-500" : "text-gray-400"
+              <div
+                className={`p-1.5 rounded-full ${
+                  task.completed
+                    ? "bg-green-100"
+                    : new Date(task.dueDate) < new Date()
+                    ? "bg-red-100"
+                    : "bg-yellow-100"
                 }`}
               >
-                <IoMdDoneAll size={20} />
-              </p>
+                <IoMdDoneAll size={16}
+                  className={`${
+                    task.completed
+                      ? "text-green-600"
+                      : new Date(task.dueDate) < new Date()
+                      ? "text-red-500"
+                      : "text-yellow-500"
+                  }`}
+                />  
+              </div>
             </Tooltip>
             <Tooltip title="Edit" color="blue">
               <button
-                className="text-[#00A1F1]"
-                onClick={() => setOpenModal(true)}
+                className="text-blue-500 p-1.5 hover:bg-blue-50 rounded-full transition-colors"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setOpenModal(true);
+                }}
               >
-                <FaPen size={15.5} />
-              </button>
+                <FaPen size={14} />
+                  </button>
             </Tooltip>
             <Tooltip title="Duplicate" color="gray">
               <button
-                className=""
-                onClick={() => handleDuplicate(task?._id, task?.title)}
+                className="text-gray-500 p-1.5 hover:bg-gray-100 rounded-full transition-colors"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDuplicate(task?._id, task?.title);
+                }}
               >
-                <IoDuplicate size={17} />
+                <IoDuplicate size={15} />
               </button>
             </Tooltip>
             <Tooltip title="Delete" color="red">
               <button
-                className="text-[#F65314]"
-                onClick={() => deleteTask(task._id, task.title)}
+                className="text-red-500 p-1.5 hover:bg-red-50 rounded-full transition-colors"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  deleteTask(task._id, task.title);
+                }}
               >
-                <FaTrash size={17} />
+                <FaTrash size={15} />
               </button>
             </Tooltip>
           </div>
