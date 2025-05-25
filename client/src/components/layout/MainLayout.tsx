@@ -166,7 +166,6 @@ const MainLayout = ({ children }: { children?: ReactNode }) => {
                   {user ? `Welcome, ${user.name}!` : "Welcome to Task Manager"}
                 </span>
               </div>
-              <Tooltip title={user?.name}>
                 {user?.photo ? (
                   <Avatar
                     onClick={hendleProfileModal}
@@ -189,9 +188,8 @@ const MainLayout = ({ children }: { children?: ReactNode }) => {
                     {user?.name?.charAt(0)?.toUpperCase()}
                   </Avatar>
                 )}
-              </Tooltip>
-              {openProfileSetting && <ProfileMenu />}
             </div>
+              {openProfileSetting && <ProfileMenu />}
           </Header>
 
           <Content

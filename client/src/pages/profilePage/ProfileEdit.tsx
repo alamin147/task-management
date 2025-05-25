@@ -15,7 +15,6 @@ import { setUser } from "@/redux/features/auth/authSlice";
 
 const ProfileSettings = () => {
   const { data: user, isLoading } = useGetUserQuery(undefined);
-  // useUpdateUserMutation
   const [updateUser] = useUpdateUserMutation();
   const { register, handleSubmit } = useForm({
     defaultValues: {
@@ -31,6 +30,10 @@ const ProfileSettings = () => {
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+        if (file.size > 5 * 1024 * 1024) {
+            toast.error("Image size exceeds 5MB limit.");
+            return;
+        }
       setImageFile(file);
       const reader = new FileReader();
       reader.onload = () => {
@@ -48,7 +51,6 @@ const ProfileSettings = () => {
 
     const formData = new FormData();
 
-    // Check if form data fields are populated and append them
     const datas: any = {};
     if (data.name) datas.name = data.name;
     if (data.bio) datas.bio = data.bio;
@@ -59,7 +61,6 @@ const ProfileSettings = () => {
       formData.append("img", imageFile);
     }
 
-    // console.dir("FormData:", formData);
     try {
       const res = await updateUser(formData).unwrap();
 
@@ -96,132 +97,145 @@ const ProfileSettings = () => {
     <>
       {isPreview && (
         <motion.div
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black bg-opacity-50"
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black bg-opacity-70"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.3 }}
         >
-          <div className="relative max-w-[80%] max-h-[80%] rounded-lg">
+          <div className="relative max-w-[90%] max-h-[90%] rounded-lg shadow-2xl">
             <button
               onClick={() => setIsPreview(false)}
-              className="absolute top-1 right-2  text-3xl font-bold bg-transparent border-none cursor-pointer text-gray-500 hover:text-gray-700 focus:outline-none p-1 rounded-full bg-red-500"
+              className="absolute top-2 right-2 text-white bg-red-500 hover:bg-red-600 p-2 rounded-full transition-colors focus:outline-none"
             >
-              <RxCross2 size={20} />
+              <RxCross2 size={22} />
             </button>
             <img
-              className="w-full h-full object-center rounded-lg"
+              className="w-full h-full object-contain rounded-lg max-h-[90vh]"
               src={uploadedImagePreview ? uploadedImagePreview : user?.photo}
-              alt="uploaded image"
+              alt="Profile preview"
             />
           </div>
         </motion.div>
       )}
-      <div className="max-w-7xl m-6">
-        <h1 className="text-2xl font-bold">Edit Profile</h1>
-        <p className="text-gray-500 mb-6">Edit your profile</p>
+      <div className="max-w-5xl mx-auto p-6 bg-white rounded-xl shadow-lg">
+        <div className="border-b pb-4 mb-6">
+          <h1 className="text-3xl font-bold text-gray-800">Edit Profile</h1>
+          <p className="text-gray-500 mt-1">Customize your profile information</p>
+        </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="p-0">
-          <div className="mb-3 relative">
-            <div className="relative w-52 h-52">
-              {uploadedImagePreview || user?.photo ? (
-                <>
-                  <img
-                    className="w-full h-full rounded-full object-cover"
-                    src={uploadedImagePreview || user?.photo}
-                    alt="Profile"
-                  />
-                </>
-              ) : (
-                <div className="w-full h-full rounded-full bg-gray-300 flex items-center justify-center text-gray-700 text-4xl font-bold">
-                  <Avatar className="w-full h-full rounded-full">
-                    {user?.name?.charAt(0).toUpperCase() || "U"}
-                  </Avatar>
-                </div>
-              )}
+          <div className="flex flex-col md:flex-row gap-8">
+            {/* Profile Photo Section */}
+            <div className="mb-6 relative">
+              <div className="relative w-52 h-52 mx-auto md:mx-0">
+                {uploadedImagePreview || user?.photo ? (
+                  <>
+                    <img
+                      className="w-full h-full rounded-full object-cover border-4 border-gray-100 shadow-md"
+                      src={uploadedImagePreview || user?.photo}
+                      alt="Profile"
+                    />
+                  </>
+                ) : (
+                  <div className="w-full h-full rounded-full bg-gray-200 flex items-center justify-center text-gray-700 text-4xl font-bold shadow-inner">
+                    <Avatar className="w-full h-full rounded-full">
+                      {user?.name?.charAt(0).toUpperCase() || "U"}
+                    </Avatar>
+                  </div>
+                )}
 
-              {/* Hover effect for both image and avatar */}
-              <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40 opacity-0 hover:opacity-100 transition-opacity duration-300 rounded-full">
-                <label
-                  htmlFor="imageUpload"
-                  className="cursor-pointer flex items-center justify-center w-12 h-12 bg-blue-500 text-white rounded-full hover:bg-blue-600"
-                >
-                  <FaPlus />
-                </label>
+                {/* Hover effect for image upload */}
+                <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30 opacity-0 hover:opacity-100 transition-opacity duration-300 rounded-full">
+                  <label
+                    htmlFor="imageUpload"
+                    className="cursor-pointer flex items-center justify-center w-14 h-14 bg-green-500 text-white rounded-full hover:bg-green-600 transition-colors shadow-lg"
+                  >
+                    <FaPlus size={24} />
+                  </label>
+                </div>
+
+                <input
+                  id="imageUpload"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="hidden"
+                />
               </div>
 
-              <input
-                id="imageUpload"
-                type="file"
-                accept="image/*"
-                onChange={handleImageUpload}
-                className="hidden"
-              />
+              <div className="text-center md:text-left mt-4">
+                <Tooltip placement="top" title="Can upload one image only">
+                  <p className="text-xs text-gray-500 mb-2">Maximum size: 5MB</p>
+                </Tooltip>
+
+                {(uploadedImagePreview || user?.photo) && (
+                  <button
+                    className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors text-sm font-medium"
+                    type="button"
+                    onClick={() => setIsPreview(true)}
+                  >
+                    Preview Full Image
+                  </button>
+                )}
+              </div>
             </div>
 
-            <input
-              id="imageUpload"
-              type="file"
-              accept="image/*"
-              onChange={handleImageUpload}
-              className="hidden"
-            />
-            <Tooltip placement="topLeft" title="Can upload one image only" />
-          </div>
+            {/* Form Fields Section */}
+            <div className="flex-1">
+              <div className="space-y-5">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                  <input
+                    type="text"
+                    {...register("name")}
+                    className="w-full px-4 py-3 border rounded-lg bg-white border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all"
+                    defaultValue={user?.name}
+                    placeholder="Enter your name"
+                  />
+                </div>
 
-          {(uploadedImagePreview || user?.photo) && (
-            <button
-              className="mb-1"
-              type="button"
-              onClick={() => setIsPreview(true)}
-            >
-              Preview Fullscreen
-            </button>
-          )}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                  <input
+                    type="text"
+                    className="w-full px-4 py-3 border rounded-lg bg-gray-50 cursor-not-allowed text-gray-600 focus:outline-none"
+                    value={user?.email}
+                    disabled
+                  />
+                  <p className="mt-1 text-xs text-gray-500">Email address cannot be changed</p>
+                </div>
 
-          <div className="mb-3">
-            <label className="mt-2 block text-sm font-medium mb-1">Name</label>
-            <input
-              type="text"
-              {...register("name")}
-              className="max-w-96 w-full px-4 py-2 border rounded-lg bg-white border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
-              defaultValue={user?.name}
-            />
-          </div>
-          <div className="mb-3">
-            <label className="mt-2 block text-sm font-medium mb-1">Email</label>
-            <input
-              type="text"
-              className="bg-white cursor-not-allowed max-w-96 w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-green-500 focus:border-green-500"
-              value={user?.email}
-              disabled
-            />
-          </div>
-          <div className="mb-3">
-            <label className="mt-2 block text-sm font-medium mb-1">Bio</label>
-            <textarea
-              {...register("bio")}
-              className="bg-white max-w-96 w-full px-4 py-2 border border-gray-300 rounded-lg max-h-52 min-h-32 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
-              defaultValue={user?.bio || ""}
-            />
-          </div>
-          <div className="mt-5">
-            {sendBtn ? (
-              <button
-                type="submit"
-                className="px-4 py-2 bg-green-500 hover:bg-green-400 text-white rounded-lg"
-                disabled
-              >
-                <Spin />
-              </button>
-            ) : (
-              <button
-                type="submit"
-                className="px-4 py-2 bg-green-500 hover:bg-green-400 text-white rounded-lg"
-              >
-                Update Profile
-              </button>
-            )}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Bio</label>
+                  <textarea
+                    {...register("bio")}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg min-h-32 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all"
+                    defaultValue={user?.bio || ""}
+                    placeholder="Tell us about yourself..."
+                  />
+                </div>
+
+                <div className="pt-3">
+                  {sendBtn ? (
+                    <button
+                      type="submit"
+                      className="px-6 py-3 bg-green-500 text-white rounded-lg font-medium cursor-not-allowed opacity-80"
+                      disabled
+                    >
+                      <Spin size="small" className="mr-2" /> Updating...
+                    </button>
+                  ) : (
+                    <button
+                      type="submit"
+                      className="px-6 py-3 bg-green-500 hover:bg-green-600 text-white rounded-lg font-medium transition-colors"
+                    >
+                      Update Profile
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
         </form>
       </div>

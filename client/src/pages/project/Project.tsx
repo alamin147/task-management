@@ -26,7 +26,6 @@ const Project = () => {
     }
   };
   const [shareOpenModal, setShareOpenModal] = useState(false);
-  // console.log("task",data)
 
   return (
     <>
@@ -53,7 +52,7 @@ const Project = () => {
               <PiShareNetworkFill
                 size={20}
                 className="cursor-pointer me-5"
-                color="white"
+                color="black"
                 onClick={() => setShareOpenModal(true)}
               />
             </Tooltip>
