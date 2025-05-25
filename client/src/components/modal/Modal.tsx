@@ -28,98 +28,95 @@ const Modal = ({ task, setOpenModal }: { task: TTask; setOpenModal: any }) => {
     setOpenModal(false);
   };
 
-  return (
-    <div className="fixed left-0 top-0 z-50 h-full w-full bg-[#333]/30 overflow-hidden">
+  return (    <div className="fixed left-0 top-0 z-50 h-full w-full bg-black/40 overflow-hidden backdrop-blur-sm">
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="py-5 px-6 max-w-[520px] w-full flex flex-col gap-3 bg-white absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-lg shadow-md"
+        className="py-8 px-7 max-w-[550px] w-full flex flex-col gap-4 bg-white absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-xl shadow-xl"
       >
         {/* Close button */}
         <button
           type="button"
-          className="absolute top-2 right-2 text-white bg-red-500 hover:bg-red-600 rounded-full w-8 h-8 flex items-center justify-center"
+          className="absolute top-3 right-3 text-gray-600 hover:text-red-500 transition-colors rounded-full w-8 h-8 flex items-center justify-center border border-gray-200 hover:border-red-200"
           onClick={() => setOpenModal(false)}
         >
           &times;
         </button>
 
-        <h1 className="text-2xl font-bold text-center mt-10 mb-3">
-          Update your Task
-        </h1>
-
-        {/* Title Field */}
-        <div className="flex flex-col gap-1">
-          <label htmlFor="title">Title</label>
+        <h1 className="text-2xl font-bold text-center mt-4 mb-4 text-custom-green-dark">
+          Update Task
+        </h1>        {/* Title Field */}
+        <div className="flex flex-col gap-2">
+          <label htmlFor="title" className="text-gray-700 font-medium">Title</label>
           <Controller
             name="title"
             control={control}
             render={({ field }) => (
               <input
                 {...field}
-                className="bg-[#F9F9F9] p-2 rounded-md border"
+                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-custom-green-light focus:border-custom-green transition duration-200"
                 type="text"
                 id="title"
-                placeholder="Task Title"
+                placeholder="Enter task title"
               />
             )}
           />
         </div>
 
         {/* Description Field */}
-        <div className="flex flex-col gap-1">
-          <label htmlFor="description">Description</label>
+        <div className="flex flex-col gap-2">
+          <label htmlFor="description" className="text-gray-700 font-medium">Description</label>
           <Controller
             name="description"
             control={control}
             render={({ field }) => (
               <textarea
                 {...field}
-                className="bg-[#F9F9F9] p-2 rounded-md border resize-none"
-                placeholder="Task Description"
+                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-custom-green-light focus:border-custom-green transition duration-200"
+                placeholder="Enter task details"
                 rows={4}
               />
             )}
           />
-        </div>
+        </div>        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-1">
+          {/* Priority Field */}
+          <div className="flex flex-col gap-2">
+            <label htmlFor="priority" className="text-gray-700 font-medium">Priority</label>
+            <Controller
+              name="priority"
+              control={control}
+              render={({ field }) => (
+                <select
+                  {...field}
+                  className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-custom-green-light focus:border-custom-green transition duration-200 bg-white"
+                >
+                  <option value="low">Low</option>
+                  <option value="medium">Medium</option>
+                  <option value="high">High</option>
+                </select>
+              )}
+            />
+          </div>
 
-        {/* Priority Field */}
-        <div className="flex flex-col gap-1">
-          <label htmlFor="priority">Select Priority</label>
-          <Controller
-            name="priority"
-            control={control}
-            render={({ field }) => (
-              <select
-                {...field}
-                className="bg-[#F9F9F9] p-2 rounded-md border cursor-pointer"
-              >
-                <option value="low">Low</option>
-                <option value="medium">Medium</option>
-                <option value="high">High</option>
-              </select>
-            )}
-          />
-        </div>
-
-        {/* Due Date Field */}
-        <div className="flex flex-col gap-1">
-          <label htmlFor="dueDate">Due Date</label>
-          <Controller
-            name="dueDate"
-            control={control}
-            render={({ field }) => (
-              <input
-                {...field}
-                className="bg-[#F9F9F9] p-2 rounded-md border"
-                type="date"
-              />
-            )}
-          />
+          {/* Due Date Field */}
+          <div className="flex flex-col gap-2">
+            <label htmlFor="dueDate" className="text-gray-700 font-medium">Due Date</label>
+            <Controller
+              name="dueDate"
+              control={control}
+              render={({ field }) => (
+                <input
+                  {...field}
+                  className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-custom-green-light focus:border-custom-green transition duration-200"
+                  type="date"
+                />
+              )}
+            />
+          </div>
         </div>
 
         {/* Completed Field */}
-        <div className="flex flex-col gap-1">
-          <label htmlFor="completed">Task Completed</label>
+        <div className="flex flex-col gap-2 mt-1">
+          <label htmlFor="completed" className="text-gray-700 font-medium">Task Status</label>
           <Controller
             name="completed"
             control={control}

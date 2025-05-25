@@ -9,7 +9,8 @@ import { RxCross2 } from "react-icons/rx";
 import { FaPlus, FaTrash } from "react-icons/fa6";
 import Swal from "sweetalert2";
 import { motion } from "framer-motion";
-
+import { CiImageOn } from "react-icons/ci"
+import { LuEye } from "react-icons/lu";
 const MiniTaskModal = ({
   onClose,
   miniTaskData,
@@ -183,24 +184,26 @@ const MiniTaskModal = ({
 
       {/*end of preview image */}
 
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-        <div className="bg-white rounded-lg shadow-lg w-full max-w-lg p-6">
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 backdrop-blur-sm">
+        <div className="bg-white rounded-xl shadow-xl w-full max-w-lg p-7 border-l-4 border-custom-green transform transition-transform duration-200 hover:scale-[1.01]"
+        >
           {/* Modal Header */}
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-semibold text-gray-800">Task</h2>
+          <div className="flex justify-between items-center mb-5">
+            <h2 className="text-xl font-semibold text-custom-green-dark">Edit Card</h2>
             <button
               onClick={onClose}
-              className="text-gray-500 hover:text-gray-700 focus:outline-none p-1 rounded-full bg-red-500"
+              className="text-gray-600 hover:text-red-500 transition-colors duration-200 rounded-full w-8 h-8 flex items-center justify-center border border-gray-200 hover:border-red-200"
             >
-              <RxCross2 color="white" size={20} />
+              <RxCross2 size={18} />
             </button>
           </div>
 
           {/* Modal Form */}
           <form onSubmit={handleSubmit}>
             {/* Task Image Upload */}
-            <div className="mb-3">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+            <div className="mb-4">
+              <label className="text-custom-green-dark font-medium mb-2 flex items-center gap-2">
+               <CiImageOn size={18}/>
                 Cover Image
               </label>
 
@@ -272,22 +275,19 @@ const MiniTaskModal = ({
                 title={"Can upload one image only"}
               />
             </div>
-
             {/* Task Title */}
-
             <div className="mb-4">
               {/* fullscreen */}
-
               {uploadedImagePreview && (
                 <button
-                  className="mb-1"
+                  className="mb-1 text-xs text-custom-green-dark hover:text-custom-green font-medium flex items-center gap-1 transition-colors duration-200"
                   type="button"
                   onClick={() => setIsPreview(true)}
                 >
+                 <LuEye size={18}/>
                   Preview Fullscreen
                 </button>
               )}
-
               <label className="mt-2 block text-sm font-medium text-gray-700 mb-1">
                 Task Title
               </label>
@@ -295,7 +295,7 @@ const MiniTaskModal = ({
                 type="text"
                 value={taskTitle}
                 onChange={(e) => setTaskTitle(e.target.value)}
-                className="w-full px-4 py-2 border rounded-lg"
+                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-custom-green focus:border-custom-green transition-all duration-200"
                 required
               />
             </div>
@@ -308,7 +308,7 @@ const MiniTaskModal = ({
               <textarea
                 value={taskDescription}
                 onChange={(e) => setTaskDescription(e.target.value)}
-                className="w-full px-4 py-2 border rounded-lg max-h-64"
+                className="w-full px-4 py-2 border border-gray-200 rounded-lg max-h-64 focus:outline-none focus:ring-1 focus:ring-custom-green focus:border-custom-green transition-all duration-200 resize-none"
               />
             </div>
 
@@ -321,7 +321,7 @@ const MiniTaskModal = ({
                 type="date"
                 value={taskDueDate}
                 onChange={(e) => setTaskDueDate(e.target.value)}
-                className="w-full px-4 py-2 border rounded-lg"
+                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-custom-green focus:border-custom-green transition-all duration-200 cursor-pointer"
               />
             </div>
 
@@ -358,14 +358,14 @@ const MiniTaskModal = ({
                 <button
                   type="button"
                   onClick={onClose}
-                  className="px-4 py-2 bg-gray-200 rounded-lg"
+                  className="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg transition-colors duration-200"
                   disabled={loading}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-blue-500 text-white rounded-lg"
+                  className="px-5 py-2 bg-custom-green hover:bg-custom-green-hover text-white rounded-lg shadow-sm transition-all duration-200 hover:shadow-md disabled:opacity-70"
                   disabled={loading}
                 >
                   {loading ? "Saving..." : "Save Task"}

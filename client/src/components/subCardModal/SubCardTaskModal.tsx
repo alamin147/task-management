@@ -71,62 +71,62 @@ const SubCardTaskModal = ({
   };
   return (
     <>
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-        <div className="bg-white rounded-lg shadow-lg w-full max-w-lg p-6">
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 backdrop-blur-sm">
+        <div className="bg-white rounded-xl shadow-xl w-full max-w-lg p-7">
           {/* Modal Header */}
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-semibold text-gray-800">Sub Task</h2>
+          <div className="flex justify-between items-center mb-5">
+            <h2 className="text-xl font-semibold text-custom-green-dark">Edit List</h2>
             <button
               onClick={onClose}
-              className="text-gray-500 hover:text-gray-700 focus:outline-none p-1 rounded-full bg-red-500"
+              className="text-gray-600 hover:text-red-500 transition-colors rounded-full w-8 h-8 flex items-center justify-center border border-gray-200 hover:border-red-200"
             >
-              <RxCross2 color="white" size={20} />
+              <RxCross2 size={18} />
             </button>
           </div>
 
           {/* Modal Form */}
           <form onSubmit={handleSubmit}>
             {/* Task Title */}
-
-            <div className="mb-4">
-              <label className="mt-2 block text-sm font-medium text-gray-700 mb-1">
-                Task Title
+            <div className="mb-5">
+              <label className="block text-gray-700 font-medium mb-2">
+                List Title
               </label>
               <input
                 type="text"
                 value={taskTitle}
                 onChange={(e) => setTaskTitle(e.target.value)}
-                className="w-full px-4 py-2 border rounded-lg"
+                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-custom-green-light focus:border-custom-green transition duration-200"
                 required
               />
             </div>
 
             {/* Buttons */}
-            <div className="flex justify-between items-center">
-              <Tooltip title="Delete this Task" color={"red"} key={"red"}>
-                <FaTrash
-                  onClick={handleDelete}
-                  size={18}
-                  color="red"
-                  className="ms-1 cursor-pointer"
+            <div className="flex justify-between items-center mt-7">
+              <Tooltip title="Delete this list" color="red">
+                <button
                   type="button"
-                />
+                  onClick={handleDelete}
+                  className="flex items-center gap-2 px-3 py-2 rounded-md bg-red-50 hover:bg-red-100 text-red-600 transition-colors"
+                >
+                  <FaTrash size={16} />
+                  <span>Delete</span>
+                </button>
               </Tooltip>
-              <div className="flex justify-end gap-4">
+              <div className="flex justify-end gap-3">
                 <button
                   type="button"
                   onClick={onClose}
-                  className="px-4 py-2 bg-gray-200 rounded-lg"
+                  className="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 rounded-md text-gray-700 transition-colors"
                   disabled={loading}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-blue-500 text-white rounded-lg"
+                  className="px-5 py-2.5 bg-custom-green hover:bg-custom-green-dark text-white rounded-md font-medium transition-colors shadow-sm"
                   disabled={loading}
                 >
-                  {loading ? "Saving..." : "Save Task"}
+                  {loading ? "Saving..." : "Save Changes"}
                 </button>
               </div>
             </div>
