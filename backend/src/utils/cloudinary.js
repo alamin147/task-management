@@ -10,7 +10,9 @@ export const uploadIMG = async (path, fileName) => {
   });
   try {
     const uploadResult = await cloudinary.uploader.upload(path, {
-      public_id: fileName,
+    public_id: fileName,
+    folder: process.env.CLOUDINARY_FOLDER,
+    resource_type: "image",
     });
 
     return uploadResult;
