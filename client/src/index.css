@@ -2,10 +2,142 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
+:root {
+  --custom-green: #2ECC71;
+  --custom-green-hover: #1abc9c;
+  --custom-green-dark: #27ae60;
+  --custom-green-light: #a1e3ba;
+  --custom-bg: #f0f9f4;
+  --custom-sidebar: #0e3326;
+  --custom-header: #104632;
+}
 
 body {
-  background-color: #f9f9f9;
+  background-color: var(--custom-bg, #f0f9f4);
   height: 100vh;
   position: relative;
+  font-family: 'Poppins', sans-serif;
+  color: #333;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f0f9f4;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2ECC71;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #27ae60;
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: 2px solid rgba(46, 204, 113, 0.5) !important;
+  border-color: #2ECC71 !important;
+}
+
+@media (max-width: 768px) {
+  .ant-layout-sider {
+    max-width: 60px !important;
+    min-width: 60px !important;
+    width: 60px !important;
+  }
+
+  .ant-layout-sider-collapsed {
+    max-width: 0 !important;
+    min-width: 0 !important;
+    width: 0 !important;
+  }
+
+  .ant-layout-header {
+    padding: 0 8px !important;
+    height: 56px !important;
+  }
+
+  .ant-menu-item {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+    height: 48px !important;
+    line-height: 48px !important;
+  }
+
+  .ant-layout-content {
+    padding: 12px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .ant-layout-sider {
+    max-width: 50px !important;
+    min-width: 50px !important;
+    width: 50px !important;
+  }
+
+  .ant-layout-content {
+    padding: 8px !important;
+  }
+
+  
+  .ant-layout-header {
+    padding: 0 4px !important;
+    justify-content: space-between !important;
+    gap: 4px !important;
+  }
+
+  
+  .ant-btn {
+    padding: 0 8px !important;
+  }
+
+  
+  .ant-menu-item .anticon,
+  .ant-menu-submenu-title .anticon {
+    font-size: 18px !important;
+    margin-right: 0 !important;
+  }
+}
+
+
+.ant-btn-primary {
+  background-color: var(--custom-green) !important;
+}
+
+.ant-btn-primary:hover {
+  background-color: var(--custom-green-hover) !important;
+}
+
+.ant-menu-item-selected {
+  background-color: var(--custom-green-dark) !important;
+}
+
+.ant-tooltip .ant-tooltip-inner {
+  border-radius: 6px;
+}
+
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.task-item-animate {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.2s ease-out;
 }

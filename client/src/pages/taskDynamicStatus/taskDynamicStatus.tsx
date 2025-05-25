@@ -46,31 +46,34 @@ const TaskDynamicStatus = () => {
       ? data?.tasks
       : data?.tasks?.filter((task: TTask) => task.priority === filter);
   return (
-    <>
-      {isLoading ? (
-        <div className="relative top-1/2 left-1/2 w-12 h-12 border-4 border-t-4 border-gray-300 border-t-[#3aafae] rounded-full animate-spin"></div>
+    <>      {isLoading ? (
+        <div className="flex items-center justify-center h-[80vh]">
+          <div className="w-16 h-16 border-4 border-gray-200 border-t-custom-green rounded-full animate-spin"></div>
+        </div>
       ) : (
-        <main className="m-6 h-full">
-          <div className="flex justify-between">
-            <h1 className="text-2xl font-bold">
-              {status && status?.charAt(0).toUpperCase() + status?.slice(1)}{" "}
-              Tasks
+        <main className="m-6 h-full">          <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6">
+            <h1 className="text-2xl font-bold text-custom-green-dark mb-4 sm:mb-0">
+              <span className="border-b-4 border-custom-green pb-1">
+                {status && status?.charAt(0).toUpperCase() + status?.slice(1)}{" "}
+                Tasks
+              </span>
             </h1>
 
             <Tooltip title="Filter by Priority" color="green">
               <Select
-                placeholder="Priority"
-                style={{ width: 120 }}
+                placeholder="Filter by Priority"
+                style={{ width: 160 }}
                 onChange={handleChange}
                 defaultValue="all"
                 options={options}
+                className="rounded-md shadow-sm border-custom-green-light"
                 allowClear
               />
             </Tooltip>
           </div>
 
           <motion.div
-            className="pb-[2rem] mt-6 grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap- overflow-x-auto"
+            className="pb-8 mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 overflow-x-auto"
             initial="hidden"
             animate="visible"
           >

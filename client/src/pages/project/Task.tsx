@@ -67,16 +67,16 @@ const Task = ({ task }: { task: any }) => {
         return (
           <div key={card._id}>
             <div className="cngbg-white rounded-lg cngshadow-md w-72 p-2.5 cngborder cngborder-gray-200">
-              <div className="w-70 mb-4 p-3  bg-gray-50 rounded-lg shadow-sm flex items-center justify-between">
-                <PiDotsSixVertical />
-                <h3 className="text-lg font-semibold text-gray-800">
+              <div className="w-70 mb-4 p-3 bg-custom-green/10 rounded-lg shadow-task flex items-center justify-between border-l-4 border-custom-green">
+                <PiDotsSixVertical className="text-custom-green-dark" />
+                <h3 className="text-lg font-semibold text-custom-green-dark">
                   {card?.title}
                 </h3>
                 <div
-                  className="cursor-pointer"
+                  className="cursor-pointer p-1.5 hover:bg-custom-green/20 rounded-full transition-all"
                   onClick={() => handleOpenSubTaskModal(card, task?._id)}
                 >
-                  <FaPencil />
+                  <FaPencil className="text-custom-green-dark" />
                 </div>
               </div>
               <div className="cngbg-gray-50 rounded-lg shadow-sm">
@@ -84,31 +84,51 @@ const Task = ({ task }: { task: any }) => {
                   {task?.subcards[i]?.miniTasks?.map((minicard: any) => (
                     <div
                       key={minicard._id}
-                      className={` rounded-lg shadow-md bg-white flex flex-col `}
+                      className={`rounded-lg shadow-task hover:shadow-task-hover bg-white flex flex-col transition-all duration-200 border border-gray-100`}
                     >
                       {minicard.img && (
-                        <img
-                          src={minicard.img}
-                          alt={minicard.title}
-                          className="w-full h-32 object-cover rounded-t-md"
-                        />
+                        <div className="relative group">
+                          <img
+                            src={minicard.img}
+                            alt={minicard.title}
+                            className="w-full h-32 object-cover rounded-t-md"
+                          />
+                          <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-t-md">
+                            <span className="text-white text-sm bg-custom-green/80 px-3 py-1 rounded-full">View image</span>
+                          </div>
+                        </div>
                       )}
 
                       {/* tags */}
 
-                      <div className="p-3 ps-2">
+                      <div className="p-3 ps-3">
                         <div className="flex items-center gap-2">
                           {/* {minicard?.tags &&
                               minicard?.tags.map((tag: any) => ( */}
                           <span
                             // key={tag.title}
-                            className="px-[10px] py-[2px] text-[13px] font-medium rounded-md "
+                            className="px-3 py-0.5 text-xs font-medium rounded-full"
                             style={{
                               backgroundColor: "rgb(207, 250, 254)",
                               color: "rgb(8, 145, 178)",
                             }}
                           >
-                            tags
+                            Task
+                          </span>
+                          <span
+                            className={`px-3 py-0.5 text-xs font-medium rounded-full ${
+                              minicard?.completed === "completed"
+                                ? "bg-green-100 text-green-700"
+                                : minicard?.completed === "in progress"
+                                ? "bg-yellow-100 text-yellow-700"
+                                : "bg-red-100 text-red-700"
+                            }`}
+                          >
+                            {minicard?.completed === "completed"
+                              ? "Completed"
+                              : minicard?.completed === "in progress"
+                              ? "In Progress"
+                              : "Pending"}
                           </span>
                           {/* ))} */}
                         </div>
@@ -116,12 +136,12 @@ const Task = ({ task }: { task: any }) => {
 
                       {/* title */}
 
-                      <div className="p-3 pt-0">
+                      <div className="px-3 pt-1 pb-3">
                         <div className="flex justify-between items-center">
                           <span
                             className={`text-gray-800 font-semibold text-lg ${
                               minicard?.completed === "completed"
-                                ? "line-through"
+                                ? "line-through text-gray-400"
                                 : ""
                             }`}
                           >
@@ -129,35 +149,33 @@ const Task = ({ task }: { task: any }) => {
                           </span>
 
                           <div
-                            className="cursor-pointer"
+                            className="cursor-pointer p-1.5 hover:bg-gray-100 rounded-full transition-colors"
                             onClick={() =>
                               handleOpenMiniTaskModal(minicard, card)
                             }
                           >
-                            <FaPencil />
+                            <FaPencil className="text-gray-500" size={14} />
                           </div>
                         </div>
                       </div>
-                      <div className="p-3 pt-0">
+                      <div className="px-3 pt-0">
                         <div className="flex justify-between items-center">
-                          <span className="text-gray-500 text-[13px]">
-                            {minicard?.description?.length > 30
-                              ? `${minicard.description.substring(0, 30)}...`
-                              : minicard?.description}
-                          </span>
+                          <p className="text-gray-500 text-sm min-h-[2rem] line-clamp-2">
+                            {minicard?.description?.length > 60
+                              ? `${minicard.description.substring(0, 60)}...`
+                              : minicard?.description || "No description provided"}
+                          </p>
                         </div>
                       </div>
-                      <div className="p-3 pt-0">
+                      <div className="p-3 mt-auto border-t border-gray-100">
                         <div className="flex justify-between items-center">
                           <Tooltip
                             title="Due Date"
-                            color="red"
-                            key={"dd"}
-                            className=""
+                            color="green"
                           >
-                            <div className="flex items-center gap-2">
-                              <FaClock className="" size={18} />
-                              <div className="pt-0.5">
+                            <div className="flex items-center gap-2 px-2 py-1 rounded-md bg-custom-bg text-custom-green-dark text-xs font-medium">
+                              <FaClock size={12} />
+                              <div>
                                 {minicard?.dueDate.split("T")[0]}
                               </div>
                             </div>
