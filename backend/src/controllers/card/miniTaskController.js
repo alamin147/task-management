@@ -29,8 +29,7 @@ export const createMiniTask = asyncHandler(async (req, res) => {
   const mainTask = await TaskModel.findOne({
     subcards: { $in: [task._id] },
   });
-  console.log(mainTask);
-
+ 
   if (!mainTask){
     return res.status(404).json({ message: "Task not found" });
 }
