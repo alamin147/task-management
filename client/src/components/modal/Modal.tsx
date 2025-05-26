@@ -8,8 +8,8 @@ const Modal = ({ task, setOpenModal }: { task: TTask; setOpenModal: any }) => {
   const {
     control,
     handleSubmit,
-    setValue,
-    formState: { errors },
+
+
   } = useForm({
     defaultValues: {
       title: task.title,
@@ -28,7 +28,8 @@ const Modal = ({ task, setOpenModal }: { task: TTask; setOpenModal: any }) => {
     setOpenModal(false);
   };
 
-  return (    <div className="fixed left-0 top-0 z-50 h-full w-full bg-black/40 overflow-hidden backdrop-blur-sm">
+  return (
+  <div className="fixed left-0 top-0 z-50 h-full w-full bg-black/40 overflow-hidden backdrop-blur-sm">
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="py-8 px-7 max-w-[550px] w-full flex flex-col gap-4 bg-white absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-xl shadow-xl"

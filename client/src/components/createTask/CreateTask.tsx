@@ -27,9 +27,6 @@ const CreateTask = ({
 
   const onSubmit = async (data: any) => {
     try {
-      console.log(
-        "right herererer create task"
-      )
       await createTask(data).unwrap();
       toast.success("Task created successfully!");
       setOpenModal(false);

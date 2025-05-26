@@ -1,4 +1,4 @@
-type TUser = {
+export type TUser = {
     email: string;
     exp: number;
     iat: number;
@@ -7,8 +7,6 @@ type TUser = {
     photo: string;
     role: "user" | "admin"
   };
-  
-
 
   export type TTask = {
     _id:string;
@@ -18,5 +16,5 @@ type TUser = {
     status?: "active" | "inactive";
     completed?: boolean;
     priority: "low" | "medium" | "high";
-    user: string; 
+    user: string;
   };

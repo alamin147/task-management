@@ -3,7 +3,7 @@ import { FaClockRotateLeft, FaUserGroup } from "react-icons/fa6";
 import { TbLayoutListFilled } from "react-icons/tb";
 import { ReactNode, useState } from "react";
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
-import { Avatar, Button, Layout, Menu, Tooltip } from "antd";
+import { Avatar, Button, Layout, Menu } from "antd";
 import { getUserInfo } from "../auth/utils/authUlits";
 import CreateTask from "../createTask/CreateTask";
 import { useLocation, useNavigate } from "react-router-dom";

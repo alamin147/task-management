@@ -1,7 +1,6 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
 import { useRegisterUserMutation } from "../../../redux/features/auth/authApi";
 
 interface IFormInput {
@@ -24,20 +23,17 @@ function RegisterForm() {
     },
   });
 
-  const [registerUser, { isLoading }] = useRegisterUserMutation();
+  const [registerUser] = useRegisterUserMutation();
 
   const [showPassword, setShowPassword] = React.useState(false);
-  const navigate = useNavigate();
 
   const togglePassword = () => setShowPassword(!showPassword);
 
   const onSubmit = async (data: IFormInput) => {
     try {
-      const res = await registerUser(data);
-      // console.log("here",res);
+      await registerUser(data);
       toast.success("User registered successfully");
-      reset(); // Reset the form after successful submission
-      // navigate("/login"); // Use navigate instead of router.push
+      reset();
     } catch (error: any) {
       console.log("Error registering user", error);
       toast.error(error.response?.data?.message);
