@@ -6,7 +6,7 @@ import {
   deleteTask,
 } from "../controllers/task/taskController.js";
 import { protect } from "../middleware/authMiddleware.js";
-import { createSubTask, deleteSubtask, updateSubTask } from "../controllers/card/cardController.js";
+import { createSubTask, deleteSubtask, reorderSubTasks, updateSubTask } from "../controllers/card/cardController.js";
 
 export const CardRoutes = express.Router();
 
@@ -17,6 +17,8 @@ CardRoutes.get("/sub-cards", protect, getTasks);
 CardRoutes.patch("/sub-card/update", protect, updateSubTask);
 
 CardRoutes.delete("/sub-card/delete", protect, deleteSubtask);
+
+CardRoutes.patch("/sub-card/reorder", protect, reorderSubTasks);
 
 CardRoutes.get("/sub-card/:id", protect, getTask);
 CardRoutes.patch("/sub-card/:id", protect, updateTask);

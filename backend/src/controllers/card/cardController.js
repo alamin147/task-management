@@ -81,8 +81,6 @@ export const updateSubTask = asyncHandler(async (req, res) => {
   }
 });
 
-
-
 export const deleteSubtask = asyncHandler(async (req, res) => {
   const { taskId, subtaskId } = req.body;
 
@@ -134,6 +132,61 @@ export const deleteSubtask = asyncHandler(async (req, res) => {
       status: 500,
       message: "Internal server error",
       error: error.message,
+    });
+  }
+});
+
+export const reorderSubTasks = asyncHandler(async (req, res) => {
+  const { taskId, subtasks } = req.body;
+  const userId = req.user.id;
+
+  if (!taskId) {
+    return res.status(400).json({
+      status: 400,
+      message: "Task ID is required",
+    });
+  }
+
+  if (!subtasks || !Array.isArray(subtasks)) {
+    return res.status(400).json({
+      status: 400,
+      message: "Subtasks array is required",
+    });
+  }
+
+  try {
+    const task = await TaskModel.findById(taskId);
+
+    if (!task) {
+      return res.status(404).json({
+        status: 404,
+        message: "Task not found",
+      });
+    }
+
+    const isOwner = task.user.equals(userId);
+    const isShared = task.shared.some((sharedUserId) => sharedUserId.equals(userId));
+
+    if (!isOwner && !isShared) {
+      return res.status(401).json({
+        status: 401,
+        message: "User not authorized to modify this task",
+      });
+    }
+
+    task.subcards = subtasks;
+    await task.save();
+
+    return res.status(200).json({
+      status: 200,
+      message: "Subtasks reordered successfully",
+      task,
+    });
+  } catch (error) {
+    console.error("Error reordering subtasks:", error);
+    return res.status(500).json({
+      status: 500,
+      message: "Failed to reorder subtasks",
     });
   }
 });

@@ -85,19 +85,19 @@ input:focus, textarea:focus, select:focus {
     padding: 8px !important;
   }
 
-  
+
   .ant-layout-header {
     padding: 0 4px !important;
     justify-content: space-between !important;
     gap: 4px !important;
   }
 
-  
+
   .ant-btn {
     padding: 0 8px !important;
   }
 
-  
+
   .ant-menu-item .anticon,
   .ant-menu-submenu-title .anticon {
     font-size: 18px !important;
@@ -140,4 +140,18 @@ input:focus, textarea:focus, select:focus {
 
 .animate-fadeIn {
   animation: fadeIn 0.2s ease-out;
+}
+
+/* Drag and Drop Styles */
+.drag-handle {
+  cursor: grab;
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+}
+
+.sortable-item-dragging {
+  opacity: 0.5;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23) !important;
 }

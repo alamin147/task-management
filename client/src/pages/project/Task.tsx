@@ -5,17 +5,123 @@ import { Tooltip } from "antd";
 import SubCardTaskModal from "@/components/subCardModal/SubCardTaskModal";
 import { FaClock } from "react-icons/fa";
 import { PiDotsSixVertical } from "react-icons/pi";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import { useReorderSubTasksMutation } from "@/redux/features/subtask/subtaskApi";
+import toast from "react-hot-toast";
+
+// Sortable item component for each subtask
+const SortableSubtask = ({ card, handleOpenSubTaskModal, task, children }: any) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging
+  } = useSortable({ id: card._id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+    zIndex: isDragging ? 10 : 1,
+  };
+
+  return (
+    <div ref={setNodeRef} style={style} className="mb-6">
+      <div className="cngbg-white rounded-lg cngshadow-md w-72 p-2.5 cngborder cngborder-gray-200">
+        <div className="w-70 mb-4 p-3 bg-custom-green/10 rounded-lg shadow-task flex items-center justify-between border-l-4 border-custom-green">
+          <div className="cursor-move drag-handle" {...attributes} {...listeners}>
+            <PiDotsSixVertical className="text-custom-green-dark" />
+          </div>
+          <h3 className="text-lg font-semibold text-custom-green-dark">
+            {card?.title}
+          </h3>
+          <div
+            className="cursor-pointer p-1.5 hover:bg-custom-green/20 rounded-full transition-all"
+            onClick={() => handleOpenSubTaskModal(card, task?._id)}
+          >
+            <FaPencil className="text-custom-green-dark" />
+          </div>
+        </div>
+        {children}
+      </div>
+    </div>
+  );
+};
+
 const Task = ({ task }: { task: any }) => {
   const [createMiniTask] = useCreateMiniTaskMutation();
+  const [reorderSubTasks] = useReorderSubTasksMutation();
 
-  // console.log(data)
   const [miniTaskModal, setMiniTaskModal] = useState(false);
   const [selectedMiniTask, setSelectedMiniTask] = useState<any>(null);
   const [selectedSubTask, setSelectedSubTask] = useState<any>(null);
   const [miniTaskInputs, setMiniTaskInputs] = useState<{
     [key: string]: string;
   }>({});
+  const [subtasks, setSubtasks] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (task?.subcards) {
+      setSubtasks([...task.subcards]);
+    }
+  }, [task?.subcards]);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (!over || active.id === over.id) {
+      return;
+    }
+
+    const activeIndex = subtasks.findIndex(item => item._id === active.id);
+    const overIndex = subtasks.findIndex(item => item._id === over.id);
+
+    if (activeIndex !== -1 && overIndex !== -1) {
+      const newSubtasks = arrayMove(subtasks, activeIndex, overIndex);
+      setSubtasks(newSubtasks);
+
+      try {
+        await reorderSubTasks({
+          taskId: task._id,
+          subtasks: newSubtasks.map(item => item._id)
+        }).unwrap();
+      } catch (error) {
+        console.error('Failed to reorder subtasks:', error);
+        toast.error('Failed to reorder subtasks');
+        setSubtasks([...task.subcards]);
+      }
+    }
+  };
 
   const handleAddMiniTask = async (id: string) => {
     const miniTaskTitle = miniTaskInputs[id] || "Untitled mini task";
@@ -63,22 +169,22 @@ const Task = ({ task }: { task: any }) => {
         />
       )}
 
-      {task?.subcards?.map((card: any, i: number) => {
-        return (
-          <div key={card._id}>
-            <div className="cngbg-white rounded-lg cngshadow-md w-72 p-2.5 cngborder cngborder-gray-200">
-              <div className="w-70 mb-4 p-3 bg-custom-green/10 rounded-lg shadow-task flex items-center justify-between border-l-4 border-custom-green">
-                <PiDotsSixVertical className="text-custom-green-dark" />
-                <h3 className="text-lg font-semibold text-custom-green-dark">
-                  {card?.title}
-                </h3>
-                <div
-                  className="cursor-pointer p-1.5 hover:bg-custom-green/20 rounded-full transition-all"
-                  onClick={() => handleOpenSubTaskModal(card, task?._id)}
-                >
-                  <FaPencil className="text-custom-green-dark" />
-                </div>
-              </div>
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragEnd={handleDragEnd}
+      >
+        <SortableContext
+          items={subtasks.map(card => card._id)}
+          strategy={verticalListSortingStrategy}
+        >
+          {subtasks.map((card: any, i: number) => (
+            <SortableSubtask
+              key={card._id}
+              card={card}
+              handleOpenSubTaskModal={handleOpenSubTaskModal}
+              task={task}
+            >
               <div className="cngbg-gray-50 rounded-lg shadow-sm">
                 <div className="space-y-6">
                   {task?.subcards[i]?.miniTasks?.map((minicard: any) => (
@@ -228,10 +334,10 @@ const Task = ({ task }: { task: any }) => {
                   Add mini task
                 </button>
               </div>
-            </div>
-          </div>
-        );
-      })}
+            </SortableSubtask>
+          ))}
+        </SortableContext>
+      </DndContext>
     </>
   );
 };

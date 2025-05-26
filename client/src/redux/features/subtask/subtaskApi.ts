@@ -34,8 +34,22 @@ const subtaskApi = baseApi.injectEndpoints({
       },
       invalidatesTags: ["subtask"],
     }),
+    reorderSubTasks: builder.mutation({
+      query: ({ taskId, subtasks }) => {
+        return {
+          url: `/card/sub-card/reorder`,
+          method: "PATCH",
+          body: { taskId, subtasks },
+        };
+      },
+      invalidatesTags: ["subtask"],
+    }),
   }),
 });
 
-export const { useCreateSubTaskMutation, useUpdateSubTaskMutation,useDeleteSubTaskMutation} =
-  subtaskApi;
+export const {
+  useCreateSubTaskMutation,
+  useUpdateSubTaskMutation,
+  useDeleteSubTaskMutation,
+  useReorderSubTasksMutation
+} = subtaskApi;

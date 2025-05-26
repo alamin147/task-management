@@ -26,6 +26,11 @@ This project demonstrates a comprehensive implementation of a project management
 - 📝 Full CRUD functionality for tasks and projects
 - 📋 Mini-tasks for breaking down larger tasks
 - 👥 Task sharing and collaboration
+- 🔄 Drag and drop task management
+  - Intuitive reordering of subtasks using the six-dot drag handle
+  - Real-time visual feedback during drag operations
+  - Automatic synchronization with backend after reordering
+  - Smooth animations for enhanced user experience
 - 📊 Dynamic status tracking for tasks
 - 🖼️ Profile management with avatar upload
 - 🚩 Customizable task prioritization
@@ -44,6 +49,7 @@ This project demonstrates a comprehensive implementation of a project management
 - Redux Toolkit
 - Framer Motion
 - Ant Design
+- DND Kit (for drag and drop functionality)
 
 **Backend:**
 - Node.js
@@ -58,6 +64,7 @@ This project demonstrates a comprehensive implementation of a project management
 - React Hook Form
 - React Hot Toast (notifications/alert)
 
+
 ---
 
 ## 👥 User Capabilities
@@ -67,6 +74,7 @@ This project demonstrates a comprehensive implementation of a project management
   - Add, edit, delete tasks
   - Create mini-tasks within tasks
   - Share projects with other users
+  - Reorder the tasks
   - Customize task status and priority
   - Manage their profile and preferences
 
@@ -75,7 +83,7 @@ This project demonstrates a comprehensive implementation of a project management
 ## 📷 Screenshots / Demo
 
 > The application includes multiple key sections:
-> - Dashboard with task overview
+> - 
 
 ---
 
@@ -199,6 +207,7 @@ GET /api/cards                 - Get all cards/projects
 POST /api/cards                - Create a new card/project
 PUT /api/cards/:id             - Update a card/project
 DELETE /api/cards/:id          - Delete a card/project
+PATCH /api/card/sub-card/reorder - Reorder subtasks (drag and drop)
 ```
 
 ### Share Routes
