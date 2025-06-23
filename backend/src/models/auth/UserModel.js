@@ -38,9 +38,10 @@ const UserSchema = new mongoose.Schema(
       default: "user",
     },
 
-    isVerified: {
-      type: Boolean,
-      default: false,
+    status: {
+      type: String,
+      enum: ["active", "suspended"],
+      default: "active",
     },
   },
   { timestamps: true, minimize: true }
@@ -48,11 +49,6 @@ const UserSchema = new mongoose.Schema(
 
 // hash the password before saving
 UserSchema.pre("save", async function (next) {
-  // check if the password is not modified
-  // if (!this.isModified("password")) {
-  //   return next();
-  // }
-  // hash the password  ==> bcrypt
   // generate salt
   const salt = await bcrypt.genSalt(10);
   // hash the password with the salt

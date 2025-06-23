@@ -9,12 +9,15 @@ import {
 } from "../controllers/auth/userController.js";
 import {
   adminMiddleware,
-  creatorMiddleware,
   protect,
 } from "../middleware/authMiddleware.js";
 import {
   deleteUser,
   getAllUsers,
+  getUsersWithDetails,
+  changeUserRole,
+  toggleUserStatus,
+  getUserAnalytics
 } from "../controllers/auth/adminController.js";
 import { uploader } from "../utils/uploader.js";
 
@@ -26,12 +29,16 @@ userRoutes.post("/login", loginUser);
 userRoutes.get("/user", protect, getUser);
 userRoutes.patch("/user", protect, updateUser);
 
-// admin route
+// admin routes
+userRoutes.get("/admin/users", protect, adminMiddleware, getAllUsers);
+userRoutes.get("/admin/users/details", protect, adminMiddleware, getUsersWithDetails);
 userRoutes.delete("/admin/users/:id", protect, adminMiddleware, deleteUser);
-userRoutes.get("/admin/users", protect, creatorMiddleware, getAllUsers);
+userRoutes.patch("/admin/users/:id/role", protect, adminMiddleware, changeUserRole);
+userRoutes.patch("/admin/users/:id/status", protect, adminMiddleware, toggleUserStatus);
+userRoutes.get("/admin/analytics", protect, adminMiddleware, getUserAnalytics);
 
 // get all users for share
-// auth/users/share 
+// auth/users/share
 
 userRoutes.patch("/user/edit", protect, uploader?.single("img"),(req,res,next)=>{
   req.body = JSON.parse(req.body.data)
