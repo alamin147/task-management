@@ -92,15 +92,19 @@ export const loginUser = asyncHandler(async (req, res) => {
     return res.status(404).json({ message: "User not found, sign up!" });
   }
 
+
   // check id the password match the hashed password in the database
   const isMatch = await bcrypt.compare(password, userExists.password);
 
   if (!isMatch) {
-    // 400 Bad Request
-    return res.status(400).json({ message: "Invalid credentials" });
-  }
+      // 400 Bad Request
+      return res.status(400).json({ message: "Invalid credentials" });
+    }
 
-  // console.log({userExists})
+    if(userExists.status === 'suspended') {
+      return res.status(403).json({ message: "Your account has been suspended. Please contact an administrator." });
+    }
+//   console.log({userExists})
   // generate token with user id
   const token = generateToken(
     userExists._id,
