@@ -12,20 +12,27 @@ cloudinary.v2.config({
   api_key: configserverENV.cloud_api_key,
   api_secret: configserverENV.cloud_api_secret,
 });
+
 export const registerUser = asyncHandler(async (req, res) => {
   const { name, email, password } = req.body;
 
   //validation
   if (!name || !email || !password) {
     // 400 Bad Request
-    return res.status(400).json({ message: "All fields are required" });
+    return res.json({
+      status: 400,
+      success: false,
+      message: "All fields are required",
+    });
   }
 
   // check password length
   if (password.length < 6) {
-    return res
-      .status(400)
-      .json({ message: "Password must be at least 6 characters" });
+    return res.json({
+      status: 400,
+      success: false,
+      message: "Password must be at least 6 characters",
+    });
   }
 
   // check if user already exists
@@ -33,7 +40,11 @@ export const registerUser = asyncHandler(async (req, res) => {
 
   if (userExists) {
     // bad request
-    return res.status(400).json({ message: "User already exists" });
+    return res.json({
+      status: 400,
+      success: false,
+      message: "User already exists with same email",
+    });
   }
 
   // create new user
@@ -56,25 +67,27 @@ export const registerUser = asyncHandler(async (req, res) => {
   });
 
   if (user) {
-    const { _id, name, email, role, photo, bio, isVerified } = user;
+    const { _id, name, email, role, photo, bio } = user;
 
     // 201 Created
-    return res.status(201).json({
+    return res.json({
+      status: 201,
+      success: true,
       _id,
       name,
       email,
       role,
       photo,
       bio,
-      isVerified,
       token,
     });
   } else {
-    res.status(400).json({ message: "Invalid user data" });
+    res.json({ status: 400, success: false, message: "Invalid user data" });
   }
 });
 
 // user login
+
 export const loginUser = asyncHandler(async (req, res) => {
   // get email and password from req.body
   const { email, password } = req.body;
@@ -82,29 +95,45 @@ export const loginUser = asyncHandler(async (req, res) => {
   // validation
   if (!email || !password) {
     // 400 Bad Request
-    return res.status(400).json({ message: "All fields are required" });
+    return res.json({
+      status: 400,
+      success: false,
+      message: "All fields are required",
+    });
   }
 
   // check if user exists
   const userExists = await User.findOne({ email });
 
   if (!userExists) {
-    return res.status(404).json({ message: "User not found, sign up!" });
+    return res.json({
+      status: 404,
+      success: false,
+      message: "User not found, sign up!",
+    });
   }
-
 
   // check id the password match the hashed password in the database
   const isMatch = await bcrypt.compare(password, userExists.password);
 
   if (!isMatch) {
-      // 400 Bad Request
-      return res.status(400).json({ message: "Invalid credentials" });
-    }
+    // 400 Bad Request
+    return res.json({
+      status: 400,
+      success: false,
+      message: "Wrong password, please try again!",
+    });
+  }
 
-    if(userExists.status === 'suspended') {
-      return res.status(403).json({ message: "Your account has been suspended. Please contact an administrator." });
-    }
-//   console.log({userExists})
+  if (userExists.status === "suspended") {
+    return res.json({
+      status: 400,
+      success: false,
+      message:
+        "Your account has been suspended. Please contact an administrator.",
+    });
+  }
+  //   console.log({userExists})
   // generate token with user id
   const token = generateToken(
     userExists._id,
@@ -115,7 +144,7 @@ export const loginUser = asyncHandler(async (req, res) => {
   );
 
   if (userExists && isMatch) {
-    const { _id, name, email, role, photo, bio, isVerified } = userExists;
+    const { _id, name, email, role, photo, bio } = userExists;
 
     // set the token in the cookie
     res.cookie("token", token, {
@@ -127,18 +156,23 @@ export const loginUser = asyncHandler(async (req, res) => {
     });
 
     // send back the user and token in the response to the client
-    res.status(200).json({
+    res.json({
+      status: 200,
+      success: true,
       _id,
       name,
       email,
       role,
       photo,
       bio,
-      isVerified,
       token,
     });
   } else {
-    res.status(400).json({ message: "Invalid email or password" });
+    res.json({
+      status: 400,
+      success: false,
+      message: "Invalid email or password",
+    });
   }
 });
 
@@ -176,7 +210,6 @@ export const getUsersWithoutSelf = asyncHandler(async (req, res) => {
 });
 
 // update user
-
 export const updateUser = asyncHandler(async (req, res) => {
   try {
     const userId = req.user._id;

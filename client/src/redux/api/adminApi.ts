@@ -9,7 +9,6 @@ export interface UserWithDetails {
   bio: string;
   role: 'user' | 'admin' ;
   status: 'active' | 'suspended';
-  isVerified: boolean;
   createdAt: string;
   updatedAt: string;
   totalTasks: number;

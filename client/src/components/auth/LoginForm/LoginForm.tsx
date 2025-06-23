@@ -17,12 +17,7 @@ const LoginForm = () => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<IFormInput>({
-    defaultValues: {
-      email: "aabcd@gm.c",
-      password: "123456",
-    },
-  });
+  } = useForm<IFormInput>();
 
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
@@ -34,7 +29,12 @@ const LoginForm = () => {
   const onSubmit = async (data: IFormInput) => {
     try {
       const res: any = await loginUser(data).unwrap();
-      if (res && res.token) {
+      console.log(res)
+      if(res?.success == false) {
+        toast.error(res?.message || "Login failed. Please try again.");
+        return;
+    }
+      if (res && res?.token) {
         const token = res.token;
 
         let decoded;

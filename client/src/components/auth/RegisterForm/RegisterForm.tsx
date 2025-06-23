@@ -2,6 +2,7 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { useRegisterUserMutation } from "../../../redux/features/auth/authApi";
+import { useNavigate } from "react-router-dom";
 
 interface IFormInput {
   name: string;
@@ -15,13 +16,8 @@ function RegisterForm() {
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm<IFormInput>({
-    defaultValues: {
-      name: "john doe",
-      email: "john@example.com",
-      password: "123456",
-    },
-  });
+  } = useForm<IFormInput>();
+  const navigate = useNavigate();
 
   const [registerUser] = useRegisterUserMutation();
 
@@ -31,12 +27,19 @@ function RegisterForm() {
 
   const onSubmit = async (data: IFormInput) => {
     try {
-      await registerUser(data);
-      toast.success("User registered successfully");
+      const res=await registerUser(data).unwrap();
+      console.log(res)
+      if(res?.success) {
+          toast.success("User registered successfully. Please login to continue.");
+        navigate("/login");
+      }
+      else {
+        toast.error(res?.message || "Registration failed. Please try again.");
+    }
       reset();
     } catch (error: any) {
       console.log("Error registering user", error);
-      toast.error(error.response?.data?.message);
+      toast.error(error.response?.data?.message? error.response.data.message : "Registration failed. Please try again.");
     }
   };
 
