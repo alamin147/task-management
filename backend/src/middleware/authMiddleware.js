@@ -25,6 +25,11 @@ export const protect = asyncHandler(async (req, res, next) => {
       return res.status(404).json({ message: "User not found!" });
     }
 
+    // check if user is suspended
+    if (user.status === 'suspended') {
+      return res.status(403).json({ message: "Your account has been suspended. Please contact an administrator." });
+    }
+
     // set user details in the request object
     req.user = user;
     // console.log(req.user)
@@ -47,26 +52,3 @@ export const adminMiddleware = asyncHandler(async (req, res, next) => {
   return res.status(403).json({ message: "Only admins can do this!" });
 });
 
-export const creatorMiddleware = asyncHandler(async (req, res, next) => {
-  if (
-    (req.user && req.user.role === "creator") ||
-    (req.user && req.user.role === "admin")
-  ) {
-    // if user is creator, move to the next middleware/controller
-    next();
-    return;
-  }
-  // if not creator, send 403 Forbidden --> terminate the request
-  res.status(403).json({ message: "Only creators can do this!" });
-});
-
-// verified middleware
-export const verifiedMiddleware = asyncHandler(async (req, res, next) => {
-  if (req.user && req.user.isVerified) {
-    // if user is verified, move to the next middleware/controller
-    next();
-    return;
-  }
-  // if not verified, send 403 Forbidden --> terminate the request
-  res.status(403).json({ message: "Please verify your email address!" });
-});
