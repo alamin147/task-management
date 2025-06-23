@@ -86,17 +86,17 @@ const UserManagement = () => {
         />
       </div>
 
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto shadow rounded-lg">
         <table className="min-w-full bg-white dark:bg-gray-800 rounded-lg overflow-hidden">
           <thead className="bg-gray-100 dark:bg-gray-700">
             <tr>
-              <th className="px-4 py-3 text-left">User</th>
-              <th className="px-4 py-3 text-left">Email</th>
-              <th className="px-4 py-3 text-center">Role</th>
-              <th className="px-4 py-3 text-center">Status</th>
-              <th className="px-4 py-3 text-center">Tasks</th>
-              <th className="px-4 py-3 text-center">Completion</th>
-              <th className="px-4 py-3 text-center">Actions</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">Email</th>
+              <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+              <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+              <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">Tasks</th>
+              <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">Completion</th>
+              <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -116,16 +116,20 @@ const UserManagement = () => {
                           {user.name[0]}
                         </div>
                       )}
-                      <span>{user.name}</span>
+                      <div className="flex flex-col md:hidden">
+                        <span className="font-medium">{user.name}</span>
+                        <span className="text-xs text-gray-500">{user.email}</span>
+                      </div>
+                      <span className="hidden md:block">{user.name}</span>
                     </div>
                   </td>
-                  <td className="px-4 py-3">{user.email}</td>
+                  <td className="px-4 py-3 hidden md:table-cell">{user.email}</td>
                   <td className="px-4 py-3 text-center">
                     <select
                       value={user.role}
                       onChange={(e) => handleRoleChange(user._id, e.target.value as 'user' | 'admin')}
                       disabled={isUpdatingRole}
-                      className="bg-gray-50 border border-gray-300 text-sm rounded-lg block p-2"
+                      className="bg-gray-50 border border-gray-300 text-sm rounded-lg block p-2 w-full"
                     >
                       <option value="user">User</option>
                       <option value="admin">Admin</option>
@@ -142,10 +146,10 @@ const UserManagement = () => {
                       {user.status || 'active'}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-center">
+                  <td className="px-4 py-3 text-center hidden lg:table-cell">
                     {user.totalTasks} ({user.completedTasks} completed)
                   </td>
-                  <td className="px-4 py-3 text-center">
+                  <td className="px-4 py-3 text-center hidden lg:table-cell">
                     <div className="flex items-center justify-center">
                       <span className="mr-2">{user.completionRate}%</span>
                       <div className="w-16 bg-gray-200 rounded-full h-2">
@@ -157,11 +161,11 @@ const UserManagement = () => {
                     </div>
                   </td>
                   <td className="px-4 py-3 text-center">
-                    <div className="flex justify-center space-x-2">
+                    <div className="flex flex-col sm:flex-row justify-center space-y-2 sm:space-y-0 sm:space-x-2">
                       <button
                         onClick={() => handleStatusToggle(user._id, user.status || 'active')}
                         disabled={isTogglingStatus}
-                        className={`text-xs px-2 py-1 rounded ${
+                        className={`text-xs px-2 py-1 rounded whitespace-nowrap ${
                           user.status === 'active'
                             ? 'bg-amber-100 text-amber-800 hover:bg-amber-200'
                             : 'bg-green-100 text-green-800 hover:bg-green-200'
