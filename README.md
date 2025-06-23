@@ -36,6 +36,33 @@ This project demonstrates a comprehensive implementation of a project management
 - 🚩 Customizable task prioritization
 - 📅 Task deadlines
 - 📱 Responsive design for all devices
+- 🎨 **Image Upload for Mini-tasks**
+  - Upload and attach images to mini-tasks
+  - Image preview functionality with fullscreen view
+  - Cloudinary integration for optimized image storage
+- 📊 **Advanced Charts and Analytics**
+  - Interactive charts using Chart.js and Recharts
+  - Doughnut charts for user role distribution
+  - Bar charts for task completion analytics
+  - Custom tooltips with enhanced styling
+- 👑 **Admin Dashboard**
+  - Comprehensive user management system
+  - User role management (promote/demote users)
+  - User account suspension/activation
+  - User analytics with completion rates
+  - Task statistics and performance metrics
+  - Advanced user search and filtering
+- 🔄 **Task Duplication**
+  - One-click task duplication with all subtasks and mini-tasks
+  - Preserves task structure and relationships
+- 📈 **Enhanced Task Status Management**
+  - Multiple status options (Completed, Pending, In Progress)
+  - Visual status indicators with color coding
+  - Dynamic status filtering and sorting
+- 🎭 **Profile Enhancement**
+  - Extended profile editing with bio field
+  - Profile photo upload with preview
+  - Improved profile management interface
 
 ---
 
@@ -50,6 +77,8 @@ This project demonstrates a comprehensive implementation of a project management
 - Framer Motion
 - Ant Design
 - DND Kit (for drag and drop functionality)
+- Chart.js (for analytics charts)
+- Recharts (for advanced data visualization)
 
 **Backend:**
 - Node.js
@@ -60,9 +89,10 @@ This project demonstrates a comprehensive implementation of a project management
 **Other:**
 - JWT (authentication)
 - Bcrypt (password hashing)
-- Cloudinary (file uploads)
+- Cloudinary (file uploads and image management)
 - React Hook Form
 - React Hot Toast (notifications/alert)
+- SweetAlert2 (enhanced confirmations)
 
 
 ---
@@ -73,17 +103,29 @@ This project demonstrates a comprehensive implementation of a project management
   - Create and manage projects
   - Add, edit, delete tasks
   - Create mini-tasks within tasks
+  - Upload images to mini-tasks with preview functionality
   - Share projects with other users
-  - Reorder the tasks
-  - Customize task status and priority
-  - Manage their profile and preferences
+  - Reorder the tasks using drag and drop
+  - Duplicate tasks with all associated data
+  - Customize task status (Completed, Pending, In Progress) and priority
+  - Filter tasks by priority and status
+  - Manage their profile with photo upload and bio
+  - View task analytics and completion rates
+
+- 👑 **Admin users can:**
+  - Access comprehensive admin dashboard
+  - View system-wide analytics with interactive charts
+  - Manage all users (promote/demote roles)
+  - Suspend or activate user accounts
+  - View detailed user statistics and task completion rates
+  - Monitor platform performance and user activity
 
 ---
 
 ## 📷 Screenshots / Demo
 
 > The application includes multiple key sections:
-> - 
+> -
 
 ---
 
@@ -196,9 +238,9 @@ DELETE /api/tasks/:id          - Delete a task
 ### Mini-Task Routes
 ```http
 GET /api/mini-tasks/:taskId    - Get mini-tasks for a task
-POST /api/mini-tasks           - Create a new mini-task
-PUT /api/mini-tasks/:id        - Update a mini-task
-DELETE /api/mini-tasks/:id     - Delete a mini-task
+POST /api/minitask/create      - Create a new mini-task
+POST /api/minitask/update      - Update a mini-task (supports image upload)
+DELETE /api/minitask/delete/minitask - Delete a mini-task
 ```
 
 ### Card/Project Routes
@@ -208,13 +250,30 @@ POST /api/cards                - Create a new card/project
 PUT /api/cards/:id             - Update a card/project
 DELETE /api/cards/:id          - Delete a card/project
 PATCH /api/card/sub-card/reorder - Reorder subtasks (drag and drop)
+POST /api/card/sub-card        - Create a new subtask
+PATCH /api/card/sub-card/update - Update a subtask
+DELETE /api/card/sub-card/delete - Delete a subtask
 ```
 
 ### Share Routes
 ```http
-POST /api/cards/share          - Share a card with other users
-DELETE /api/cards/share/:id    - Remove shared access
-GET /api/cards/shared          - Get shared cards
+POST /api/task/share/:taskId   - Share a task with other users
+DELETE /api/task/delete/share/:taskId - Remove shared access
+GET /api/task/tasks/share      - Get shared tasks
+```
+
+### Admin Routes
+```http
+GET /api/auth/admin/users/details    - Get all users with detailed stats
+GET /api/auth/admin/analytics        - Get system analytics
+PATCH /api/auth/admin/users/:id/role - Update user role
+PATCH /api/auth/admin/users/:id/status - Toggle user status
+DELETE /api/auth/admin/users/:id     - Delete user
+```
+
+### Task Enhancement Routes
+```http
+POST /api/task/duplicate/:taskId     - Duplicate a task with all data
 ```
 
 ---
