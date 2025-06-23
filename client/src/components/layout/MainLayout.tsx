@@ -1,6 +1,7 @@
 import { FaClock, FaCheckCircle } from "react-icons/fa";
 import { FaClockRotateLeft, FaUserGroup } from "react-icons/fa6";
 import { TbLayoutListFilled } from "react-icons/tb";
+import { MdAdminPanelSettings } from "react-icons/md";
 import { ReactNode, useState } from "react";
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
 import { Avatar, Button, Layout, Menu } from "antd";
@@ -50,6 +51,15 @@ const MainLayout = ({ children }: { children?: ReactNode }) => {
       label: "Shared with me",
       link: "/shared",
     },
+    // Admin Dashboard (only visible to admin users)
+    ...(user?.role === "admin" ? [
+      {
+        key: "6",
+        icon: <MdAdminPanelSettings />,
+        label: "Admin Dashboard",
+        link: "/admin",
+      }
+    ] : []),
   ];
 
   const getSelectedKey = () => {

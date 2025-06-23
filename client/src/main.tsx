@@ -13,8 +13,12 @@ import TaskDynamicStatus from "./pages/taskDynamicStatus/taskDynamicStatus.tsx";
 import Project from "./pages/project/Project.tsx";
 import MainLayout from "./components/layout/MainLayout.tsx";
 import PrivateRoute from "./routes/PrivateRoute.tsx";
+import AdminRoute from "./routes/AdminRoute.tsx";
 import ShareTasks from "./pages/sharePage/ShareTasks.tsx";
 import ProfileEdit from "./pages/profilePage/ProfileEdit.tsx";
+import AdminDashboard from "./pages/admin/AdminDashboard.tsx";
+// Import APIs to ensure they are loaded
+import "./redux/api/index.ts";
 
 const router = createBrowserRouter([
   {
@@ -47,6 +51,10 @@ const router = createBrowserRouter([
   {
     path: "/profile-edit",
     element: <PrivateRoute children=<MainLayout children=<ProfileEdit /> /> />,
+  },
+  {
+    path: "/admin",
+    element: <AdminRoute children=<MainLayout children=<AdminDashboard /> /> />,
   },
 ]);
 ReactDOM.createRoot(document.getElementById("root")!).render(
