@@ -12,6 +12,10 @@ const subCardSchema = new mongoose.Schema(
         ref: "miniTask",
       },
     ],
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );

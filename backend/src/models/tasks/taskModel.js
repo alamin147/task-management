@@ -42,9 +42,13 @@ const TaskSchema = new mongoose.Schema(
     shared: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User"
+        ref: "User",
       },
     ],
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );
