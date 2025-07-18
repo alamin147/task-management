@@ -29,7 +29,7 @@ export const createMiniTask = asyncHandler(async (req, res) => {
   const mainTask = await TaskModel.findOne({
     subcards: { $in: [task._id] },
   });
- 
+
   if (!mainTask){
     return res.status(404).json({ message: "Task not found" });
 }
@@ -124,9 +124,6 @@ export const deleteMiniTask = asyncHandler(async (req, res) => {
         .json({ status: 400, message: "MiniTask Not found in Subcard" });
     }
 
-    subcard.miniTasks.splice(miniTaskIndex, 1);
-    await subcard.save();
-
     const miniTask = await miniTaskModel.findById(miniTaskId);
     if (!miniTask) {
       return res
@@ -134,23 +131,14 @@ export const deleteMiniTask = asyncHandler(async (req, res) => {
         .json({ status: 400, message: "MiniTask Not found" });
     }
 
-    const miniTaskName = miniTask.title;
-    await miniTaskModel.findByIdAndDelete(miniTaskId);
-
-    if (miniTask.img) {
-      const publicId = extractPublicId(miniTask.img);
-      try {
-        await cloudinary.v2.uploader.destroy(publicId);
-      } catch (err) {
-        console.error("Failed to delete image from Cloudinary:", err);
-      }
-    }
+    // Soft delete the mini task
+    await miniTaskModel.findByIdAndUpdate(miniTaskId, { isDeleted: true });
 
     res
       .status(200)
-      .json({ status: 200, message: `${miniTaskName} deleted successfully` });
+      .json({ status: 200, message: "MiniTask deleted successfully" });
   } catch (error) {
-    console.error("Error:", error);
-    res.status(500).json({ message: error.message });
+    console.error("Error in deleteMiniTask:", error.message);
+    res.status(500).json({ status: 500, message: "Internal server error" });
   }
 });

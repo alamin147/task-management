@@ -22,6 +22,10 @@ const miniTaskSchema = new mongoose.Schema(
       enum: ["completed", "pending", "in progress"],
       default: "pending",
     },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );
