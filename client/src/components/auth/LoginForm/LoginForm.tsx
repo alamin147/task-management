@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 import { jwtDecode } from "jwt-decode";
 import { setUser } from "../../../redux/features/auth/authSlice";
 import { useDispatch } from "react-redux";
+import { FaShieldAlt, FaUser } from "react-icons/fa";
 
 interface IFormInput {
   email: string;
@@ -16,6 +17,7 @@ const LoginForm = () => {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<IFormInput>();
 
@@ -26,14 +28,68 @@ const LoginForm = () => {
   const [loginUser] = useLoginUserMutation();
   const dispatch = useDispatch();
 
+  // Demo login credentials
+  const demoCredentials = {
+    admin: {
+      email: "john@example.com",
+      password: "123456",
+    },
+    user: {
+      email: "user@example.com",
+      password: "123456",
+    },
+  };
+
+  const handleDemoLogin = async (type: "admin" | "user") => {
+    const credentials = demoCredentials[type];
+
+    // Fill the form with demo credentials
+    setValue("email", credentials.email);
+    setValue("password", credentials.password);
+
+    try {
+      const res: any = await loginUser(credentials).unwrap();
+      console.log(res);
+      if (res?.success == false) {
+        toast.error(res?.message || "Login failed. Please try again.");
+        return;
+      }
+      if (res && res?.token) {
+        const token = res.token;
+
+        let decoded;
+        try {
+          decoded = jwtDecode(token);
+        } catch (err) {
+          console.error("Failed to decode token:", err);
+          toast.error("Invalid token received");
+          return;
+        }
+        navigate("/");
+        dispatch(setUser({ user: decoded, token }));
+        toast.success(`Demo ${type} logged in successfully!`);
+      } else {
+        toast.error("Login failed: No token received");
+        throw new Error("Login failed: No token received");
+      }
+    } catch (error: any) {
+      console.error("Demo login error:", error);
+      if (error.data?.message) {
+        toast.error(error.data.message);
+      } else {
+        toast.error("An error occurred. Please try again.");
+      }
+    }
+  };
+
   const onSubmit = async (data: IFormInput) => {
     try {
       const res: any = await loginUser(data).unwrap();
-      console.log(res)
-      if(res?.success == false) {
+      console.log(res);
+      if (res?.success == false) {
         toast.error(res?.message || "Login failed. Please try again.");
         return;
-    }
+      }
       if (res && res?.token) {
         const token = res.token;
 
@@ -153,6 +209,32 @@ const LoginForm = () => {
           </div>
         </div>
         {/* <img src="/flurry.png" alt="" /> */}
+
+        <div className="relative mb-4 mt-5">
+          <hr className="border-gray-300" />
+          <span className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white px-3 text-sm text-gray-500">
+            or
+          </span>
+        </div>
+        {/* Demo Login Buttons */}
+        <div className="mb-6 flex gap-3">
+          <button
+            type="button"
+            onClick={() => handleDemoLogin("admin")}
+            className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border bg-background h-10 px-4 py-2 border-yellow-500/50 hover:bg-yellow-500/10 hover:text-yellow-600 flex-1"
+          >
+            <FaShieldAlt className="mr-2 h-4 w-4" />
+            Demo Admin
+          </button>
+          <button
+            type="button"
+            onClick={() => handleDemoLogin("user")}
+            className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border bg-background h-10 px-4 py-2 border-green-500/50 hover:bg-green-500/10 hover:text-green-600 flex-1"
+          >
+            <FaUser className="mr-2 h-4 w-4" />
+            Demo User
+          </button>
+        </div>
       </form>
     </>
   );

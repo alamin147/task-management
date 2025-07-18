@@ -2,7 +2,7 @@ import { FaClock, FaCheckCircle } from "react-icons/fa";
 import { FaClockRotateLeft, FaUserGroup } from "react-icons/fa6";
 import { TbLayoutListFilled } from "react-icons/tb";
 import { MdAdminPanelSettings } from "react-icons/md";
-import { ReactNode, useState } from "react";
+import { ReactNode, useState, useEffect } from "react";
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
 import { Avatar, Button, Layout, Menu } from "antd";
 import { getUserInfo } from "../auth/utils/authUlits";
@@ -19,6 +19,22 @@ const MainLayout = ({ children }: { children?: ReactNode }) => {
   const [collapsed, setCollapsed] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [openProfileSetting, setOpenProfileSetting] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+      // Auto-collapse sidebar on mobile for better UX
+      if (window.innerWidth < 768) {
+        setCollapsed(true);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    // Initial check
+    handleResize();
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const navItems = [
     {
@@ -80,20 +96,24 @@ const MainLayout = ({ children }: { children?: ReactNode }) => {
           trigger={null}
           collapsible
           collapsed={collapsed}
+          width={isMobile ? 200 : 250}
+          collapsedWidth={isMobile ? 60 : 80}
           className="bg-custom-sidebar transition-all duration-300"
           style={{ boxShadow: '2px 0 10px rgba(0,0,0,0.1)' }}
         >
-          <div className="mb-5 bg-gradient-to-r from-custom-green to-custom-green-dark py-2 md:py-3 shadow-md">
-            <div className="text-white ms-2 md:ms-5 my-2 md:my-3 font-bold text-lg md:text-xl flex items-center justify-center md:justify-start">
+          <div className="mb-5 bg-gradient-to-r from-custom-green to-custom-green-dark py-3 shadow-md">
+            <div className="text-white px-2 md:px-4 font-bold flex items-center justify-center">
               {collapsed ? (
                 <span className="text-xl md:text-2xl flex items-center justify-center">
                   📋
                 </span>
               ) : (
-                <>
-                  <span className="text-xl md:text-2xl mr-2">📋</span>
-                  <span className="hidden md:block">Task Management</span>
-                </>
+                <div className="flex items-center justify-start w-full overflow-hidden">
+                  <span className="text-xl md:text-2xl mr-2 md:mr-3 flex-shrink-0">📋</span>
+                  <span className="text-sm md:text-lg font-semibold truncate min-w-0">
+                    Flurry
+                  </span>
+                </div>
               )}
             </div>
           </div>
