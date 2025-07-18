@@ -38,11 +38,14 @@ export const getSharedTasks = async (req, res) => {
 
     const allTasks = await TaskModel.find({
       shared: { $in: [userId] },
+      isDeleted: { $ne: true }
     }).populate({
       path: "subcards",
+      match: { isDeleted: { $ne: true } },
       select: "title",
       populate: {
         path: "miniTasks",
+        match: { isDeleted: { $ne: true } },
       },
     });
 
@@ -76,11 +79,16 @@ export const getTasks = async (req, res) => {
       return res.status(401).json({ message: "User not authenticated" });
     }
 
-    const allTasks = await TaskModel.find({ user: userId }).populate({
+    const allTasks = await TaskModel.find({
+      user: userId,
+      isDeleted: { $ne: true }
+    }).populate({
       path: "subcards",
+      match: { isDeleted: { $ne: true } },
       select: "title",
       populate: {
         path: "miniTasks",
+        match: { isDeleted: { $ne: true } },
       },
     });
 
@@ -125,12 +133,17 @@ export const getTask = asyncHandler(async (req, res) => {
     const { id } = req.params;
     if (!id) return res.status(401).json({ message: "Id not Given" });
 
-    const task = await TaskModel.findById(id).populate([
+    const task = await TaskModel.findOne({
+      _id: id,
+      isDeleted: { $ne: true }
+    }).populate([
       {
         path: "subcards",
+        match: { isDeleted: { $ne: true } },
         select: "title",
         populate: {
           path: "miniTasks",
+          match: { isDeleted: { $ne: true } },
         },
       },
       {
@@ -208,7 +221,8 @@ export const deleteTask = asyncHandler(async (req, res) => {
         .json({ status: 401, message: "User not authenticated" });
     }
 
-    await TaskModel.findByIdAndDelete(id);
+    // Soft delete: set isDeleted to true instead of removing from database
+    await TaskModel.findByIdAndUpdate(id, { isDeleted: true });
 
     res.status(200).json({
       status: 200,
@@ -229,9 +243,16 @@ export const duplicateTask = asyncHandler(async (req, res) => {
     if (!taskId)
       return res.status(400).json({ message: "Task ID not provided" });
 
-    const task = await TaskModel.findById(taskId).populate({
+    const task = await TaskModel.findOne({
+      _id: taskId,
+      isDeleted: { $ne: true }
+    }).populate({
       path: "subcards",
-      populate: { path: "miniTasks" },
+      match: { isDeleted: { $ne: true } },
+      populate: {
+        path: "miniTasks",
+        match: { isDeleted: { $ne: true } }
+      },
     });
 
     if (!task) return res.status(404).json({ message: "Task not found" });

@@ -97,9 +97,6 @@ export const deleteSubtask = asyncHandler(async (req, res) => {
       return res.status(404).json({ status: 404, message: "Task not found" });
     }
 
-    task.subcards = task.subcards.filter((id) => id.toString() !== subtaskId);
-    await task.save();
-
     const subCard = await subCardModel.findById(subtaskId);
     if (!subCard) {
       return res
@@ -107,20 +104,13 @@ export const deleteSubtask = asyncHandler(async (req, res) => {
         .json({ status: 404, message: "Subtask not found" });
     }
 
+    // Soft delete the subcard
+    await subCardModel.findByIdAndUpdate(subtaskId, { isDeleted: true });
+
+    // Soft delete all mini tasks in this subcard
     for (const miniTaskId of subCard.miniTasks) {
-      const miniTask = await miniTaskModel.findById(miniTaskId);
-      if (miniTask?.img) {
-        const publicId = miniTask.img.split("/").pop().split(".")[0];
-
-        await cloudinaryConfig.v2.uploader.destroy(publicId, (error, result) => {
-          if (error) console.error(`Error deleting image: ${error.message}`);
-        });
-      }
-
-      await miniTaskModel.findByIdAndDelete(miniTaskId);
+      await miniTaskModel.findByIdAndUpdate(miniTaskId, { isDeleted: true });
     }
-
-    await subCardModel.findByIdAndDelete(subtaskId);
 
     return res.status(200).json({
       status: 200,
